@@ -1,7 +1,7 @@
 package org.sopt.artoo.utils;
 
 /**
- * Created by ds on 2018-11-28.
+ * Created by ds on 2018-12-26.
  */
 public class StatusCode {
     public static final int OK = 200;

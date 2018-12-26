@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 
-/**
- * Created by ds on 2018-11-28.
- */
-
 @Getter
 @Builder
 @NoArgsConstructor
@@ -23,7 +19,8 @@ public class DefaultRes<T> {
 
     private T data;
 
-    public DefaultRes(final int status, final String message) {
+
+    public DefaultRes(final int status, String message) {
         this.status = status;
         this.message = message;
         this.data = null;
