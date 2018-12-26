@@ -28,7 +28,8 @@ public class HomeController {
     @GetMapping("/today")
     public ResponseEntity getAllTodayArtist(){
         try{
-            DefaultRes<List<Home>> defaultRes = homeService.getAllTodayArtist();
+
+            DefaultRes<List<Home>> defaultRes = homeService.getAllTodayArtist(); //작가 이름
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());
