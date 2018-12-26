@@ -1,4 +1,4 @@
-package org.yapp.unitice.utils;
+package org.sopt.artoo.utils;
 
 public class ResponseMessage {
 
@@ -46,4 +46,16 @@ public class ResponseMessage {
     public static final String SERVICE_UNAVAILABLE = "현재 서비스를 사용하실 수 없습니다. 잠시후 다시 시도해 주세요.";
 
     public static final String DB_ERROR = "데이터베이스 에러";
+
+
+    /* display - 다영 */
+    public static final String READ_ALL_DISPLAY = "전시장 조회 성공";
+    public static final String READ_DISPLAY = "전시 상세 조회 성공";
+    public static final String NOT_FOUND_DISPLAY = "컨텐츠가 존재하지 않습니다.";
+    public static final String CREATE_DISPLAY = "전시 등록 성공";
+    public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
+    public static final String FAIL_CREATE_DISPLAY = "전시 등록 실패";
+    public static final String DELETE_DISPLAY= "전시 취소 성공";
+    public static final String FAIL_DELETE_DISPLAY = "전시 취소 실패";
+
 }

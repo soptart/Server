@@ -1,4 +1,4 @@
-package com.example.soptappjamtestspringboot.service;
+package org.sopt.artoo.service;
 
 
 import com.auth0.jwt.JWT;

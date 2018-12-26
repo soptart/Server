@@ -1,8 +1,8 @@
-package com.example.soptappjamtestspringboot.model;
+package org.sopt.artoo.model;
 
 
-import com.example.soptappjamtestspringboot.utils.ResponseMessage;
-import com.example.soptappjamtestspringboot.utils.StatusCode;
+import org.sopt.artoo.utils.ResponseMessage;
+import org.sopt.artoo.utils.StatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

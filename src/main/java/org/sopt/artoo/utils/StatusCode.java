@@ -1,4 +1,4 @@
-package org.yapp.unitice.utils;
+package org.sopt.artoo.utils;
 
 
 //재정의한 StatusCode
