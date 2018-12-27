@@ -1,6 +1,12 @@
 package org.sopt.artoo.utils;
 
+
 public class ResponseMessage {
+    /**
+     * Home
+     */
+    public static final String NOT_FOUND_ARTIST = "작가를 찾을 수 없습니다.";
+    public static final String READ_ARTIST = "작가 정보 조회 성공";
 
     public static final String LOGIN_SUCCESS = "로그인 성공";
     public static final String LOGIN_FAIL = "로그인 실패";
