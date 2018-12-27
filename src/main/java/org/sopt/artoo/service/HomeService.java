@@ -6,6 +6,7 @@ import org.sopt.artoo.dto.ArtworkPic;
 import org.sopt.artoo.dto.Home;
 import org.sopt.artoo.dto.Tag;
 
+import org.sopt.artoo.mapper.ArtworkPicMapper;
 import org.sopt.artoo.mapper.HomeMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -23,22 +24,22 @@ public class HomeService {
 
     private final HomeMapper homeMapper;
 //    private final ArtworkMapper artworkMapper;
-//    private final ArtworkPicMapper artworkPicMapper;
-//
-//
-//    /**
-//     * HomeMapper 생성자 의존성 주입
-//     */
-//    public HomeService(HomeMapper homeMapper, ArtworkMapper artworkMapper, ArtworkPicMapper artworkPicMapper) {
-//        this.homeMapper = homeMapper;
-//        this.artworkMapper = artworkMapper;
-//        this.artworkPicMapper = artworkPicMapper;
-//    }
+    private final ArtworkPicMapper artworkPicMapper;
 
 
-    public HomeService(HomeMapper homeMapper) {
+    /**
+     * HomeMapper 생성자 의존성 주입
+     */
+    public HomeService(HomeMapper homeMapper,  ArtworkPicMapper artworkPicMapper) {
         this.homeMapper = homeMapper;
+//        this.artworkMapper = artworkMapper;
+        this.artworkPicMapper = artworkPicMapper;
     }
+
+
+//    public HomeService(HomeMapper homeMapper) {
+//        this.homeMapper = homeMapper;
+//    }
 
     /**
      * 좋아요 순위 5개 작가, 작가 작품
@@ -78,18 +79,18 @@ public class HomeService {
 
 
 //artwork 에서 pic갖고오는 함수 갖고와 지면 주석 풀기 12.28
-//    @Transactional
-//    public DefaultRes<List<ArtworkPic>> getAllDetailTag(final int t_idx){
-//        int artwork_idx = homeMapper.findTagArtowrkIndex(t_idx);
-//        final List<ArtworkPic> themePicList = artworkPicMapper.findPickList(artwork_idx);
-////        for(ArtworkPic artworkPic : themePicList){
-////            artworkPic.setPic_url(artWorkPicMapper.findDetail);
-////        }
-////        if(shortThemeList.isEmpty()){
-////            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
-////        }
-//        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, themePicList);
-//    }
+    @Transactional
+    public DefaultRes<List<ArtworkPic>> getAllDetailTag(final int t_idx){
+        int artwork_idx = homeMapper.findTagArtowrkIndex(t_idx);
+        final List<ArtworkPic> themePicList = artworkPicMapper.findPicListByArtIdx(artwork_idx);
+//        for(ArtworkPic artworkPic : themePicList){
+//            artworkPic.setPic_url(artWorkPicMapper.findDetail);
+//        }
+//        if(shortThemeList.isEmpty()){
+//            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+//        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, themePicList);
+    }
 
 
 

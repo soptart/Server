@@ -52,16 +52,16 @@ public class HomeController {
 
 
     //artwork 에서 pic갖고오는 함수 갖고와 지면 주석 풀기 12.28
-//    @GetMapping("/theme/details/{t_idx}")
-//    public ResponseEntity getAllDetailTag(@PathVariable("t_idx") final int t_idx){
-//        try{
-//            DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllDetailTag(t_idx); //Tag 모든 정보
-//
-//            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-//        }catch (Exception e){
-//            log.error(e.getMessage());
-//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @GetMapping("/theme/details/{t_idx}")
+    public ResponseEntity getAllDetailTag(@PathVariable("t_idx") final int t_idx){
+        try{
+            DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllDetailTag(t_idx); //Tag 모든 정보
+
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
