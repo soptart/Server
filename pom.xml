@@ -45,6 +45,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JWT -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+      
         <!-- AWS -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -61,7 +68,6 @@
             <artifactId>spring-cloud-aws-autoconfigure</artifactId>
             <version>1.2.1.RELEASE</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -72,5 +78,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
