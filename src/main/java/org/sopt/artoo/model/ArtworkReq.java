@@ -1,6 +1,8 @@
 package org.sopt.artoo.model;
 
 import lombok.Data;
+import org.sopt.artoo.dto.ArtworkPic;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -35,8 +37,10 @@ public class ArtworkReq {
     private Date a_date;
     // 작품 제작년도
     private String a_year;
+    // 작품 사진
+    private MultipartFile pic_url;
 
     public boolean checkProperties() {
-
+        return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null &&a_date!=null && a_year!=null);
     }
 }
