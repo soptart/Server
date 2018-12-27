@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.sopt.artoo.dto.Home;
+import org.sopt.artoo.dto.Tag;
 
 import java.util.List;
 
@@ -16,7 +17,18 @@ public interface HomeMapper {
             "WHERE ROWNUM <=5")
     List<Home> findTodayArtist();
 
-    //작가의 작품 리스트
-    @Select("SELECT u_name, a_name, a_year  FROM artwork, user WHERE artwork.u_idx = #{u_idx} and user.u_idx = #{u_idx}")
-    List<List<Home>> findTodayContents(@Param("u_idx") final int u_idx);
+    //작가 정보, 작품 이름, 작품 연도
+    @Select("SELECT u_name, a_name, a_year  FROM artwork, user WHERE artwork.u_idx = #{u_idx} AND user.u_idx = #{u_idx}")
+    String findTodayContents(@Param("u_idx") final int u_idx);
+
+    //전체 테마 정보
+    @Select("SELECT * FROM tag")
+    List<Tag> findAllTag();
+
+    //테마 tag에 맞는 *에 들어있는 a_idx넣어주고 a_idx에 따른 이미지 검색(정빈 만들어주면)
+    @Select("SELECT a_idx FROM tag WHERE t_idx = #{t_idx}")
+    int findTagArtowrkIndex(@Param("t_idx") final int t_idx);
+
+
+
 }

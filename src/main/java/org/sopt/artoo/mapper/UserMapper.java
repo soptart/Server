@@ -1,13 +1,12 @@
 package org.sopt.artoo.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.model.UserSignUpReq;
 
+@Mapper
 public interface UserMapper {
+
 
     //회원 가입, 모든 케이스가 다 채워진 경우
     @Insert("INSERT INTO user(u_email, u_pw, u_phoneNum, u_address, u_name, u_bank, u_account) " +
