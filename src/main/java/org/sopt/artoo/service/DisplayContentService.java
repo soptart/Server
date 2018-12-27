@@ -23,11 +23,6 @@ public class DisplayContentService {
     private UserMapper userMapper;
     private ArtworkPicMapper artworkPicMapper;
 
-    public DisplayContentService(DisplayContentMapper displayContentMapper, UserMapper userMapper, ArtworkPicMapper artworkPicMapper) {
-        this.displayContentMapper = displayContentMapper;
-        this.userMapper = userMapper;
-        this.artworkPicMapper = artworkPicMapper;
-    }
 
     /**
      * 전시관람
@@ -68,7 +63,6 @@ public class DisplayContentService {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
         }
     }
-
 
     /**
      * 전시신청 취소

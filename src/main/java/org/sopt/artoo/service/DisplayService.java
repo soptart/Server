@@ -32,7 +32,7 @@ public class DisplayService {
      * @return DefaultRes<List<Display>>
      */
 
-    public DefaultRes<List<Display>> findDisplays (){
+    public DefaultRes<List<Display>> findDisplays(){
         String month = getMonth();
 
         List<Display> displayList = displayMapper.findNow(month);
@@ -45,6 +45,19 @@ public class DisplayService {
         if(displayList == null || displayListApp == null)
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
+
+//        java.util.Date date = new Date();
+//        Calendar now = Calendar.getInstance();
+//
+//        List<Display> displayList = displayMapper.findAllDisplay();
+//
+//        for(Display display : displayList){
+//            Calendar cal = Calendar.getInstance();
+//            cal.setTime(display.getD_sdateApp());
+//
+//            if(display.getD_sdateApp().compareTo(now)
+//            display.getD_sdateApp()
+//        }
     }
 
     public String getMonth() {

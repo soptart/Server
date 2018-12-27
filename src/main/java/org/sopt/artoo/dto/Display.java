@@ -11,9 +11,15 @@ public class Display {
     // 고유 idx
     private int d_idx;
     // 전시 시작 date
-    private String d_sdate;
+    private String d_sdateNow;
     // 전시 마지막 date
-    private String d_edate;
+    private String d_edateNow;
+
+    // 신청 시작 date
+    private String d_sdateApp;
+    // 신청 마지막 date
+    private String d_edateApp;
+
     // 전시 대문사진 url
     private String d_imgUrl;
     // 전시 title
