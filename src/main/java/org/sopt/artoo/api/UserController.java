@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
+
 @RestController
 @RequestMapping("/users")
 @Slf4j
