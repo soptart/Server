@@ -2,8 +2,10 @@ package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.DisplayContent;
+import org.sopt.artoo.mapper.ArtworkPicMapper;
 import org.sopt.artoo.mapper.DisplayContentMapper;
 import org.sopt.artoo.mapper.DisplayMapper;
+import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.DisplayReq;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -38,7 +40,7 @@ public class DisplayContentService {
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         for(DisplayContent displayContent : dcList){
             displayContent.setU_name(userMapper.findUnameByUidx(displayContent.getU_idx()));
-            displayContent.setPic_url(artworkPicMapper.findByArtIdx(displayContent.getA_idx()));
+            displayContent.setPic_url(artworkPicMapper.findByArtIdx(displayContent.getA_idx()).getPic_url());
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, dcList);
     }
