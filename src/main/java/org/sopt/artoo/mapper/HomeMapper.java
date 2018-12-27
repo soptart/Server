@@ -17,6 +17,6 @@ public interface HomeMapper {
     List<Home> findTodayArtist();
 
     //작가의 작품 리스트
-    @Select("SELECT u_name, a_thumb_url, a_name, a_year  FROM artwork, user WHERE artwork.u_idx = #{u_idx} and user.u_idx = #{u_idx}")
+    @Select("SELECT u_name, a_name, a_year  FROM artwork, user WHERE artwork.u_idx = #{u_idx} and user.u_idx = #{u_idx}")
     List<List<Home>> findTodayContents(@Param("u_idx") final int u_idx);
 }
