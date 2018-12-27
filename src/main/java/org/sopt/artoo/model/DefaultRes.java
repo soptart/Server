@@ -19,6 +19,7 @@ public class DefaultRes<T> {
 
     private T data;
 
+
     public DefaultRes(final int status, String message) {
         this.status = status;
         this.message = message;

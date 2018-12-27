@@ -1,5 +1,8 @@
 package org.sopt.artoo.utils;
 
+/**
+ * Created by ds on 2018-12-26.
+ */
 public class StatusCode {
     public static final int OK = 200;
     public static final int CREATED = 201;
