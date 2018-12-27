@@ -26,7 +26,7 @@ public class UserController {
     public ResponseEntity userSignUp(@RequestBody UserSignUpReq userSignUpReq){
         try {
             return new ResponseEntity<>(userService.save(userSignUpReq), HttpStatus.OK);
-        } catch {
+        } catch (Exception e){
             //로그 안찍혀서 다시해야함
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -34,19 +34,19 @@ public class UserController {
     }
 
     //개인 작품 확인, jwt 삽입 해야함!! -> 이후 작업 연결할 Service 하고 Mapper 작업 만들어야함
-    @GetMapping("/{u_idx}")
-    public ResponseEntity getUserItem(
-            //@RequestHeader (value = "Authorization", required = false) final String header, 인증키 추후 수정
-            @PathVariable("u_idx") final int userIdx){
-        try {
-            DefaultRes<User> defaultRes = userService.findUserWork(userIdx);
-            //if (jwtService.checkAuth(header, userIdx)) defaultRes.getData().setAuth(true); 인증 키 추후 수정
-            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-        } catch {
-            //로그 안찍혀서 다시해야함
-            log.error(e.getMessage());
-            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @GetMapping("/{u_idx}")
+//    public ResponseEntity getUserItem(
+//            //@RequestHeader (value = "Authorization", required = false) final String header, 인증키 추후 수정
+//            @PathVariable("u_idx") final int userIdx){
+//        try {
+//            DefaultRes<User> defaultRes = userService.findUserWork(userIdx);
+//            //if (jwtService.checkAuth(header, userIdx)) defaultRes.getData().setAuth(true); 인증 키 추후 수정
+//            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+//        } catch (Exception e){
+//            //로그 안찍혀서 다시해야함
+//            log.error(e.getMessage());
+//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 }
