@@ -1,12 +1,10 @@
 package org.sopt.artoo.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.model.UserSignUpReq;
 
+@Mapper
 public interface UserMapper {
 
     //회원 가입, 모든 케이스가 다 채워진 경우
@@ -20,4 +18,6 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE email = #{email}")
     User findByEmail(@Param("email") final String email);
 
+    @Select("SELECT u_name FROM user WHERE u_idx = #{userIdx}")
+    String findUnameByUidx(@Param("userIdx") final int userIdx);
 }
