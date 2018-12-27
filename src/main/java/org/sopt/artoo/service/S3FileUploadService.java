@@ -28,7 +28,7 @@ public class S3FileUploadService {
 
     private final AmazonS3Client amazonS3Client;
 
-    public S3FileUploadService(AmazonS3Client amazonS3Client) {
+    public S3FileUploadService(final AmazonS3Client amazonS3Client) {
         this.amazonS3Client = amazonS3Client;
     }
 
