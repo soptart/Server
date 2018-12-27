@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
-@RestController("/")
+@RestController("/displays")
 public class DisplayController {
     private DisplayService displayService;
     private JwtService jwtService;
@@ -28,7 +28,7 @@ public class DisplayController {
      * @param header     jwt token
      * @return ResponseEntity - List<Display>
      */
-    @GetMapping("/displays")
+    @GetMapping("/")
     public ResponseEntity getDisplay(@RequestHeader(value="Authorization") final String header){
         try {
             return new ResponseEntity<>(displayService.findDisplays(), HttpStatus.OK);
@@ -46,7 +46,7 @@ public class DisplayController {
      * @param display_idx  전시장 고유 id
      * @return ResponseEntity - <Display>
      */
-    @GetMapping("/displays/{display_idx}")
+    @GetMapping("/{display_idx}")
     public ResponseEntity getDisplay(@RequestHeader(value="Authorization") final String header,
                                      @PathVariable(value="display_idx") final int display_idx){
         try {

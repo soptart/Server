@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
-@RestController("/")
+@RestController("/discontents")
 public class DisplayContentController {
     private DisplayContentService displayContentService;
     private JwtService jwtService;
@@ -35,7 +35,7 @@ public class DisplayContentController {
      * @param display_idx 전시 고유 인덱스
      * @return ResponseEntity - List<DisplayContent>
      */
-    @GetMapping("/disContents/{display_idx}/")
+    @GetMapping("/{display_idx}/")
     public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization") final String header,
                                           @PathVariable(value = "display_idx") final int display_idx) {
         try {
@@ -54,7 +54,7 @@ public class DisplayContentController {
      * @return ResponseEntity
      */
 //    @Auth
-    @PostMapping("/disContents")
+    @PostMapping("/")
     public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization") final String header,
                                              final DisplayReq displayReq) {
         try {
@@ -73,7 +73,7 @@ public class DisplayContentController {
      * @param displayContent_idx 전시 컨텐츠 고유 인덱스
      */
 
-    @DeleteMapping("/disContents/{displayContent_idx}")
+    @DeleteMapping("/{displayContent_idx}")
     public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization") final String header,
                                                @PathVariable(value = "displayContent_idx") final int displayContent_idx) {
         try {
