@@ -16,7 +16,7 @@ public class Display {
     private String d_edate;
     // 전시 대문사진 url
     private String d_imgUrl;
-    // 전지  title
+    // 전시 title
     private String d_title;
     //전시 설명
     private String d_detail;

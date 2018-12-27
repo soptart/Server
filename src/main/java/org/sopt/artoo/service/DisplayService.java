@@ -21,20 +21,17 @@ import java.util.List;
 @Service
 public class DisplayService {
     private DisplayMapper displayMapper;
-    private DisplayContentMapper displayContentMapper;
-    private UserMapper userMapper;
 
-    public DisplayService(DisplayMapper displayMapper, DisplayContentMapper displayContentMapper, UserMapper userMapper) {
+    public DisplayService(DisplayMapper displayMapper) {
         this.displayMapper = displayMapper;
-        this.displayContentMapper = displayContentMapper;
-        this.userMapper = userMapper;
     }
 
     /**
-     * 모든 전시 조회
+     * 전시 메인 - 모든 전시 조회
      *
      * @return DefaultRes<List<Display>>
      */
+
     public DefaultRes<List<Display>> findDisplays (){
         String month = getMonth();
 
@@ -46,8 +43,8 @@ public class DisplayService {
 
         displayList.addAll(displayListApp);
         if(displayList == null || displayListApp == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, displayList);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
     }
 
     public String getMonth() {
@@ -60,70 +57,18 @@ public class DisplayService {
     }
 
     /**
-     * 전시회 입장
+     * 전시장 입장
      *
-     * @param displayIdx 전시 고유 인덱스
-     * @return DefaultRes
+     * @param display_idx  전시장 고유 id
+     * @return ResponseEntity - <Display>
      */
+    public DefaultRes<Display> findByDisplayIdx(final int display_idx){
+        Display display = displayMapper.findByDisplayidx(display_idx);
 
-    public DefaultRes<List<DisplayContent>> findByDisplayIdx(final int displayIdx){
-        List<DisplayContent> dcList = displayMapper.findDisplayDetail(displayIdx);
-        if(dcList == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
-
-        for(DisplayContent displayContent : dcList){
-            displayContent.setU_name(userMapper.findUnameByUidx(displayContent.getU_idx()));
-        }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, dcList);
+        if(display == null)
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, display);
     }
-
-    /**
-     * 전시신청서
-     *
-     * @param displayReq 전시 신청 데이터
-     * @return DefaultRes
-     */
-    @Transactional
-    public DefaultRes save(final DisplayReq displayReq) {
-        if(displayContentMapper.findByArtworkIdx(displayReq.getA_idx()) == null){
-            try{
-                displayContentMapper.save(displayReq);
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY);
-            }catch(Exception e){
-                log.info(e.getMessage());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-            }
-        }else{
-            //이미 전시에 등록한 경우
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
-        }
-    }
-
-    /**
-     * 전시신청 취소
-     *
-     * @param dc_idx 전시 컨텐츠 idx
-     * @return DefaultRes
-     */
-    @Transactional
-    public DefaultRes save(final DisplayReq displayReq) {
-        if(displayContentMapper.findByArtworkIdx(displayReq.getA_idx()) == null){
-            try{
-                displayContentMapper.save(displayReq);
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY);
-            }catch(Exception e){
-                log.info(e.getMessage());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-            }
-        }else{
-            //이미 전시에 등록한 경우
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
-        }
-    }
-
-
 
 }
 

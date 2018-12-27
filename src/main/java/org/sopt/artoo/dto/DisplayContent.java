@@ -13,12 +13,14 @@ public class DisplayContent {
     //작품 정보
     private int a_idx;
     private String a_name;
-    private String a_thumb_url;
     private int a_width;
     private int a_height;
     private int a_depth;
     private String a_form;
     private String a_year;
+
+    //작품 사진
+    private String pic_url;
 
     //유저 정보
     //?영어이름

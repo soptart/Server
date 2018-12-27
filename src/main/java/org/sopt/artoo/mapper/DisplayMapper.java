@@ -16,7 +16,6 @@ public interface DisplayMapper {
     @Select("SELECT * FROM display WHERE ")
     List<Display> findApp(@Param("month") final String nowMonth);
 
-    @Select("SELECT * FROM artwork, display_content WHERE art_work.a_idx=display_content.a_idx and " +
-            "display_content.d_idx=#{displayIdx}")
-    List<DisplayContent> findDisplayDetail(@Param("d_idx") final int d_idx);
+    @Select("SELECT * FROM display WHERE d_idx=#{d_idx}")
+    Display findByDisplayidx(@Param("d_idx") final int d_idx);
 }

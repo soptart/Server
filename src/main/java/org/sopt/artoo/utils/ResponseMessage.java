@@ -50,7 +50,7 @@ public class ResponseMessage {
 
     /* display - 다영 */
     public static final String READ_ALL_DISPLAY = "전시장 조회 성공";
-    public static final String READ_DISPLAY = "전시 상세 조회 성공";
+    public static final String READ_DISPLAY = "전시 입장 성공";
     public static final String NOT_FOUND_DISPLAY = "컨텐츠가 존재하지 않습니다.";
     public static final String CREATE_DISPLAY = "전시 등록 성공";
     public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
