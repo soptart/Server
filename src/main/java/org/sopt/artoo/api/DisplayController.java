@@ -57,7 +57,7 @@ public class DisplayController {
     }
 
     /**
-     * 전시신청서
+     * 전시신청
      *
      * @param header     jwt token
      * @param displayIdx 전시 고유 인덱스
@@ -69,6 +69,26 @@ public class DisplayController {
                                final DisplayReq displayReq){
         try {
             displayReq.setU_idx(jwtService.decode(header).getUser_idx());
+            return new ResponseEntity<>(displayService.save(displayReq), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 전시신청 취소
+     *
+     * @param header     jwt token
+     * @param displayIdx 전시 고유 인덱스
+     */
+    @DeleteMapping("/display/{display_idx}")
+    public ResponseEntity update(@RequestHeader(value="Authorization") final String header,
+                                 @PathVariable(value="display_idx") final int display_idx,
+                                 final int displayIdx){
+        try {
+            final int userIdx = jwtService.decode(header).getUser_idx();
+
             return new ResponseEntity<>(displayService.save(displayReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());

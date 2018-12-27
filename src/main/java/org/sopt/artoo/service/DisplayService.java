@@ -5,7 +5,6 @@ import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.DisplayContent;
 import org.sopt.artoo.mapper.DisplayContentMapper;
 import org.sopt.artoo.mapper.DisplayMapper;
-import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.DisplayReq;
 import org.sopt.artoo.utils.ResponseMessage;
