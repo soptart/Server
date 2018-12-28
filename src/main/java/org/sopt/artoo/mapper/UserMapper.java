@@ -36,4 +36,7 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE u_idx = #{userIdx}")
     User findByUidx(@Param("userIdx") final int userIdx);
 
+    @Update("UPDATE user SET u_description = #{userDes} WHERE u_idx = #{userIdx}")
+    void saveUserDescription(@Param("userIdx") final int userIdx, @Param("userDes") final String userDes);
+
 }

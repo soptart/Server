@@ -16,8 +16,9 @@ public interface PurchaseMapper {
      * @param u_idx
      * @return List<Purchase> 판매 + 구매
      */
-    @Select("SELECT * FROM purchase WHERE purchase.u_idx = #{u_idx} UNION " +
-            "SELECT * FROM purchase WHERE a_idx IN (SELECT a_idx FROM artwork WHERE artwork.u_idx = #{u_idx})")
+    @Select("(SELECT * FROM purchase WHERE purchase.u_idx = #{u_idx}) UNION " +
+            "(SELECT * FROM purchase WHERE a_idx IN (SELECT a_idx FROM artwork WHERE artwork.u_idx = #{u_idx}))" +
+            "ORDER BY p_date DESC")
     List<Purchase> findTransactionByUserIdx(@Param("u_idx") final int u_idx);
 
 
