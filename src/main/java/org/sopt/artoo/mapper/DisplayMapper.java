@@ -15,5 +15,4 @@ public interface DisplayMapper {
 
     @Select("SELECT * FROM display WHERE d_idx=#{d_idx}")
     Display findByDisplayidx(@Param("d_idx") final int d_idx);
-
 }

@@ -22,7 +22,6 @@ public class DisplayContentRes {
     private String pic_url;
 
     //유저 정보
-    //?영어이름
     private int u_idx;
     private String u_name;
 }
