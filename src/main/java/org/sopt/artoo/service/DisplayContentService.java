@@ -50,7 +50,7 @@ public class DisplayContentService {
         if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT); }
 
         for(DisplayContentRes displayContent : dcList) {
-            displayContent.setU_name(userMapper.findUnameByUidx(displayContent.getU_idx()));
+            displayContent.setU_name(userMapper.findByUidx(displayContent.getU_idx()).getU_name());
             //작품 사진 없는 경우
             if(artworkPicMapper.findByArtIdx(displayContent.getA_idx()) != null)
                 displayContent.setPic_url(artworkPicMapper.findByArtIdx(displayContent.getA_idx()).getPic_url());
