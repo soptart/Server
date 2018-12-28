@@ -23,7 +23,6 @@ import java.util.List;
 @Service
 public class DisplayService {
     private DisplayMapper displayMapper;
-    final static String DAY_DATE_FORMAT = "yyyy-MM-dd";
 
     public DisplayService(DisplayMapper displayMapper) {
         this.displayMapper = displayMapper;
@@ -36,19 +35,6 @@ public class DisplayService {
      */
 
     public DefaultRes<List<Display>> findDisplays(){
-//        String month = getMonth();
-//
-//        List<Display> displayList = displayMapper.findNow(month);
-//        List<Display> displayListApp = displayMapper.findApp(month);
-//
-//        for(Display display : displayList) { display.setIsNow(1); }
-//        for(Display display : displayListApp) { display.setIsNow(0); }
-//
-//        displayList.addAll(displayListApp);
-//        if(displayList == null || displayListApp == null)
-//            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
-//        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
-
         java.util.Date date = new java.util.Date();
         Calendar now = Calendar.getInstance();
         now.setTime(date);
@@ -59,8 +45,8 @@ public class DisplayService {
         for(Display display : displayList){
             Calendar sCalApp = Calendar.getInstance();
             Calendar eCalApp = Calendar.getInstance();
-            sCalApp.setTime(Date.valueOf(display.getD_sdateApp()));
-            eCalApp.setTime(Date.valueOf(display.getD_edateApp()));
+            sCalApp.setTime(Date.valueOf(display.getD_sdateApply()));
+            eCalApp.setTime(Date.valueOf(display.getD_edateApply()));
 
             Calendar sCalNow = Calendar.getInstance();
             Calendar eCalNow = Calendar.getInstance();
@@ -68,14 +54,17 @@ public class DisplayService {
             eCalNow.setTime(Date.valueOf(display.getD_edateNow()));
 
             //신청 중
-            if(now.compareTo(sCalApp) != -1 && now.compareTo(eCalApp)  != 1){ display.setIsNow(0);}
+            if(now.compareTo(sCalApp) != -1 && now.compareTo(eCalApp)  != 1){ display.setIsNow("0");}
             //전시 중
-            if(now.compareTo(sCalNow) != -1 && now.compareTo(eCalNow)  != 1){ display.setIsNow(1); }
+            if(now.compareTo(sCalNow) != -1 && now.compareTo(eCalNow)  != 1){ display.setIsNow("1"); }
+
         }
+
         if(displayList == null)
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
     }
+
 
     public String getMonth() {
         java.util.Date date = new java.util.Date();

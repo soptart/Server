@@ -32,8 +32,4 @@ public interface HomeMapper {
     //테마 tag에 맞는 *에 들어있는 a_idx넣어주고 a_idx에 따른 이미지 검색
     @Select("SELECT a_idx FROM tag WHERE t_idx = #{t_idx}")
     int findTagArtworkIndex(@Param("t_idx") final int t_idx);
-
-
-
-
 }

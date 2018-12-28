@@ -9,6 +9,7 @@ import org.sopt.artoo.service.DisplayService;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
+import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
-@RestController("/discontents")
+@RestController
 public class DisplayContentController {
     private DisplayContentService displayContentService;
     private JwtService jwtService;
@@ -32,11 +33,11 @@ public class DisplayContentController {
      * 전시관람
      *
      * @param header      jwt token
-     * @param display_idx 전시 고유 인덱스
+     * @param display_idx 전시회 고유 인덱스
      * @return ResponseEntity - List<DisplayContent>
      */
-    @GetMapping("/{display_idx}/")
-    public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization") final String header,
+    @GetMapping("/discontents/{display_idx}")
+    public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization", required = false) final String header,
                                           @PathVariable(value = "display_idx") final int display_idx) {
         try {
             return new ResponseEntity<>(displayContentService.findByDisplayIdx(display_idx), HttpStatus.OK);
@@ -54,11 +55,12 @@ public class DisplayContentController {
      * @return ResponseEntity
      */
 //    @Auth
-    @PostMapping("/")
-    public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization") final String header,
+    @PostMapping("/discontents")
+    public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                              final DisplayReq displayReq) {
         try {
-            displayReq.setU_idx(jwtService.decode(header).getUser_idx());
+//            displayReq.setU_idx(jwtService.decode(header).getUser_idx());
+            displayReq.setU_idx(1);
             return new ResponseEntity<>(displayContentService.save(displayReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -73,8 +75,8 @@ public class DisplayContentController {
      * @param displayContent_idx 전시 컨텐츠 고유 인덱스
      */
 
-    @DeleteMapping("/{displayContent_idx}")
-    public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization") final String header,
+    @DeleteMapping("/discontents/{displayContent_idx}")
+    public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                                @PathVariable(value = "displayContent_idx") final int displayContent_idx) {
         try {
             final int user_idx = jwtService.decode(header).getUser_idx();
