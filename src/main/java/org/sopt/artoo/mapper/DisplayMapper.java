@@ -13,7 +13,7 @@ public interface DisplayMapper {
     @Select("SELECT * FROM display WHERE ")
     List<Display> findNow(@Param("month") final String nowMonth);
 
-    @Select("SELECT * FROM display WHERE ")
+    @Select("SELECT * FROM display ")
     List<Display> findApp(@Param("month") final String nowMonth);
 
     @Select("SELECT * FROM display")

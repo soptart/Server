@@ -36,7 +36,7 @@ public class DisplayContentController {
      * @return ResponseEntity - List<DisplayContent>
      */
     @GetMapping("/{display_idx}/")
-    public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization") final String header,
+    public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization", required = false) final String header,
                                           @PathVariable(value = "display_idx") final int display_idx) {
         try {
             return new ResponseEntity<>(displayContentService.findByDisplayIdx(display_idx), HttpStatus.OK);
@@ -55,7 +55,7 @@ public class DisplayContentController {
      */
 //    @Auth
     @PostMapping("/")
-    public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization") final String header,
+    public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                              final DisplayReq displayReq) {
         try {
             displayReq.setU_idx(jwtService.decode(header).getUser_idx());
@@ -74,7 +74,7 @@ public class DisplayContentController {
      */
 
     @DeleteMapping("/{displayContent_idx}")
-    public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization") final String header,
+    public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                                @PathVariable(value = "displayContent_idx") final int displayContent_idx) {
         try {
             final int user_idx = jwtService.decode(header).getUser_idx();
