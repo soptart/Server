@@ -35,13 +35,28 @@ public class DisplayService {
      */
 
     public DefaultRes<List<Display>> findDisplays(){
-        java.util.Date date = new java.util.Date();
-        Calendar now = Calendar.getInstance();
-        now.setTime(date);
-        log.info(now.toString());
-
         List<Display> displayList = displayMapper.findAllDisplay();
 
+        //v1
+//        for(Display display : displayList){
+//            Calendar sCalApp = Calendar.getInstance();
+//            Calendar eCalApp = Calendar.getInstance();
+//            sCalApp.setTime(Date.valueOf(display.getD_sdateApply()));
+//            eCalApp.setTime(Date.valueOf(display.getD_edateApply()));
+//
+//            Calendar sCalNow = Calendar.getInstance();
+//            Calendar eCalNow = Calendar.getInstance();
+//            sCalNow.setTime(Date.valueOf(display.getD_sdateNow()));
+//            eCalNow.setTime(Date.valueOf(display.getD_edateNow()));
+//
+//            //신청 중
+//            if(now.compareTo(sCalApp) != -1 && now.compareTo(eCalApp)  != 1){ display.setIsNow("0");}
+//            //전시 중
+//            if(now.compareTo(sCalNow) != -1 && now.compareTo(eCalNow)  != 1){ display.setIsNow("1"); }
+//
+//        }
+
+        //v2
         for(Display display : displayList){
             Calendar sCalApp = Calendar.getInstance();
             Calendar eCalApp = Calendar.getInstance();
@@ -53,16 +68,32 @@ public class DisplayService {
             sCalNow.setTime(Date.valueOf(display.getD_sdateNow()));
             eCalNow.setTime(Date.valueOf(display.getD_edateNow()));
 
-            //신청 중
-            if(now.compareTo(sCalApp) != -1 && now.compareTo(eCalApp)  != 1){ display.setIsNow("0");}
-            //전시 중
-            if(now.compareTo(sCalNow) != -1 && now.compareTo(eCalNow)  != 1){ display.setIsNow("1"); }
-
+            if(isContain(sCalApp, eCalApp)) display.setIsNow("0");
+            if(isContain(eCalNow, eCalNow)) display.setIsNow("1");
         }
 
         if(displayList == null)
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
+    }
+
+    /**
+     * 현재 시간이 sdate ~ edate 에 포함되는지 확인
+     *
+     * @return true - 포함
+     * @return false - 불포함
+     */
+    public boolean isContain( final Calendar sdate, final Calendar edate){
+        java.util.Date date = new java.util.Date();
+        Calendar now = Calendar.getInstance();
+        now.setTime(date);
+        log.info(now.toString());
+
+        if(now.compareTo(sdate) != -1 && now.compareTo(edate)  != 1){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 
@@ -79,7 +110,7 @@ public class DisplayService {
      * 전시장 입장
      *
      * @param display_idx  전시장 고유 id
-     * @return ResponseEntity - <Display>
+     * @return DefaultRes - <Display>
      */
     public DefaultRes<Display> findByDisplayIdx(final int display_idx){
         Display display = displayMapper.findByDisplayidx(display_idx);

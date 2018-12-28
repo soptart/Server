@@ -10,6 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface DisplayMapper {
+
     @Select("SELECT * FROM display")
     List<Display> findAllDisplay();
 

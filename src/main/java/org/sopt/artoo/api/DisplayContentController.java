@@ -34,13 +34,30 @@ public class DisplayContentController {
      *
      * @param header      jwt token
      * @param display_idx 전시회 고유 인덱스
-     * @return ResponseEntity - List<DisplayContent>
+     * @return ResponseEntity - List<DisplayContentRes>
      */
     @GetMapping("/discontents/{display_idx}")
     public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization", required = false) final String header,
                                           @PathVariable(value = "display_idx") final int display_idx) {
         try {
             return new ResponseEntity<>(displayContentService.findByDisplayIdx(display_idx), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * 전시신청서
+     *
+     * @param header      jwt token
+     * @return ResponseEntity - List<DisplayApplyRes>
+     */
+
+    @GetMapping("/discontents/apply")
+    public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header) {
+        try {
+            final int u_idx = jwtService.decode(header).getUser_idx();
+            return new ResponseEntity<>(displayContentService.findDisplayApply(u_idx), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -74,7 +91,7 @@ public class DisplayContentController {
      * @param header      jwt token
      * @param displayContent_idx 전시 컨텐츠 고유 인덱스
      */
-
+//    @Auth
     @DeleteMapping("/discontents/{displayContent_idx}")
     public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                                @PathVariable(value = "displayContent_idx") final int displayContent_idx) {
