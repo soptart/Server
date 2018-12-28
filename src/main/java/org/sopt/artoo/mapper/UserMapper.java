@@ -33,7 +33,7 @@ public interface UserMapper {
      * @param userIdx 유저 인덱스
      * @return String 유저 이름
      */
-    @Select("SELECT u_name FROM user WHERE u_idx = #{userIdx}")
-    String findUnameByUidx(@Param("userIdx") final int userIdx);
+    @Select("SELECT * FROM user WHERE u_idx = #{userIdx}")
+    User findByUidx(@Param("userIdx") final int userIdx);
 
 }

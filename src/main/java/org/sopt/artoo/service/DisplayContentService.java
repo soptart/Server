@@ -38,26 +38,26 @@ public class DisplayContentService {
      * @return ResponseEntity - List<DisplayContentRes>
      */
     public DefaultRes<List<DisplayContentRes>> findByDisplayIdx(final int d_idx){
+        // 존재하지 않는 전시
+        if(displayMapper.findByDisplayidx(d_idx) == null){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT); }
+
+        // 전시 타이틀
+        String d_title = displayMapper.findByDisplayidx(d_idx).getD_title();
+        log.info(d_title);
         List<DisplayContentRes> dcList = displayContentMapper.findArtworksByDisplayIdx(d_idx);
 
-        String d_title = displayMapper.findByDisplayidx(d_idx).getD_title();
-        log.info("aa");
-        if(dcList.isEmpty()){
-            log.info("bb");
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
-        }
-        try{
-            for(DisplayContentRes displayContent : dcList){
-                log.info("cc");
-                displayContent.setU_name(userMapper.findUnameByUidx(displayContent.getU_idx()));
+        // 전시회에 신청한 작품이 없을 경우
+        if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT); }
+
+        for(DisplayContentRes displayContent : dcList) {
+            displayContent.setU_name(userMapper.findUnameByUidx(displayContent.getU_idx()));
+            //작품 사진 없는 경우
+            if(artworkPicMapper.findByArtIdx(displayContent.getA_idx()) != null)
                 displayContent.setPic_url(artworkPicMapper.findByArtIdx(displayContent.getA_idx()).getPic_url());
-                displayContent.setD_idx(d_idx);
-                displayContent.setD_title(d_title);
-                log.info(displayContent.toString());
-            }
-        }catch(Exception e){
-            log.error(e.getMessage());
+            displayContent.setD_idx(d_idx);
+            displayContent.setD_title(d_title);
         }
+
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, dcList);
     }
 
