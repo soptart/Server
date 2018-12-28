@@ -24,8 +24,8 @@ public class UserService {
     @Transactional
     public DefaultRes save(UserSignUpReq userSignUpReq) {
         if(userSignUpReq.checkQualification()) { //이메일 중복 검사
-            final User user = userMapper.findByEmail(userSignUpReq.getU_email());
-            if(user == null) {
+//            final User user = userMapper.findByEmail(userSignUpReq.getU_email());
+//            if(user == null) {
                 try {
                     userMapper.save(userSignUpReq);
                     return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
@@ -34,7 +34,7 @@ public class UserService {
                     log.error(e.getMessage());
                     return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                 }
-            } else return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ALREADY_USER);
+//            } else return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ALREADY_USER);
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_USER);
     }

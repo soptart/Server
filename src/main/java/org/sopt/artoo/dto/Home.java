@@ -14,8 +14,10 @@ public class Home {
     String u_name;
     //작품 이름
     String a_name;
-    //대표 사진
-    String a_thumb_url;
+    //제작 연도
+    String a_year;
+    //사진
+    List<ArtworkPic> pic_url;
     //좋아요
     int a_like_count;
 
