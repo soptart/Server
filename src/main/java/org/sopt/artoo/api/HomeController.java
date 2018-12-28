@@ -42,7 +42,9 @@ public class HomeController {
     @GetMapping("/theme")
     public ResponseEntity getAllTag(){
         try{
-            DefaultRes<List<Tag>> defaultRes = homeService.getAllTag(); //Tag 모든 정보
+            DefaultRes<List<Tag>> defaultRes = homeService.getAllTag(); // 모든 Tag 정보
+
+            //0번째 Tag정보+TagPicture, 그리고 다른 Tag 정보
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());
@@ -55,7 +57,7 @@ public class HomeController {
     @GetMapping("/theme/details/{t_idx}")
     public ResponseEntity getAllDetailTag(@PathVariable("t_idx") final int t_idx){
         try{
-            DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllDetailTag(t_idx); //Tag 모든 정보
+            DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllTagPicUrl(t_idx); //Tag 모든 정보
 
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         }catch (Exception e){

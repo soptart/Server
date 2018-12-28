@@ -64,12 +64,17 @@ public class HomeService {
 
 
     /**
-     *  테마 ShortTag
+     *  테마 첫 화면 tag 테이블 넘겨주기
      * @return DefaultRes
      */
 //    @Transactional
     public DefaultRes getAllTag(){
-        final List<Tag> themeList = homeMapper.findAllTag(); //작가 u_idx, u_name 리스트 받아옴
+        final List<Tag> themeList = homeMapper.findAllTag(); //모든 tag리스트 받아옴
+        final Tag tag = themeList.get(0);
+        int artwork_idx = homeMapper.findTagArtworkIndex(tag.getT_idx()); //tag가 갖고 있는 a_idx
+        final List<ArtworkPic> themePicList = artworkPicMapper.findRecPicListByArtIdx(artwork_idx); //a_idx를 이용해서 0번째 picutre 6개
+        tag.setFirstTag(themePicList);
+        themeList.set(0, tag);
 
         if(themeList.isEmpty()){
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
@@ -77,11 +82,9 @@ public class HomeService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, themeList);
     }
 
-
-//artwork 에서 pic갖고오는 함수 갖고와 지면 주석 풀기 12.28
     @Transactional
-    public DefaultRes<List<ArtworkPic>> getAllDetailTag(final int t_idx){
-        int artwork_idx = homeMapper.findTagArtowrkIndex(t_idx);
+    public DefaultRes<List<ArtworkPic>> getAllTagPicUrl(final int t_idx){
+        int artwork_idx = homeMapper.findTagArtworkIndex(t_idx);
         final List<ArtworkPic> themePicList = artworkPicMapper.findPicListByArtIdx(artwork_idx);
 //        for(ArtworkPic artworkPic : themePicList){
 //            artworkPic.setPic_url(artWorkPicMapper.findDetail);
@@ -91,7 +94,6 @@ public class HomeService {
 //        }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, themePicList);
     }
-
 
 
 

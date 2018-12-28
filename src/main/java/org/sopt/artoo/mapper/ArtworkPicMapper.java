@@ -30,7 +30,15 @@ public interface ArtworkPicMapper {
      * @param a_idx
      * @return 사진 여러장
      */
-    @Select("SELECT * FROM artworkPic WHERE a_idx = #{a_idx}")
+    @Select("SELECT pic_url FROM artworkPic WHERE a_idx = #{a_idx}")
     List<ArtworkPic> findPicListByArtIdx(@Param("a_idx") final int a_idx);
+
+    /**
+     * 태그 추천 작품 사진 조회
+     * @param a_idx
+     * @return 사진 여러장
+     */
+    @Select("SELECT pic_url FROM (SELECT pic_url FROM artworkPic WHERE a_idx = #{a_idx}) WHERE ROWNUM<=6")
+    List<ArtworkPic> findRecPicListByArtIdx(@Param("a_idx") final int a_idx);
 
 }
