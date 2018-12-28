@@ -28,4 +28,7 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE u_email = #{u_email}")
     User findByEmail(@Param("u_email") final String u_email);
 
+    @Select("SELECT u_name FROM user WHERE u_idx = #{userIdx}")
+    String findUnameByUidx(@Param("userIdx") final int userIdx);
+
 }
