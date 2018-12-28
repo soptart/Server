@@ -7,6 +7,7 @@ import org.sopt.artoo.model.UserSignUpReq;
 @Mapper
 public interface UserMapper {
 
+
     //회원 가입, 모든 케이스가 다 채워진 경우
     @Insert("INSERT INTO user(u_email, u_pw, u_school, u_address, u_name, u_bank, u_account, u_dept, u_phone) " +
             "VALUES(#{userSignUpReq.u_email}, #{userSignUpReq.u_pw}, #{userSignUpReq.u_school}, " +
