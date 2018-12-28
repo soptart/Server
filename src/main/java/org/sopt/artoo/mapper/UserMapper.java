@@ -28,6 +28,11 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE u_email = #{u_email}")
     User findByEmail(@Param("u_email") final String u_email);
 
+    /**
+     * 아이디로 이름 검색
+     * @param userIdx 유저 인덱스
+     * @return String 유저 이름
+     */
     @Select("SELECT u_name FROM user WHERE u_idx = #{userIdx}")
     String findUnameByUidx(@Param("userIdx") final int userIdx);
 
