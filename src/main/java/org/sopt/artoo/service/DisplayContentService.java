@@ -39,7 +39,7 @@ public class DisplayContentService {
         if(dcList == null)
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         for(DisplayContent displayContent : dcList){
-            displayContent.setU_name(userMapper.findUnameByUidx(displayContent.getU_idx()));
+            // displayContent.setU_name(userMapper.findUnameByUidx(displayContent.getU_idx())); -> 오류 떠서 잠시 주석 나중에 해결 부타캐요
             displayContent.setPic_url(artworkPicMapper.findByArtIdx(displayContent.getA_idx()).getPic_url());
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, dcList);

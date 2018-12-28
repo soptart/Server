@@ -26,6 +26,9 @@ public class UserSignUpReq {
     //유저 전공
 
     public boolean checkQualification() {
-        return (u_email != null && u_pw != null);
+        return (
+                u_email != null && u_pw != null && u_phone != null && u_address != null
+                && u_name != null && u_bank != null && u_account != null
+        );
     }
 }
