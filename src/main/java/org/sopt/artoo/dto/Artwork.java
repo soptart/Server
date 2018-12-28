@@ -36,4 +36,6 @@ public class Artwork {
     private String a_year;
     // 작품 사진
     private ArtworkPic pic_url;
+    //수정삭제권한
+    private boolean auth;
 }
