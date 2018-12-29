@@ -38,7 +38,7 @@ public interface ArtworkPicMapper {
      * @param a_idx
      * @return 사진 6개
      */
-    @Select("SELECT pic_url FROM artworkPic WHERE a_idx = 5 LIMIT 6")
+    @Select("SELECT pic_url FROM artworkPic WHERE a_idx = #{a_idx} LIMIT 6")
     List<ArtworkPic> findRecPicListByArtIdx(@Param("a_idx") final int a_idx);
 
 }
