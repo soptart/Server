@@ -28,4 +28,6 @@ public class User {
     // 은행명
     private String u_account;
     // 유저 계좌 번호
+    private String u_description;
+    // 유저 자기 소개
 }

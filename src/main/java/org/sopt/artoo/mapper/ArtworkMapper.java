@@ -27,12 +27,24 @@ public interface ArtworkMapper {
     Artwork findByIdx(@Param("a_idx") final int a_idx);
 
     /**
+     * 특정 작가별 작품 조회
+     *
+     * @param u_idx
+     * @return 미술작품객체 리스트
+     */
+    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx}")
+    List<Artwork> findArtworkByUserIdx(@Param("u_idx") final int u_idx);
+
+
+    /**
      * 미술작품 저장
      *
      * @param artworkReq
      */
-    @Insert("INSERT INTO artwork(a_idx, a_name, a_width, a_height, a_depth, a_category, a_form, a_price, a_like_count, u_idx, c_idx, a_detail, a_date, a_year) " +
-            "VALUES(#{artworkReq.a_idx, artworkReq.a_name, artworkReq.a_width,artworkReq.a_height,artworkReq.a_depth,artworkReq.a_category,artworkReq.a_form,artworkReq.a_price,artworkReq.a_like_count,artworkReq.u_idx,artworkReq.c_idx,artworkReq.a_detail,artworkReq.a_date, artworkReq.a_year})")
+
+
+    @Insert("INSERT INTO artwork(a_idx, a_name, a_width, a_height, a_depth, a_category, a_form, a_price, a_like_count, u_idx, c_idx, a_detail, a_date, a_year, pic_url) " +
+            "VALUES(#{artworkReq.a_idx}, #{artworkReq.a_name}, #{artworkReq.a_width},#{artworkReq.a_height},#{artworkReq.a_depth},#{artworkReq.a_category},#{artworkReq.a_form},#{artworkReq.a_price},#{artworkReq.a_like_count},#{artworkReq.u_idx},#{artworkReq.c_idx},#{artworkReq.a_detail},#{artworkReq.a_date}, #{artworkReq.a_year},#{artworkReq.pic_url})")
     @Options(useGeneratedKeys = true, keyProperty = "artworkReq.a_idx")
     void save(@Param("artworkReq") final ArtworkReq artworkReq);
 
@@ -41,4 +53,7 @@ public interface ArtworkMapper {
 
     @Delete("DELETE FROM artwork WHERE a_idx = #{a_idx}")
     void deleteByArtIdx(@Param("a_idx") final int a_idx);
+
+
+
 }
