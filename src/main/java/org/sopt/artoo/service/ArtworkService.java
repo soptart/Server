@@ -74,7 +74,6 @@ public class ArtworkService {
                 artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
                 final int artIdx = artworkReq.getA_idx();
-
                 MultipartFile artwork = artworkReq.getPic_url();
                 artworkPicMapper.save(artIdx, s3FileUploadService.upload(artwork));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
@@ -83,6 +82,7 @@ public class ArtworkService {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
+
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
     }

@@ -6,6 +6,7 @@ import org.sopt.artoo.dto.ArtworkLike;
 import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.UserSignUpReq;
+import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,11 @@ import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 public class UserController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public UserController(final UserService userService){
+    public UserController(final UserService userService, final JwtService jwtService){
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
 
@@ -34,12 +37,12 @@ public class UserController {
      */
     @GetMapping("/{u_idx}")
     public ResponseEntity getUserItem(
-            //@RequestHeader (value = "Authorization", required = false) final String header, 인증키 추후 수정
+            //@RequestHeader(value = "Authorization") final String header,
             @PathVariable("u_idx") final int userIdx){
         try {
             DefaultRes<List<Artwork>> defaultRes = userService.findUserWork(userIdx);
-            //if (jwtService.checkAuth(header, userIdx)) defaultRes.getData().setAuth(true); 인증 키 추후 수정
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+
         } catch (Exception e){
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
