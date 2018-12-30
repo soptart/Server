@@ -18,6 +18,7 @@ import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
 @RestController
+@RequestMapping("/home")
 public class HomeController {
     private static final DefaultRes UNAUTHORIZED_RES = new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
     private final HomeService homeService;
@@ -25,7 +26,6 @@ public class HomeController {
     public HomeController(HomeService homeService) {
         this.homeService = homeService;
     }
-
 
     @GetMapping("/today")
     public ResponseEntity getAllTodayArtist(){

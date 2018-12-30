@@ -3,6 +3,7 @@ package org.sopt.artoo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.ArtworkPic;
 import org.sopt.artoo.dto.Home;
+import org.sopt.artoo.dto.HomeData;
 import org.sopt.artoo.dto.Tag;
 
 import org.sopt.artoo.mapper.ArtworkPicMapper;
@@ -13,6 +14,7 @@ import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,26 +41,31 @@ public class HomeService {
 //        this.homeMapper = homeMapper;
 //    }
 
+
     /**
      * 좋아요 순위 5개 작가, 작가 작품
      * @return DefaultRes
      */
 //    @Transactional
     public DefaultRes getAllTodayContents(){
-        final List<Integer> todayUserIndex = homeMapper.findUserIdx(); //작가 u_idx 리스트 받아옴
-        List<Home> todayArtistList = null;//작가 u_name 받아오기
+        final List<Integer> todayUserIndex = homeMapper.findUserIdx(); //작가 u_idx 리스트
+        List<Home> todayArtistList = new ArrayList<>();
 
-        for(int i = 0; i<todayUserIndex.size(); i++){
-            todayArtistList.set(i, homeMapper.findTodayContents(todayUserIndex.get(0))); // u_name, a_name, a_year, a_idx 갖고옴
-            todayArtistList.get(i).setPic_url(artworkPicMapper.findPicListByArtIdx(todayArtistList.get(i).getA_idx()));
-//        for(Home todayArtist : todayUserIndex){
-//            todayArtist.setA_name(homeMapper.findTodayContents(todayArtist.getU_idx())); //user_idx 넘겨주면 artwork name갖고 오기
-//            todayArtist.setU_name(homeMapper.findTodayContents(todayArtist.getU_idx())); //user_idx 넘겨주면 user name 갖고오기
-//            todayArtist.setA_year(homeMapper.findTodayContents(todayArtist.getU_idx()));
-//            todayArtist.setA_idx(homeMapper.findTodayContents(todayArtist.getU_idx()));
-//            todayArtist.setPic_url(artworkPicMapper.findPicListByArtIdx());
-//            todayArtist.setPic_url(); //user_idx artworkPicMapper 사용해서 List 갖고오기
+        for(int i = 0; i < todayUserIndex.size(); i++){
+
+            List<HomeData> artPicData = homeMapper.findArtistContentsByUserIdx(todayUserIndex.get(i)); //u_name, u_year 리스트, pic_url은 null
+            for(HomeData artData : artPicData){
+                artData.setPic_url(artworkPicMapper.findPicListByArtIdx(artData.getA_idx())); // artData의 pic_url 설정
+            }
+            Home todayArtist = new Home();
+            todayArtist.setU_idx(todayUserIndex.get(i));
+            todayArtist.setU_name(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_name());
+            todayArtist.setU_description(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_description());
+            todayArtist.setPic_Info(artPicData);
+
+            todayArtistList.add(todayArtist);
         }
+
 
         if(todayArtistList.isEmpty()){
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
