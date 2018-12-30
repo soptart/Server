@@ -1,11 +1,9 @@
 package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.ArtworkPic;
-import org.sopt.artoo.dto.Home;
-import org.sopt.artoo.dto.HomeData;
-import org.sopt.artoo.dto.Tag;
+import org.sopt.artoo.dto.*;
 
+import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.ArtworkPicMapper;
 import org.sopt.artoo.mapper.HomeMapper;
 import org.sopt.artoo.model.DefaultRes;
@@ -23,24 +21,18 @@ import java.util.List;
 public class HomeService {
 
     private final HomeMapper homeMapper;
-//    private final ArtworkMapper artworkMapper;
+    private final ArtworkMapper artworkMapper;
     private final ArtworkPicMapper artworkPicMapper;
 
 
     /**
      * HomeMapper 생성자 의존성 주입
      */
-    public HomeService(HomeMapper homeMapper,  ArtworkPicMapper artworkPicMapper) {
+    public HomeService(HomeMapper homeMapper, ArtworkMapper artworkMapper, ArtworkPicMapper artworkPicMapper) {
         this.homeMapper = homeMapper;
-//        this.artworkMapper = artworkMapper;
+        this.artworkMapper = artworkMapper;
         this.artworkPicMapper = artworkPicMapper;
     }
-
-
-//    public HomeService(HomeMapper homeMapper) {
-//        this.homeMapper = homeMapper;
-//    }
-
 
     /**
      * 좋아요 순위 5개 작가, 작가 작품
@@ -61,7 +53,7 @@ public class HomeService {
             todayArtist.setU_idx(todayUserIndex.get(i));
             todayArtist.setU_name(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_name());
             todayArtist.setU_description(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_description());
-            todayArtist.setPic_Info(artPicData);
+            todayArtist.setList(artPicData);
 
             todayArtistList.add(todayArtist);
         }
@@ -78,30 +70,50 @@ public class HomeService {
      *  테마 첫 화면 tag 테이블 넘겨주기
      * @return DefaultRes
      */
-//    @Transactional
     public DefaultRes getAllTagInfo(){
         final List<Tag> themeList = homeMapper.findAllTag(); //모든 tag리스트 받아옴
-        final Tag tag = themeList.get(0);
-        int artwork_idx = homeMapper.findArtworkIdxByTagIdx(tag.getT_idx()); //tag가 갖고 있는 a_idx
-        final List<ArtworkPic> themePicList = artworkPicMapper.findRecPicListByArtIdx(artwork_idx); //a_idx를 이용해서 0번째 picutre 6개
-        tag.setFirstTag(themePicList);
+        final Tag tag = themeList.get(0); //themeList 첫번째 Tag정보
+        final List<ArtworkPic> themePicList = new ArrayList<>();
+        List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx(); //a_tag와 a_idx 갖고옴
+        for(Artwork artwork : artworkList){
+            if(themePicList.size() == 6){
+                break;
+            }
+            String a_tags = artwork.getA_tags();
+            String[] tagNum = a_tags.split(","); // {3,4,5}
+            for (String aTagNum : tagNum) {
+                if (String.valueOf(tag.getT_idx()).equals(aTagNum)) { //0번째 tag index와 aTagNum가 같으면
+                    themePicList.add(artworkPicMapper.findByArtIdx(artwork.getA_idx())); //사진 가져오기
+                }
+            }
+        }
+        tag.setList(themePicList);
         themeList.set(0, tag);
 
         if(themeList.isEmpty()){
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, themeList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themeList);
     }
 
     @Transactional
     public DefaultRes<List<ArtworkPic>> getAllTagPicUrl(final int t_idx){
-        int artwork_idx = homeMapper.findArtworkIdxByTagIdx(t_idx);
-        final List<ArtworkPic> themePicList = artworkPicMapper.findPicListByArtIdx(artwork_idx);
+        final List<ArtworkPic> themePicList = new ArrayList<>();
+        List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx(); //a_tag와 a_idx 갖고옴
+        for(Artwork artwork : artworkList){
+            String a_tags = artwork.getA_tags();
+            String[] tagNum = a_tags.split(","); // {3,4,5}
+            for (String aTagNum : tagNum) {
+                if (String.valueOf(t_idx).equals(aTagNum)) { //tag index와 aTagNum가 같으면
+                    themePicList.add(artworkPicMapper.findByArtIdx(artwork.getA_idx())); //사진 가져오기
+                }
+            }
+        }
 
         if(themePicList.isEmpty()){
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, themePicList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themePicList);
     }
 
 
