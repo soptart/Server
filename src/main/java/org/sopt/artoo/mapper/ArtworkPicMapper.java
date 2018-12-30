@@ -22,13 +22,6 @@ public interface ArtworkPicMapper {
     void save(@Param("a_idx") final int a_idx, @Param("pic_url") final String pic_url);
 
 
-    /**
-     * 작품 사진 조회
-     * @param a_idx
-     * @return 사진 여러장
-     */
-    @Select("SELECT * FROM artworkPic WHERE a_idx = #{a_idx}")
-    List<ArtworkPic> findPicListByArtIdx(@Param("a_idx") final int a_idx);
 
 //    @Select("SELECT pic_url FROM artworkPic, artwork WHERE artwork.u_idx = #{u_idx}")
 //    List<ArtworkPic> findPicListByUserIdx(@Param("u_idx") final int u_idx);

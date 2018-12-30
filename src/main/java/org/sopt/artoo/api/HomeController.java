@@ -18,7 +18,6 @@ import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
 @RestController
-@RequestMapping("/home")
 public class HomeController {
     private final HomeService homeService;
 
