@@ -56,7 +56,8 @@ public class DisplayContentController {
     @GetMapping("/discontents/apply")
     public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header) {
         try {
-            final int u_idx = jwtService.decode(header).getUser_idx();
+//            final int u_idx = jwtService.decode(header).getUser_idx();
+            final int u_idx=2;
             return new ResponseEntity<>(displayContentService.findDisplayApply(u_idx), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -92,14 +93,15 @@ public class DisplayContentController {
      * @param displayContent_idx 전시 컨텐츠 고유 인덱스
      */
 //    @Auth
-    @DeleteMapping("/discontents/{displayContent_idx}")
+    @DeleteMapping("/discontents/{displaycontent_idx}")
     public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
-                                               @PathVariable(value = "displayContent_idx") final int displayContent_idx) {
+                                               @PathVariable(value = "displaycontent_idx") final int displaycontent_idx) {
         try {
-            final int user_idx = jwtService.decode(header).getUser_idx();
-            if(jwtService.checkAuth(header, user_idx))
-                return new ResponseEntity<>(displayContentService.deleteDisplaycontent(displayContent_idx), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+//            final int u_idx = jwtService.decode(header).getUser_idx();
+            int u_idx = 1;
+//            if(jwtService.checkAuth(header, u_idx))
+                return new ResponseEntity<>(displayContentService.deleteDisplaycontent(displaycontent_idx), HttpStatus.OK);
+//            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -92,6 +92,7 @@ public class DisplayContentService {
 
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, displayApplyRes);
     }
+
     /**
      * 전시신청
      *
@@ -101,16 +102,16 @@ public class DisplayContentService {
     @Transactional
     public DefaultRes save(final DisplayReq displayReq) {
 //         이미 등록된 전시인지 확인
-        if(displayContentMapper.findByArtwork(displayReq) == null){
+        if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
             try{
-                displayContentMapper.save(displayReq);
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY);
+                int idx = displayContentMapper.save(displayReq);
+                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY,idx);
             }catch(Exception e){
                 log.info(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
-        }else{
+        }else {
             //이미 전시에 등록한 경우
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
         }
@@ -124,9 +125,9 @@ public class DisplayContentService {
      */
     @Transactional
     public DefaultRes deleteDisplaycontent(final int displayContent_idx) {
-        if( displayContentMapper.findByDisplayContentIdx(displayContent_idx) == null){
+        if( displayContentMapper.findByDisplayContentIdx(displayContent_idx) != null){
             try{
-                displayContentMapper.delete(displayContent_idx);
+                displayContentMapper.deleteByDcIdx(displayContent_idx);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_DISPLAY);
             }catch(Exception e){
                 log.info(e.getMessage());
@@ -134,7 +135,7 @@ public class DisplayContentService {
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }else{
-            //이미 전시에 등록한 경우
+            // 존재하지 않는 컨텐츠입니다.
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_DELETE_DISPLAY);
         }
     }

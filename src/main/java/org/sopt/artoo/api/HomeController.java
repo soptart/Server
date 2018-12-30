@@ -18,6 +18,7 @@ import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
 @RestController
+@RequestMapping("/home")
 public class HomeController {
     private static final DefaultRes UNAUTHORIZED_RES = new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
     private final HomeService homeService;
@@ -25,7 +26,6 @@ public class HomeController {
     public HomeController(HomeService homeService) {
         this.homeService = homeService;
     }
-
 
     @GetMapping("/today")
     public ResponseEntity getAllTodayArtist(){
@@ -40,9 +40,9 @@ public class HomeController {
     }
 
     @GetMapping("/theme")
-    public ResponseEntity getAllTag(){
+    public ResponseEntity getAllTagInfo(){
         try{
-            DefaultRes<List<Tag>> defaultRes = homeService.getAllTag(); // 모든 Tag 정보
+            DefaultRes<List<Tag>> defaultRes = homeService.getAllTagInfo(); // 모든 Tag 정보
 
             //0번째 Tag정보+TagPicture, 그리고 다른 Tag 정보
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
@@ -55,7 +55,7 @@ public class HomeController {
 
     //artwork 에서 pic갖고오는 함수 갖고와 지면 주석 풀기 12.28
     @GetMapping("/theme/details/{t_idx}")
-    public ResponseEntity getAllDetailTag(@PathVariable("t_idx") final int t_idx){
+    public ResponseEntity getAllDetailTagPic(@PathVariable("t_idx") final int t_idx){
         try{
             DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllTagPicUrl(t_idx); //Tag 모든 정보
 

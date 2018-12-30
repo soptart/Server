@@ -45,6 +45,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- AOP -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.11</version>
+        </dependency>
+
         <!-- JWT -->
         <dependency>
             <groupId>com.auth0</groupId>

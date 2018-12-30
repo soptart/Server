@@ -29,14 +29,22 @@ public interface UserMapper {
     User findByEmail(@Param("u_email") final String u_email);
 
     /**
-     * 아이디로 User 검색
+     * 아이디로 이름 검색
      * @param userIdx 유저 인덱스
-     * @return String 유저 이름
+     * @return 유저 객체
      */
     @Select("SELECT * FROM user WHERE u_idx = #{userIdx}")
     User findByUidx(@Param("userIdx") final int userIdx);
 
     @Update("UPDATE user SET u_description = #{userDes} WHERE u_idx = #{userIdx}")
     void saveUserDescription(@Param("userIdx") final int userIdx, @Param("userDes") final String userDes);
+
+    /**
+     * 이메일와 비밀번호로 조회
+     * @param u_email 유저 인덱스
+     * @return String 유저 이름
+     */
+    @Select("SELECT * FROM user WHERE u_email = #{u_email} AND u_pw = #{u_pw}")
+    User findByIdAndPassword(@Param("u_email") final String u_email, @Param("u_pw") final String u_password);
 
 }

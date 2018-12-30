@@ -58,8 +58,8 @@ public class DisplayService {
 
         //v2
         for(Display display : displayList){
-            if(isContain(display.getD_sdateApply(), display.getD_edateApply())) display.setIsNow("0");
-            if(isContain(display.getD_sdateNow(), display.getD_edateNow())) display.setIsNow("1");
+            if(isContain(display.getD_sdateApply(), display.getD_edateApply())) {display.setIsNow(0); }
+            if(isContain(display.getD_sdateNow(), display.getD_edateNow())) {display.setIsNow(1);}
         }
 
         if(displayList == null)
@@ -73,20 +73,21 @@ public class DisplayService {
      * @return true - 포함
      * @return false - 불포함
      */
-    public boolean isContain( final String sdate, final String edate){
-        Calendar sCalApp = Calendar.getInstance();
-        Calendar eCalApp = Calendar.getInstance();
-        sCalApp.setTime(Date.valueOf(sdate));
-        eCalApp.setTime(Date.valueOf(edate));
+    public boolean isContain( final String sdate, final String edate) {
+        try{
+            java.util.Date date = new java.util.Date();
 
-        java.util.Date date = new java.util.Date();
-        Calendar now = Calendar.getInstance();
-        now.setTime(date);
-        log.info(now.toString());
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-mm-dd");
+            java.util.Date sdate_date = dt.parse(sdate);
+            java.util.Date edate_date = dt.parse(edate);
 
-        if(now.compareTo(sCalApp) != -1 && now.compareTo(eCalApp)  != 1){
-            return true;
-        }else{
+            if((date.getTime() >= sdate_date.getTime()) && (date.getTime() <= edate_date.getTime())){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (Exception e){
+            log.error(e.getMessage());
             return false;
         }
     }
