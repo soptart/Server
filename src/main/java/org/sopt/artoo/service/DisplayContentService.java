@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -26,12 +27,15 @@ public class DisplayContentService {
     private ArtworkMapper artworkMapper;
     private DisplayMapper displayMapper;
 
-    public DisplayContentService(DisplayContentMapper displayContentMapper, UserMapper userMapper, ArtworkPicMapper artworkPicMapper, ArtworkMapper artworkMapper, DisplayMapper displayMapper) {
+    private DisplayService displayService;
+
+    public DisplayContentService(DisplayContentMapper displayContentMapper, UserMapper userMapper, ArtworkPicMapper artworkPicMapper, ArtworkMapper artworkMapper, DisplayMapper displayMapper, DisplayService displayService) {
         this.displayContentMapper = displayContentMapper;
         this.userMapper = userMapper;
         this.artworkPicMapper = artworkPicMapper;
         this.artworkMapper = artworkMapper;
         this.displayMapper = displayMapper;
+        this.displayService = displayService;
     }
 
     /**
@@ -66,7 +70,7 @@ public class DisplayContentService {
     /**
      * 전시신청서
      *
-     * @return ResponseEntity - List<DisplayApplyRes>
+     * @return DefaultRes - List<DisplayApplyRes>
      */
     public DefaultRes findDisplayApply(final int u_idx){
         DisplayApplyRes displayApplyRes = new DisplayApplyRes();
@@ -76,16 +80,17 @@ public class DisplayContentService {
         if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
         else{ displayApplyRes.setArtworks(artworkMapper.findArtworkByUserIdx(u_idx));}
 
-
         List<Display> Alldisplays = displayMapper.findAllDisplay();
-        List<Display> nowDisplay = new List<Display>;
+        List<Display> nowDisplay = new ArrayList<Display>();
 
         // 현재 전시 중인 전시만 저장
         for(Display display : Alldisplays){
-            if(isContain(display.getD_sdateNow(), display.getD_edateNow()))
+            if(displayService.isContain(display.getD_sdateNow(), display.getD_edateNow()))
                 nowDisplay.add(display);
         }
         displayApplyRes.setDisplays(nowDisplay);
+
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, displayApplyRes);
     }
     /**
      * 전시신청
@@ -132,9 +137,7 @@ public class DisplayContentService {
             //이미 전시에 등록한 경우
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_DELETE_DISPLAY);
         }
-
     }
-
 }
 
 

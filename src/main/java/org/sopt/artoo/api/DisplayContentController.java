@@ -74,7 +74,7 @@ public class DisplayContentController {
 //    @Auth
     @PostMapping("/discontents")
     public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
-                                             final DisplayReq displayReq) {
+                                             @RequestBody final DisplayReq displayReq) {
         try {
 //            displayReq.setU_idx(jwtService.decode(header).getUser_idx());
             displayReq.setU_idx(1);
