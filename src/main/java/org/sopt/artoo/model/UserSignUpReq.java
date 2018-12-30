@@ -12,9 +12,7 @@ public class UserSignUpReq {
     // 유저 비밀번호
     private String u_school;
     // 유저 학교
-    private String u_major;
-    // 유저 전공
-    private int u_phoneNum;
+    private String u_phone;
     // 유저 핸드폰 번호
     private String u_address;
     // 유저 주소
@@ -24,8 +22,13 @@ public class UserSignUpReq {
     // 은행명
     private String u_account;
     // 유저 계좌 번호
+    private String u_dept;
+    //유저 전공
 
     public boolean checkQualification() {
-        return (u_email != null && u_pw != null);
+        return (
+                u_email != null && u_pw != null && u_phone != null && u_address != null
+                && u_name != null && u_bank != null && u_account != null
+        );
     }
 }
