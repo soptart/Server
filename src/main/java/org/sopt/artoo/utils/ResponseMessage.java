@@ -22,7 +22,9 @@ public class ResponseMessage {
     public static final String FAIL_UPDATE_USER = "회원 정보 수정 실패";
     public static final String DELETE_USER = "회원 탈퇴 성공";
     public static final String READ_USER_ARTWORK = "회원 작품 조회 성공";
+    public static final String READ_USER_LIKES = "회원 좋아요 선택 조회";
     public static final String READ_ALL_TRANSACTION = "회원 거래 내역 조회 성공";
+    public static final String READ_FINISHED_TRANSACTION = "회원 거래 후기 조회 성공";
 
     public static final String READ_ALL_CONTENTS = "모든 컨텐츠 조회 성공";
     public static final String READ_CONTENT = "컨텐츠 조회 성공";
