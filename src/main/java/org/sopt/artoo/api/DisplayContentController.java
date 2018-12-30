@@ -53,12 +53,15 @@ public class DisplayContentController {
      * @return ResponseEntity - List<DisplayApplyRes>
      */
 
-    @GetMapping("/discontents/application")
-    public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header) {
+    @GetMapping("/discontents/application/{user_idx}")
+    public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header,
+                                          @PathVariable(value="user_idx") final int user_idx) {
         try {
-            final int u_idx = jwtService.decode(header).getUser_idx();
-//            final int u_idx=2;
-            return new ResponseEntity<>(displayContentService.findDisplayApply(u_idx), HttpStatus.OK);
+            if(jwtService.checkAuth(header, user_idx)){
+                final int u_idx = jwtService.decode(header).getUser_idx();
+                return new ResponseEntity<>(displayContentService.findDisplayApply(u_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -78,8 +81,7 @@ public class DisplayContentController {
                                              @RequestBody final DisplayReq displayReq,
                                              @PathVariable(value="user_idx") final int user_idx) {
         try {
-            //            displayReq.setU_idx(1);
-            if(user_idx == jwtService.decode(header).getUser_idx()){
+            if(user_idx == jwtService.decode(header).getUser_idx() && user_idx == displayReq.getU_idx()){
                 displayReq.setU_idx(jwtService.decode(header).getUser_idx());
                 return new ResponseEntity<>(displayContentService.save(displayReq), HttpStatus.OK);
             }

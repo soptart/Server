@@ -9,7 +9,6 @@ public class DisplayApply {
     private int d_idx;
     private String d_title;
 
-    //?신청기간
     private Date d_sDateApply;
     private Date d_eDateApply;
     private Date d_sDateNow;
