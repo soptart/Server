@@ -14,6 +14,8 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -68,6 +70,8 @@ public class ArtworkService {
     public DefaultRes save(final ArtworkReq artworkReq) {
         if (artworkReq.checkProperties()) {
             try {
+                Date date = new Date();
+                artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
                 final int artIdx = artworkReq.getA_idx();
                 MultipartFile artwork = artworkReq.getPic_url();
