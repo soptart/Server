@@ -53,12 +53,15 @@ public class DisplayContentController {
      * @return ResponseEntity - List<DisplayApplyRes>
      */
 
-    @GetMapping("/discontents/apply")
-    public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header) {
+    @GetMapping("/discontents/application/{user_idx}")
+    public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header,
+                                          @PathVariable(value="user_idx") final int user_idx) {
         try {
-//            final int u_idx = jwtService.decode(header).getUser_idx();
-            final int u_idx=2;
-            return new ResponseEntity<>(displayContentService.findDisplayApply(u_idx), HttpStatus.OK);
+            if(jwtService.checkAuth(header, user_idx)){
+                final int u_idx = jwtService.decode(header).getUser_idx();
+                return new ResponseEntity<>(displayContentService.findDisplayApply(u_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -72,14 +75,17 @@ public class DisplayContentController {
      * @param displayReq 전시 컨텐츠
      * @return ResponseEntity
      */
-//    @Auth
-    @PostMapping("/discontents")
+    @Auth
+    @PostMapping("/discontents/{user_idx}")
     public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
-                                             @RequestBody final DisplayReq displayReq) {
+                                             @RequestBody final DisplayReq displayReq,
+                                             @PathVariable(value="user_idx") final int user_idx) {
         try {
-//            displayReq.setU_idx(jwtService.decode(header).getUser_idx());
-            displayReq.setU_idx(1);
-            return new ResponseEntity<>(displayContentService.save(displayReq), HttpStatus.OK);
+            if(user_idx == jwtService.decode(header).getUser_idx() && user_idx == displayReq.getU_idx()){
+                displayReq.setU_idx(jwtService.decode(header).getUser_idx());
+                return new ResponseEntity<>(displayContentService.save(displayReq), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -90,18 +96,18 @@ public class DisplayContentController {
      * 전시신청 취소
      *
      * @param header      jwt token
-     * @param displayContent_idx 전시 컨텐츠 고유 인덱스
+     * @param displaycontent_idx 전시 컨텐츠 고유 인덱스
      */
 //    @Auth
     @DeleteMapping("/discontents/{displaycontent_idx}")
     public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                                @PathVariable(value = "displaycontent_idx") final int displaycontent_idx) {
         try {
-//            final int u_idx = jwtService.decode(header).getUser_idx();
-            int u_idx = 1;
-//            if(jwtService.checkAuth(header, u_idx))
+            final int u_idx = jwtService.decode(header).getUser_idx();
+//            int u_idx = 1;
+            if(jwtService.checkAuth(header, u_idx))
                 return new ResponseEntity<>(displayContentService.deleteDisplaycontent(displaycontent_idx), HttpStatus.OK);
-//            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

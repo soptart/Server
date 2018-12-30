@@ -73,24 +73,32 @@ public class DisplayContentService {
      * @return DefaultRes - List<DisplayApplyRes>
      */
     public DefaultRes findDisplayApply(final int u_idx){
-        DisplayApplyRes displayApplyRes = new DisplayApplyRes();
-        List<Artwork> artworks = artworkMapper.findArtworkByUserIdx(u_idx);
 
-        // 유저 작품이 없을 경우-> null
-        if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
-        else{ displayApplyRes.setArtworks(artworkMapper.findArtworkByUserIdx(u_idx));}
+        try{
+            DisplayApplyRes displayApplyRes = new DisplayApplyRes();
+            List<Artwork> artworks = artworkMapper.findArtworkByUserIdx(u_idx);
 
-        List<Display> Alldisplays = displayMapper.findAllDisplay();
-        List<Display> nowDisplay = new ArrayList<Display>();
+            // 유저 작품이 없을 경우-> null
+            if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
+            else{ displayApplyRes.setArtworks(artworkMapper.findArtworkByUserIdx(u_idx));}
 
-        // 현재 전시 중인 전시만 저장
-        for(Display display : Alldisplays){
-            if(displayService.isContain(display.getD_sdateNow(), display.getD_edateNow()))
-                nowDisplay.add(display);
+            List<Display> Alldisplays = displayMapper.findAllDisplay();
+            List<Display> nowDisplay = new ArrayList<Display>();
+
+            // 현재 신청 중인 전시만 저장
+            for(Display display : Alldisplays){
+                if(displayService.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
+                    display.setIsNow(0);
+                    nowDisplay.add(display);
+                }
+            }
+            displayApplyRes.setDisplays(nowDisplay);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLICATION, displayApplyRes);
+        }catch(Exception e){
+            log.info(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
-        displayApplyRes.setDisplays(nowDisplay);
-
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, displayApplyRes);
     }
 
     /**
