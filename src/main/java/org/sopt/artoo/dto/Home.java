@@ -14,5 +14,4 @@ public class Home {
     String u_description;
     //사진 정보
     List<HomeData> pic_Info;
-
 }

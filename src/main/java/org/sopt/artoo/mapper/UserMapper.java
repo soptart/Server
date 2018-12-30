@@ -6,14 +6,6 @@ import org.sopt.artoo.model.UserSignUpReq;
 
 @Mapper
 public interface UserMapper {
-    /**
-     * 인덱스로 회원 반환
-     *
-     * @param userIdx
-     * @return User 객체
-     */
-    @Select("SELECT * FROM user WHERE user.u_idx = #{userIdx}")
-    User findByUserIdx(@Param("userIdx") final int userIdx);
 
     /**
      * 회원 가입
@@ -39,7 +31,7 @@ public interface UserMapper {
     /**
      * 아이디로 이름 검색
      * @param userIdx 유저 인덱스
-     * @return String 유저 이름
+     * @return 유저 객체
      */
     @Select("SELECT * FROM user WHERE u_idx = #{userIdx}")
     User findByUidx(@Param("userIdx") final int userIdx);
