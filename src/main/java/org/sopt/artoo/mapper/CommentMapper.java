@@ -1,9 +1,11 @@
 package org.sopt.artoo.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.sopt.artoo.dto.Comment;
+import org.sopt.artoo.model.CommentReq;
 
 import java.util.List;
 
@@ -21,6 +23,9 @@ public interface CommentMapper {
 
     @Select("SELECT * FROM comment WHERE u_idx = #{u_idx}")
     List<Comment> findAllCommentByUserIdx(@Param("u_idx") final int u_idx);
+
+    @Insert("INSERT INTO comment(c_idx, c_content, c_date, u_idx, a_idx) VALUES(#{commentReq.c_idx}, #{commentReq.c_content}, #{commentReq.c_date}, #{commentReq.u_idx}, #{commentReq.a_idx})")
+    void saveComment(@Param("commentReq") final CommentReq commentReq);
 
 
 }
