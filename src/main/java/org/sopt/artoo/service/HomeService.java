@@ -1,6 +1,5 @@
 package org.sopt.artoo.service;
 
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.*;
 
@@ -54,7 +53,7 @@ public class HomeService {
             todayArtist.setU_idx(todayUserIndex.get(i));
             todayArtist.setU_name(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_name());
             todayArtist.setU_description(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_description());
-            todayArtist.setPic_Info(artPicData);
+            todayArtist.setList(artPicData);
 
             todayArtistList.add(todayArtist);
         }
@@ -71,7 +70,6 @@ public class HomeService {
      *  테마 첫 화면 tag 테이블 넘겨주기
      * @return DefaultRes
      */
-//    @Transactional
     public DefaultRes getAllTagInfo(){
         final List<Tag> themeList = homeMapper.findAllTag(); //모든 tag리스트 받아옴
         final Tag tag = themeList.get(0); //themeList 첫번째 Tag정보
@@ -89,13 +87,13 @@ public class HomeService {
                 }
             }
         }
-        tag.setFirstTag(themePicList);
+        tag.setList(themePicList);
         themeList.set(0, tag);
 
         if(themeList.isEmpty()){
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, themeList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themeList);
     }
 
     @Transactional
@@ -115,7 +113,7 @@ public class HomeService {
         if(themePicList.isEmpty()){
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_PICTURES, themePicList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themePicList);
     }
 
 

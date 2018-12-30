@@ -16,8 +16,6 @@ public class Tag {
     String t_subTag;
     //태그 백그라운드 image
     String t_imgUrl;
-    //0번째 List
-    List<ArtworkPic> firstTag;
-
-
+    //추천 PicList
+    List<ArtworkPic> list;
 }
