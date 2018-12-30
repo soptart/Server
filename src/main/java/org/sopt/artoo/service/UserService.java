@@ -107,13 +107,16 @@ public class UserService {
      */
     public DefaultRes<List<ArtworkLike>> findUserLikes(final int userIdx){
         List<ArtworkLike> listUserLike = likeMapper.findArtworkLikeByUserIdx(userIdx);
-        try{
-            return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_LIKES, listUserLike);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error(e.getMessage());
-            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        if(userMapper.findByUidx(userIdx) != null) {
+            try {
+                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_LIKES, listUserLike);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
         }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     /**
@@ -123,13 +126,16 @@ public class UserService {
      */
     public DefaultRes<List<Purchase>> findUserPurchase(final int userIdx){
         List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
-        try{
-            return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error(e.getMessage());
-            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        if(userMapper.findByUidx(userIdx) != null) {
+            try {
+                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
         }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     /**
@@ -161,13 +167,16 @@ public class UserService {
      */
     public DefaultRes<String> findUserDescription(final int userIdx){
         final String userDescription = userMapper.findByUidx(userIdx).getU_description();
-        try{
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, userDescription);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error(e.getMessage());
-            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        if(userMapper.findByUidx(userIdx) != null) {
+            try {
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, userDescription);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
         }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     /**
