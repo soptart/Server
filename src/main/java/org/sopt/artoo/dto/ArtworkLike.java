@@ -9,5 +9,5 @@ public class ArtworkLike {
     private int u_idx;
     //해당 좋아요에 대한 유저 인덱스 (FK)
     private String al_DATETIME;
-    //해동 좋아요가 찍힌 시간 대
+    //해당 좋아요가 찍힌 시간 대
 }
