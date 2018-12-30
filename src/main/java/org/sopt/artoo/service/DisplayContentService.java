@@ -1,12 +1,12 @@
 package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.DisplayContent;
-import org.sopt.artoo.mapper.ArtworkPicMapper;
-import org.sopt.artoo.mapper.DisplayContentMapper;
-import org.sopt.artoo.mapper.DisplayMapper;
-import org.sopt.artoo.mapper.UserMapper;
+import org.sopt.artoo.mapper.*;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.DisplayApplyRes;
 import org.sopt.artoo.model.DisplayContentRes;
 import org.sopt.artoo.model.DisplayReq;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -23,19 +24,24 @@ public class DisplayContentService {
     private DisplayContentMapper displayContentMapper;
     private UserMapper userMapper;
     private ArtworkPicMapper artworkPicMapper;
+    private ArtworkMapper artworkMapper;
     private DisplayMapper displayMapper;
 
-    public DisplayContentService(DisplayContentMapper displayContentMapper, UserMapper userMapper, ArtworkPicMapper artworkPicMapper, DisplayMapper displayMapper) {
+    private DisplayService displayService;
+
+    public DisplayContentService(DisplayContentMapper displayContentMapper, UserMapper userMapper, ArtworkPicMapper artworkPicMapper, ArtworkMapper artworkMapper, DisplayMapper displayMapper, DisplayService displayService) {
         this.displayContentMapper = displayContentMapper;
         this.userMapper = userMapper;
         this.artworkPicMapper = artworkPicMapper;
+        this.artworkMapper = artworkMapper;
         this.displayMapper = displayMapper;
+        this.displayService = displayService;
     }
 
     /**
      * 전시관람
      * @param d_idx 전시 고유 인덱스
-     * @return ResponseEntity - List<DisplayContentRes>
+     * @return DefaultRes - List<DisplayContentRes>
      */
     public DefaultRes<List<DisplayContentRes>> findByDisplayIdx(final int d_idx){
         // 존재하지 않는 전시
@@ -61,17 +67,40 @@ public class DisplayContentService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, dcList);
     }
 
+    /**
+     * 전시신청서
+     *
+     * @return DefaultRes - List<DisplayApplyRes>
+     */
+    public DefaultRes findDisplayApply(final int u_idx){
+        DisplayApplyRes displayApplyRes = new DisplayApplyRes();
+        List<Artwork> artworks = artworkMapper.findArtworkByUserIdx(u_idx);
 
+        // 유저 작품이 없을 경우-> null
+        if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
+        else{ displayApplyRes.setArtworks(artworkMapper.findArtworkByUserIdx(u_idx));}
+
+        List<Display> Alldisplays = displayMapper.findAllDisplay();
+        List<Display> nowDisplay = new ArrayList<Display>();
+
+        // 현재 전시 중인 전시만 저장
+        for(Display display : Alldisplays){
+            if(displayService.isContain(display.getD_sdateNow(), display.getD_edateNow()))
+                nowDisplay.add(display);
+        }
+        displayApplyRes.setDisplays(nowDisplay);
+
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, displayApplyRes);
+    }
     /**
      * 전시신청
      *
      * @param displayReq 전시 컨텐츠
-     * @return ResponseEntity
+     * @return DefaultRes
      */
     @Transactional
     public DefaultRes save(final DisplayReq displayReq) {
 //         이미 등록된 전시인지 확인
-//        log.info(displayContentMapper.findByArtwork(displayReq));
         if(displayContentMapper.findByArtwork(displayReq) == null){
             try{
                 displayContentMapper.save(displayReq);
@@ -108,9 +137,7 @@ public class DisplayContentService {
             //이미 전시에 등록한 경우
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_DELETE_DISPLAY);
         }
-
     }
-
 }
 
 

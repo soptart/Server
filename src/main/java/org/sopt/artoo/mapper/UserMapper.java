@@ -29,7 +29,7 @@ public interface UserMapper {
     User findByEmail(@Param("u_email") final String u_email);
 
     /**
-     * 아이디로 이름 검색
+     * 아이디로 User 검색
      * @param userIdx 유저 인덱스
      * @return String 유저 이름
      */
