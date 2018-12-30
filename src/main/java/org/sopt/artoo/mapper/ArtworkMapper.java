@@ -55,5 +55,12 @@ public interface ArtworkMapper {
     void deleteByArtIdx(@Param("a_idx") final int a_idx);
 
 
+    /**
+     * 미술작품 태그, a_idx
+     *
+     * @return a_tags, a_idx
+     */
+    @Select("SELECT a_tags, a_idx FROM artwork")
+    List<Artwork> findTagsArtworkIdx();
 
 }

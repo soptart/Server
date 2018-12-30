@@ -10,8 +10,6 @@ public class Tag {
     int t_idx;
     //Tag (ex. 화려한, 조용한)
     String t_shortTag;
-    //artwork 고유키(외래키)
-    int a_idx;
     //태크 메인제목
     String t_mainTag;
     //태그 서브제목, 눌렀을 때만(t_idx로 받아옴)

@@ -33,13 +33,5 @@ public interface HomeMapper {
     @Select("SELECT * FROM tag")
     List<Tag> findAllTag();
 
-    /**
-     * artwork index 정보
-     * @param t_idx
-     * @return a_idx
-     */
-    @Select("SELECT a_idx FROM artwork WHERE artwork.t_idx = #{t_idx}")
-    int findArtworkIdxByTagIdx(@Param("t_idx") final int t_idx);
-
 
 }
