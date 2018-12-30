@@ -14,13 +14,5 @@ public class Home {
     String u_description;
     //사진 정보
     List<HomeData> pic_Info;
-//
-//    public Home(int u_idx, String u_name, String u_description, List<HomeData> pic_Info) {
-//        this.u_idx = u_idx;
-//        this.u_name = u_name;
-//        this.u_description = u_description;
-//        this.pic_Info = pic_Info;
-//    }
-
 
 }

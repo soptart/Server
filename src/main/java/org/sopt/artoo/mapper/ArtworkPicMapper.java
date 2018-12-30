@@ -1,10 +1,7 @@
 package org.sopt.artoo.mapper;
 
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.ArtworkPic;
 
 import java.util.List;
@@ -43,5 +40,8 @@ public interface ArtworkPicMapper {
      */
     @Select("SELECT pic_url FROM artworkPic WHERE a_idx = #{a_idx} LIMIT 6")
     List<ArtworkPic> findRecPicListByArtIdx(@Param("a_idx") final int a_idx);
+
+    @Delete("DELECT * FROM artworkPic WHERE a_idx = #{a_idx}")
+    void deleteArtworkPicByIdx(@Param("a_idx") final int a_idx);
 
 }

@@ -26,8 +26,6 @@ public class Artwork {
     private int a_like_count;
     // 유저 고유 인덱스
     private int u_idx;
-    // 댓글 고유 인덱스
-    private int c_idx;
     // 작품 설명
     private String a_detail;
     // 작품 작성날
@@ -38,4 +36,8 @@ public class Artwork {
     private ArtworkPic pic_url;
     //수정삭제권한
     private boolean auth;
+    // 작품 테그
+    private String a_tag;
+    // 작품 라이센스
+    private String a_license;
 }

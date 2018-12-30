@@ -12,6 +12,7 @@ import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -88,9 +89,11 @@ public class ArtworkController {
     @PostMapping("/artworks")
     public ResponseEntity saveArtwork(
             @RequestHeader(value = "Authorization") final String header,
-            ArtworkReq artworkReq) {
+            ArtworkReq artworkReq, final MultipartFile picUrl) {
         try {
-            artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
+            //artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
+            artworkReq.setU_idx(1);
+            artworkReq.setPic_url(picUrl);
             return new ResponseEntity<>(artworkService.save(artworkReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -112,9 +115,10 @@ public class ArtworkController {
             ArtworkReq artworkReq) {
         try {
             artworkReq.setA_idx(a_idx);
-            if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
+            return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK); // 여기 지우면 됨
+            /*if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
                 return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);*/
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -127,9 +131,11 @@ public class ArtworkController {
             @RequestHeader(value = "Authorization") final String header,
             @PathVariable("a_idx") final int a_idx) {
         try {
-            if(artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
+            return new ResponseEntity<>(artworkService.deleteByArtIdx(a_idx), HttpStatus.OK);
+            //임시 주석
+            /*if(artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
                 return new ResponseEntity<>(artworkService.deleteByArtIdx(a_idx), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES,HttpStatus.OK);
+            return new ResponseEntity<>(UNAUTHORIZED_RES,HttpStatus.OK);*/
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

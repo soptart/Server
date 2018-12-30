@@ -6,6 +6,14 @@ import org.sopt.artoo.model.UserSignUpReq;
 
 @Mapper
 public interface UserMapper {
+    /**
+     * 인덱스로 회원 반환
+     *
+     * @param userIdx
+     * @return User 객체
+     */
+    @Select("SELECT * FROM user WHERE user.u_idx = #{userIdx}")
+    User findByUserIdx(@Param("userIdx") final int userIdx);
 
     /**
      * 회원 가입
@@ -39,7 +47,12 @@ public interface UserMapper {
     @Update("UPDATE user SET u_description = #{userDes} WHERE u_idx = #{userIdx}")
     void saveUserDescription(@Param("userIdx") final int userIdx, @Param("userDes") final String userDes);
 
-
-
+    /**
+     * 이메일와 비밀번호로 조회
+     * @param u_email 유저 인덱스
+     * @return String 유저 이름
+     */
+    @Select("SELECT * FROM user WHERE u_email = #{u_email} AND u_pw = #{u_pw}")
+    User findByIdAndPassword(@Param("u_email") final String u_email, @Param("u_pw") final String u_password);
 
 }

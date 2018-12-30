@@ -29,8 +29,6 @@ public class ArtworkReq {
     private int a_like_count;
     // 유저 고유 인덱스
     private int u_idx;
-    // 댓글 고유 인덱스
-    private int c_idx;
     // 작품 설명
     private String a_detail;
     // 작품 작성날
@@ -39,8 +37,12 @@ public class ArtworkReq {
     private String a_year;
     // 작품 사진
     private MultipartFile pic_url;
+    // 작품 테그
+    private String a_tags;
+    // 작품 라이센스
+    private String a_license;
 
     public boolean checkProperties() {
-        return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null &&a_date!=null && a_year!=null);
+        return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null /*&&a_date!=null*/ && a_year!=null);
     }
 }

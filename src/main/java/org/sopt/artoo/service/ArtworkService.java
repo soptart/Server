@@ -14,6 +14,8 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -68,9 +70,10 @@ public class ArtworkService {
     public DefaultRes save(final ArtworkReq artworkReq) {
         if (artworkReq.checkProperties()) {
             try {
+                Date date = new Date();
+                artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
                 final int artIdx = artworkReq.getA_idx();
-
                 MultipartFile artwork = artworkReq.getPic_url();
                 artworkPicMapper.save(artIdx, s3FileUploadService.upload(artwork));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
@@ -79,6 +82,7 @@ public class ArtworkService {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
+
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
     }
