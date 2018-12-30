@@ -20,5 +20,4 @@ public class Home {
     List<ArtworkPic> pic_url;
     //좋아요
     int a_like_count;
-
 }
