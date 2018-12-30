@@ -37,7 +37,7 @@ public class Artwork {
     //수정삭제권한
     private boolean auth;
     // 작품 테그
-    private String a_tag;
+    private String a_tags;
     // 작품 라이센스
     private String a_license;
 }
