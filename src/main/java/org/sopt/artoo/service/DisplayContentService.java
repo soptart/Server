@@ -90,7 +90,7 @@ public class DisplayContentService {
         }
         displayApplyRes.setDisplays(nowDisplay);
 
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, displayApplyRes);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLICATION, displayApplyRes);
     }
 
     /**
