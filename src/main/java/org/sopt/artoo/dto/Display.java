@@ -32,5 +32,5 @@ public class Display {
     private String d_shortDetail;
 
     //진행중 전시 - 1, 신청중 전시 - 0
-    private String isNow;
+    private int isNow;
 }
