@@ -75,14 +75,14 @@ public class DisplayContentController {
      * @param displayReq 전시 컨텐츠
      * @return ResponseEntity
      */
-    @Auth
+//    @Auth
     @PostMapping("/discontents/{user_idx}")
     public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                              @RequestBody final DisplayReq displayReq,
                                              @PathVariable(value="user_idx") final int user_idx) {
         try {
-            if(user_idx == jwtService.decode(header).getUser_idx() && user_idx == displayReq.getU_idx()){
-                displayReq.setU_idx(jwtService.decode(header).getUser_idx());
+            if(user_idx == displayReq.getU_idx()){
+                log.info(String.valueOf(user_idx));
                 return new ResponseEntity<>(displayContentService.save(displayReq), HttpStatus.OK);
             }
             return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);

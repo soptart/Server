@@ -27,8 +27,8 @@ public class UserSignUpReq {
 
     public boolean checkQualification() {
         return (
-                u_email != null && u_pw != null && u_phone != null && u_address != null
-                && u_name != null && u_bank != null && u_account != null
+                u_email != null && u_pw != null && u_phone != null
+                && u_name != null
         );
     }
 }

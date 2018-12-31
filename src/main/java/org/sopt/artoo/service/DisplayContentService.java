@@ -109,20 +109,25 @@ public class DisplayContentService {
      */
     @Transactional
     public DefaultRes save(final DisplayReq displayReq) {
-//         이미 등록된 전시인지 확인
-        if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
-            try{
-                int idx = displayContentMapper.save(displayReq);
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY,idx);
-            }catch(Exception e){
-                log.info(e.getMessage());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        if(displayReq.checkProperties()){
+            // 이미 등록된 전시인지 확인
+            if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
+                try{
+                    int idx = displayContentMapper.save(displayReq);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY,idx);
+                }catch(Exception e){
+                    log.info(e.getMessage());
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                }
+            }else {
+                //이미 전시에 등록한 경우
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
             }
-        }else {
-            //이미 전시에 등록한 경우
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
         }
+        // 요청 바디 부족
+        else
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_DISPLAY);
     }
 
     /**
