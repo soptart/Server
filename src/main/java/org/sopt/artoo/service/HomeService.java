@@ -40,26 +40,27 @@ public class HomeService {
      */
 //    @Transactional
     public DefaultRes getAllTodayContents(){
-        final List<Integer> todayUserIndex = homeMapper.findUserIdx(); //작가 u_idx 리스트
+        final List<Integer> todayUserIdxList = homeMapper.findTodayUserIdx(); //오늘의 작가 u_idx 리스트
         List<Home> todayArtistList = new ArrayList<>();
+        try {
+            for (int i = 0; i < todayUserIdxList.size(); i++) {
 
-        for(int i = 0; i < todayUserIndex.size(); i++){
+                List<HomeData> artPicData = homeMapper.findArtistContentsByUserIdx(todayUserIdxList.get(i)); //u_name, u_year 리스트, pic_url은 null
+                for (HomeData artData : artPicData) {
+                    artData.setPic_url(artworkPicMapper.findByArtIdx(artData.getA_idx())); // artData의 pic_url 설정
+                }
+                Home todayArtist = new Home();
+                todayArtist.setU_idx(todayUserIdxList.get(i));
+                todayArtist.setU_name(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_name());
+                todayArtist.setU_description(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_description());
+                todayArtist.setList(artPicData);
 
-            List<HomeData> artPicData = homeMapper.findArtistContentsByUserIdx(todayUserIndex.get(i)); //u_name, u_year 리스트, pic_url은 null
-            for(HomeData artData : artPicData){
-                artData.setPic_url(artworkPicMapper.findByArtIdx(artData.getA_idx())); // artData의 pic_url 설정
+                todayArtistList.add(todayArtist);
             }
-            Home todayArtist = new Home();
-            todayArtist.setU_idx(todayUserIndex.get(i));
-            todayArtist.setU_name(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_name());
-            todayArtist.setU_description(homeMapper.findArtistNameDescriptByUserIdx(todayUserIndex.get(i)).getU_description());
-            todayArtist.setList(artPicData);
-
-            todayArtistList.add(todayArtist);
+        }catch (Exception e){
+            return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
         }
-
-
-        if(todayArtistList.isEmpty()){
+        if(todayArtistList.isEmpty()) {
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ARTIST, todayArtistList);
