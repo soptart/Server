@@ -58,8 +58,8 @@ public class DisplayService {
 
         //v2
         for(Display display : displayList){
-            if(isContain(display.getD_sdateApply(), display.getD_edateApply())) {display.setIsNow(0); }
-            if(isContain(display.getD_sdateNow(), display.getD_edateNow())) {display.setIsNow(1);}
+            if(isContain(display.getD_sDateApply(), display.getD_eDateApply())) {display.setIsNow(0); }
+            if(isContain(display.getD_sDateNow(), display.getD_eDateNow())) {display.setIsNow(1);}
         }
 
         if(displayList == null)
@@ -76,8 +76,7 @@ public class DisplayService {
     public boolean isContain( final String sdate, final String edate) {
         try{
             java.util.Date date = new java.util.Date();
-
-            SimpleDateFormat dt = new SimpleDateFormat("yyyy-mm-dd");
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date sdate_date = dt.parse(sdate);
             java.util.Date edate_date = dt.parse(edate);
 

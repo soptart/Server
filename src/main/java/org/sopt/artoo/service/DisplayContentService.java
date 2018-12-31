@@ -73,24 +73,32 @@ public class DisplayContentService {
      * @return DefaultRes - List<DisplayApplyRes>
      */
     public DefaultRes findDisplayApply(final int u_idx){
-        DisplayApplyRes displayApplyRes = new DisplayApplyRes();
-        List<Artwork> artworks = artworkMapper.findArtworkByUserIdx(u_idx);
 
-        // 유저 작품이 없을 경우-> null
-        if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
-        else{ displayApplyRes.setArtworks(artworkMapper.findArtworkByUserIdx(u_idx));}
+        try{
+            DisplayApplyRes displayApplyRes = new DisplayApplyRes();
+            List<Artwork> artworks = artworkMapper.findArtworkByUserIdx(u_idx);
 
-        List<Display> Alldisplays = displayMapper.findAllDisplay();
-        List<Display> nowDisplay = new ArrayList<Display>();
+            // 유저 작품이 없을 경우-> null
+            if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
+            else{ displayApplyRes.setArtworks(artworkMapper.findArtworkByUserIdx(u_idx));}
 
-        // 현재 전시 중인 전시만 저장
-        for(Display display : Alldisplays){
-            if(displayService.isContain(display.getD_sdateNow(), display.getD_edateNow()))
-                nowDisplay.add(display);
+            List<Display> Alldisplays = displayMapper.findAllDisplay();
+            List<Display> nowDisplay = new ArrayList<Display>();
+
+            // 현재 신청 중인 전시만 저장
+            for(Display display : Alldisplays){
+                if(displayService.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
+                    display.setIsNow(0);
+                    nowDisplay.add(display);
+                }
+            }
+            displayApplyRes.setDisplays(nowDisplay);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLICATION, displayApplyRes);
+        }catch(Exception e){
+            log.info(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
-        displayApplyRes.setDisplays(nowDisplay);
-
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, displayApplyRes);
     }
 
     /**
@@ -101,20 +109,25 @@ public class DisplayContentService {
      */
     @Transactional
     public DefaultRes save(final DisplayReq displayReq) {
-//         이미 등록된 전시인지 확인
-        if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
-            try{
-                int idx = displayContentMapper.save(displayReq);
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY,idx);
-            }catch(Exception e){
-                log.info(e.getMessage());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        if(displayReq.checkProperties()){
+            // 이미 등록된 전시인지 확인
+            if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
+                try{
+                    int idx = displayContentMapper.save(displayReq);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY,idx);
+                }catch(Exception e){
+                    log.info(e.getMessage());
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                }
+            }else {
+                //이미 전시에 등록한 경우
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
             }
-        }else {
-            //이미 전시에 등록한 경우
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
         }
+        // 요청 바디 부족
+        else
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_DISPLAY);
     }
 
     /**

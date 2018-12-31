@@ -51,6 +51,7 @@ public class ResponseMessage {
     public static final String UNLIKE_COMMENT = "댓글 좋아요 해제";
     public static final String FAIL_COMMENT = "댓글 좋아요 실패";
     public static final String FAIL_UNLIKE_COMMENT = "댓글 좋아요 해제 실패";
+    public static final String INDEX_NOT_FOUNDED = "유저가 쓴 댓글이 없음";
 
     public static final String AUTHORIZED = "인증 성공";
     public static final String UNAUTHORIZED = "인증 실패";
@@ -67,9 +68,12 @@ public class ResponseMessage {
     public static final String READ_DISPLAY = "전시 입장 성공";
     public static final String NOT_FOUND_DISPLAY = "컨텐츠가 존재하지 않습니다.";
     public static final String CREATE_DISPLAY = "전시 등록 성공";
-    public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
     public static final String FAIL_CREATE_DISPLAY = "전시 등록 실패";
+    public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
+    public static final String READ_DISPLAY_APPLICATION = "전시 신청서 조회 성공";
     public static final String DELETE_DISPLAY= "전시 취소 성공";
     public static final String FAIL_DELETE_DISPLAY = "존재하지 않는 컨텐츠 입니다.";
+
+
 
 }

@@ -5,9 +5,14 @@ import lombok.Data;
 @Data
 public class DisplayReq {
     // 작품 고유 인덱스
-    private int a_idx;
+    private int a_idx =-1;
     // 작가 고유 인덱스
-    private int u_idx;
+    private int u_idx=-1;
     // 전시회 고유 인덱스
-    private int d_idx;
+    private int d_idx=-1;
+
+
+    public boolean checkProperties() {
+        return (a_idx >=0 && u_idx>=0 && d_idx >=0);
+    }
 }
