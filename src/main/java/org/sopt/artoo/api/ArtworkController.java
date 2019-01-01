@@ -147,7 +147,7 @@ public class ArtworkController {
      * @param a_idx
      * @return
      */
-    @GetMapping("/artworks/{a_idx}/likes/{u_idx}")
+    @GetMapping("/artworks/{a_idx}/likes")
     public ResponseEntity getArtworkLikes(
             @PathVariable("a_idx") final int a_idx) {
         try {

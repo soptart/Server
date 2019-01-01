@@ -16,6 +16,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -95,7 +96,9 @@ public class ArtworkService {
             ArtworkLike artworkLike = artworkLikeMapper.findByUserIdxAndArtworkIdx(u_idx, a_idx);
             if (artworkLike == null) {
                 artworkMapper.like(a_idx, artwork.getA_like_count() + 1);
-                artworkLikeMapper.save(u_idx, a_idx, String.valueOf(new Date()));
+                Date date = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                artworkLikeMapper.save(u_idx, a_idx, sdf.format(date));
             } else {
                 artworkMapper.like(a_idx, artwork.getA_like_count() - 1);
                 artworkLikeMapper.deleteByUserIdxAndArtworkIdx(u_idx, a_idx);

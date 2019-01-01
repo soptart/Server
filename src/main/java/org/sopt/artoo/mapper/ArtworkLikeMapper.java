@@ -25,9 +25,9 @@ public interface ArtworkLikeMapper {
     @Select("SELECT * FROM artworkLike WHERE artworkLike.a_idx = #{a_idx} AND artworkLike.u_idx = #{u_idx}")
     ArtworkLike findByUserIdxAndArtworkIdx(@Param("u_idx") final int u_idx, @Param("a_idx") final int a_idx);
 
-    @Insert("INSERT INTO artworkLike(a_idx, u_idx, al_DATETIME) VALUES(#{a_idx},#{u_idx},#{al_DATETIME})")
-    void save(@Param("u_idx") final int u_idx, @Param("a_idx") final int a_idx, @Param("al_DATETIME") final String al_DATETIME);
+    @Insert("INSERT INTO artworkLike(a_idx, u_idx, al_date) VALUES(#{a_idx},#{u_idx},#{al_date})")
+    void save(@Param("u_idx") final int u_idx, @Param("a_idx") final int a_idx, @Param("al_date") final String al_DATETIME);
 
-    @Delete("DELECT FROM artworkLike WHERE artworkLike.u_idx = #{u_idx} AND artworkLike.a_idx = #{a_idx}")
+    @Delete("DELETE FROM artworkLike WHERE artworkLike.u_idx = #{u_idx} AND artworkLike.a_idx = #{a_idx}")
     void deleteByUserIdxAndArtworkIdx(@Param("u_idx") final int u_idx, @Param("a_idx") final int a_idx);
 }
