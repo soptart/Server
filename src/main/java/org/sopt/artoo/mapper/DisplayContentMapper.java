@@ -9,6 +9,14 @@ import java.util.List;
 
 @Mapper
 public interface DisplayContentMapper {
+    /**
+     *
+     * @param d_idx 전시 고유 번호
+     * @return display_conetent.a_idx
+     */
+    @Select("SELECT * FROM display_content WHERE d_idx=#{d_idx}")
+    List<DisplayContent> findDisplayContentByDisplay(@Param("d_idx") final int d_idx);
+
     // 전시 컨텐츠 테이블에서 이미 등록된 전시인지 확인
     @Select("SELECT * FROM display_content WHERE u_idx = #{displayReq.u_idx} and d_idx=#{displayReq.d_idx}")
     DisplayContent findByUidxAndDidx(@Param("displayReq") final DisplayReq displayReq);
