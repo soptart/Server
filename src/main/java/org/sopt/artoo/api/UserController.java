@@ -75,6 +75,7 @@ public class UserController {
      * @param userIdx
      * @return purchase
      */
+
     @Auth
     @GetMapping("/{u_idx}/purchase")
     public ResponseEntity getUserPurchase(
@@ -89,9 +90,7 @@ public class UserController {
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        else{
-            return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
-        }
+        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
     }
 
     /**

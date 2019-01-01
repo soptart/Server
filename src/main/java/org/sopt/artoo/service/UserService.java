@@ -127,6 +127,14 @@ public class UserService {
     public DefaultRes<List<Purchase>> findUserPurchase(final int userIdx){
         List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
         if(userMapper.findByUidx(userIdx) != null) {
+            for(Purchase P : listTransaction){
+                if(P.getU_idx() == userIdx){
+                    P.setP_isBuyer(true);
+                }
+                else{
+                    P.setP_isBuyer(false);
+                }
+            }
             try {
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
             } catch (Exception e) {

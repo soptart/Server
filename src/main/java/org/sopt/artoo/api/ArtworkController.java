@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.model.ArtworkReq;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.service.ArtworkService;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static org.sopt.artoo.model.DefaultRes.FAIL_AUTHORIZATION_RES;
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
@@ -77,6 +79,31 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * 미술작품 구매
+     *
+     * @param header jwt token
+     * @param a_idx  미술작품 고유 번호
+     * @param u_idx  구매자 고유 번호
+     * @return ResponseEntity
+     */
+//    @Auth
+//    @PostMapping("/artworks/{a_idx}/purchase/{u_idx}")
+//    public ResponseEntity buyArtwork(
+//            @RequestHeader(value = "Authorization", required = false) final String header,
+//            @RequestBody PurchaseReq purchaseReq){
+//        if(jwtService.decode(header).getUser_idx()==purchaseReq.getU_idx()) {
+//            try {
+//                artworkService.savePurchase()
+//                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+//            } catch (Exception e) {
+//                log.error(e.getMessage());
+//                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+//            }
+//        }
+//        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+//    }
 
     /**
      * 미술작품 작성
