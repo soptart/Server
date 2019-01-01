@@ -3,8 +3,11 @@ package org.sopt.artoo.model;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Data
 public class PurchaseReq {
+    
     private boolean p_isPost;
     //주문 방법
     private String p_recipient;
@@ -24,4 +27,5 @@ public class PurchaseReq {
             return (p_payment != 0);
         }
     }
+
 }
