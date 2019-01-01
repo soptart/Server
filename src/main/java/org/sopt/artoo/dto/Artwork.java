@@ -36,6 +36,8 @@ public class Artwork {
     private ArtworkPic pic_url;
     //수정삭제권한
     private boolean auth;
+    // 좋아요 여부
+    private boolean islike;
     // 작품 테그
     private String a_tags;
     // 작품 라이센스

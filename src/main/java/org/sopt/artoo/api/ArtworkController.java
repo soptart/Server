@@ -91,8 +91,8 @@ public class ArtworkController {
             @RequestHeader(value = "Authorization") final String header,
             ArtworkReq artworkReq, final MultipartFile picUrl) {
         try {
-            //artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
-            artworkReq.setU_idx(1);
+            artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
+            //artworkReq.setU_idx(1);
             artworkReq.setPic_url(picUrl);
             return new ResponseEntity<>(artworkService.save(artworkReq), HttpStatus.OK);
         } catch (Exception e) {
@@ -115,10 +115,9 @@ public class ArtworkController {
             ArtworkReq artworkReq) {
         try {
             artworkReq.setA_idx(a_idx);
-            return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK); // 여기 지우면 됨
-            /*if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
+            if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
                 return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);*/
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -141,5 +140,45 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * 작품에 대한 좋아요 수 조회
+     *
+     * @param a_idx
+     * @return
+     */
+    @GetMapping("/artworks/{a_idx}/likes/{u_idx}")
+    public ResponseEntity getArtworkLikes(
+            @PathVariable("a_idx") final int a_idx) {
+        try {
+            return new ResponseEntity<>(artworkService.getLikecountByArtIdx(a_idx), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Auth
+    @PostMapping("/artworks/{a_idx}/likes")
+    public ResponseEntity like(
+            @RequestHeader(value = "Authorization") final String header,
+            @PathVariable("a_idx") final int a_idx) {
+        try {
+            final int u_idx = jwtService.decode(header).getUser_idx();
+            return new ResponseEntity<>(artworkService.saveArtworkLike(a_idx, u_idx), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    /*@Auth
+    @GetMapping("/artworks/{a_idx}/purchase")
+    public ResponseEntity purchasePage(
+            @RequestHeader(value = "Authorization") final String header,
+            @PathVariable("a_idx") final int a_idx){
+
+    }*/
 
 }
