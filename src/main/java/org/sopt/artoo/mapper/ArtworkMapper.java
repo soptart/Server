@@ -14,7 +14,7 @@ public interface ArtworkMapper {
      *
      * @return 미술작품전체
      */
-    @Select("SELECT * FROM artwork")
+    @Select("SELECT * FROM artwork ORDER BY artwork.a_date DESC")
     List<Artwork> findAll();
 
     /**
