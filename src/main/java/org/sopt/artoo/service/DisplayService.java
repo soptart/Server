@@ -5,6 +5,7 @@ import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.DisplayContent;
 import org.sopt.artoo.mapper.DisplayContentMapper;
 import org.sopt.artoo.mapper.DisplayMapper;
+import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.DisplayReq;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -58,8 +59,8 @@ public class DisplayService {
 
         //v2
         for(Display display : displayList){
-            if(isContain(display.getD_sDateApply(), display.getD_eDateApply())) {display.setIsNow(0); }
-            if(isContain(display.getD_sDateNow(), display.getD_eDateNow())) {display.setIsNow(1);}
+            if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())) {display.setIsNow(0); }
+            if(DateRes.isContain(display.getD_sDateNow(), display.getD_eDateNow())) {display.setIsNow(1);}
         }
 
         if(displayList == null)
@@ -67,39 +68,9 @@ public class DisplayService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
     }
 
-    /**
-     * 현재 시간이 sdate ~ edate 에 포함되는지 확인
-     *
-     * @return true - 포함
-     * @return false - 불포함
-     */
-    public boolean isContain( final String sdate, final String edate) {
-        try{
-            java.util.Date date = new java.util.Date();
-            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date sdate_date = dt.parse(sdate);
-            java.util.Date edate_date = dt.parse(edate);
-
-            if((date.getTime() >= sdate_date.getTime()) && (date.getTime() <= edate_date.getTime())){
-                return true;
-            }else{
-                return false;
-            }
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return false;
-        }
-    }
 
 
-    public String getMonth() {
-        java.util.Date date = new java.util.Date();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        int month = cal.get(Calendar.MONTH);
-        log.info(Integer.toString(month));
-        return Integer.toString(month);
-    }
+
 
     /**
      * 전시장 입장

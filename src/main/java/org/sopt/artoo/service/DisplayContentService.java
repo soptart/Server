@@ -5,10 +5,7 @@ import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.DisplayContent;
 import org.sopt.artoo.mapper.*;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.DisplayApplyRes;
-import org.sopt.artoo.model.DisplayContentRes;
-import org.sopt.artoo.model.DisplayReq;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -87,7 +84,7 @@ public class DisplayContentService {
 
             // 현재 신청 중인 전시만 저장
             for(Display display : Alldisplays){
-                if(displayService.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
+                if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
                     display.setIsNow(0);
                     nowDisplay.add(display);
                 }
@@ -114,7 +111,7 @@ public class DisplayContentService {
             if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
                 try{
                     int idx = displayContentMapper.save(displayReq);
-                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY,idx);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, idx);
                 }catch(Exception e){
                     log.info(e.getMessage());
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
