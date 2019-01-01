@@ -3,7 +3,6 @@ package org.sopt.artoo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.Display;
-import org.sopt.artoo.dto.DisplayContent;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.mapper.*;
 import org.sopt.artoo.model.*;
