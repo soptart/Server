@@ -124,27 +124,27 @@ public class UserService {
      * @param userIdx 유저 인덱스
      * @return DefaultRes - List<Purchase>
      */
-    public DefaultRes<List<Purchase>> findUserPurchase(final int userIdx){
-        List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
-        if(userMapper.findByUidx(userIdx) != null) {
-            for(Purchase P : listTransaction){
-                if(P.getU_idx() == userIdx){
-                    P.setP_isBuyer(true);
-                }
-                else{
-                    P.setP_isBuyer(false);
-                }
-            }
-            try {
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
-            } catch (Exception e) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-            }
-        }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-    }
+//    public DefaultRes<List<Purchase>> findUserPurchase(final int userIdx){
+//        List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
+//        if(userMapper.findByUidx(userIdx) != null) {
+//            for(Purchase P : listTransaction){
+//                if(P.getU_idx() == userIdx){
+//                    P.setP_isBuyer(true);
+//                }
+//                else{
+//                    P.setP_isBuyer(false);
+//                }
+//            }
+//            try {
+//                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
+//            } catch (Exception e) {
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                log.error(e.getMessage());
+//                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+//            }
+//        }
+//        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+//    }
 
     /**
      * 유저별 거래 후기 조회
