@@ -69,4 +69,34 @@ public interface ArtworkMapper {
     @Select("SELECT a_tags, a_idx FROM artwork")
     List<Artwork> findTagsArtworkIdx();
 
+
+
+    /**
+     * 미술작품 크기 필터
+     * @param max_size
+     * @param min_size
+     * @return a_idx
+     * min_size, max_size 클라에서 'S', 'M' 인지 받아서 S면 min_size = 0, max_size = 2411 설정해서 a_idx받아오기,
+     * ArtworkPicMapper findByArtIdx 함수 이용해서 art_pic 받아오기
+     */
+    @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size}")
+    List<Integer> findArtIdxBySize(@Param("min_size") final int min_size, @Param("max_size") final int max_size);
+
+    /**
+     * 미술 작품 형태 필터(드로잉, 페인팅, 동양화, 혼합 매체, 조형/공예, 사진)
+     * @param a_form
+     * @return a_idx
+     */
+    @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form}")
+    List<Integer> findArtIdxByForm(@Param("a_form") final String a_form);
+
+    /**
+     * 미술 작품 카테고리(인물, 동물, 식물, 사물, 추상, 풍경)
+     */
+    @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category}")
+    List<Integer> findArtIdxByCategory(@Param("a_category") final String a_category);
+
+
+
+
 }

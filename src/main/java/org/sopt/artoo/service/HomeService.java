@@ -38,7 +38,6 @@ public class HomeService {
      * 좋아요 순위 5개 작가, 작가 작품
      * @return DefaultRes
      */
-//    @Transactional
     public DefaultRes getAllTodayContents(){
         final List<Integer> todayUserIdxList = homeMapper.findTodayUserIdx(); //오늘의 작가 u_idx 리스트
         List<Home> todayArtistList = new ArrayList<>();
@@ -76,8 +75,8 @@ public class HomeService {
         final Tag tag = themeList.get(0); //themeList 첫번째 Tag정보
         final List<ArtworkPic> themePicList = new ArrayList<>();
         List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx(); //a_tag와 a_idx 갖고옴
-        for(Artwork artwork : artworkList){
-            if(themePicList.size() == 6){
+        for (Artwork artwork : artworkList) {
+            if (themePicList.size() == 6) {
                 break;
             }
             String a_tags = artwork.getA_tags();
@@ -97,7 +96,6 @@ public class HomeService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themeList);
     }
 
-    @Transactional
     public DefaultRes<List<ArtworkPic>> getAllTagPicUrl(final int t_idx){
         final List<ArtworkPic> themePicList = new ArrayList<>();
         List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx(); //a_tag와 a_idx 갖고옴
