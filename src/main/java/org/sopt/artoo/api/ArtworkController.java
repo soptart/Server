@@ -2,6 +2,7 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.ArtworkReq;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.PurchaseReq;
@@ -85,25 +86,26 @@ public class ArtworkController {
      *
      * @param header jwt token
      * @param a_idx  미술작품 고유 번호
-     * @param u_idx  구매자 고유 번호
      * @return ResponseEntity
      */
-//    @Auth
-//    @PostMapping("/artworks/{a_idx}/purchase/{u_idx}")
-//    public ResponseEntity buyArtwork(
-//            @RequestHeader(value = "Authorization", required = false) final String header,
-//            @RequestBody PurchaseReq purchaseReq){
-//        if(jwtService.decode(header).getUser_idx()==purchaseReq.getU_idx()) {
-//            try {
-//                artworkService.savePurchase()
-//                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-//            } catch (Exception e) {
-//                log.error(e.getMessage());
-//                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//        }
-//        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
-//    }
+    @Auth
+    @PostMapping("/artworks/{a_idx}/purchase/{u_idx}")
+    public ResponseEntity buyArtwork(
+            @RequestHeader(value = "Authorization", required = false) final String header,
+            @PathVariable("u_idx") final int a_idx,
+            @PathVariable("u_idx") final int u_idx,
+            @RequestBody PurchaseReq purchaseReq){
+        if(jwtService.decode(header).getUser_idx() == u_idx) {
+            try {
+                DefaultRes<PurchaseProduct> defaultRes = artworkService.purchaseArtwork(u_idx, a_idx, purchaseReq);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+    }
 
     /**
      * 미술작품 작성

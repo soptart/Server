@@ -39,6 +39,7 @@ public class ResponseMessage {
     public static final String LIKE_CONTENT = "컨텐츠 좋아요/해제 성공";
     public static final String NO_ARTWORKLIKE = "작품에 대한 좋아요 없음";
     public static final String READ_ALL_ARTWORKLIKE = "작품에 대한 좋아요 수 조회 성공";
+    public static final String NOT_FOUND_PURCHASE = "구매 항목 미기입";
 
     public static final String READ_ALL_COMMENTS = "모든 댓글 조회 성공";
     public static final String READ_COMMENT = "댓글 조회 성공";
