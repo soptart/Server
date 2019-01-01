@@ -36,7 +36,7 @@ public class DisplayContentController {
      * @param display_idx 전시회 고유 인덱스
      * @return ResponseEntity - List<DisplayContentRes>
      */
-    @GetMapping("/discontents/{display_idx}")
+    @GetMapping("/discontents/displays/{display_idx}")
     public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization", required = false) final String header,
                                           @PathVariable(value = "display_idx") final int display_idx) {
         try {

@@ -44,16 +44,16 @@ public class DisplayContentService {
      * @return DefaultRes - List<DisplayContentRes>
      */
     public DefaultRes<List<DisplayContentRes>> findByDisplayIdx(final int d_idx){
-        // 존재하지 않는 전시
-        if(displayMapper.findByDisplayidx(d_idx) == null){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT); }
+//         존재하지 않는 전시
+        if(displayMapper.findByDisplayidx(d_idx) == null){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY); }
 
         // 전시 타이틀
         String d_title = displayMapper.findByDisplayidx(d_idx).getD_title();
         log.info(d_title);
         List<DisplayContentRes> dcList = displayContentMapper.findArtworksByDisplayIdx(d_idx);
 
-        // 전시회에 신청한 작품이 없을 경우
-        if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT); }
+//         전시회에 신청한 작품이 없을 경우
+        if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_DISPLAYCONTENT); }
 
         for(DisplayContentRes displayContent : dcList) {
             displayContent.setU_name(userMapper.findByUidx(displayContent.getU_idx()).getU_name());
