@@ -37,6 +37,8 @@ public class ResponseMessage {
     public static final String FAIL_UPDATE_CONTENT = "컨텐츠 수정 실패";
     public static final String DELETE_CONTENT = "컨텐츠 삭제 성공";
     public static final String LIKE_CONTENT = "컨텐츠 좋아요/해제 성공";
+    public static final String NO_ARTWORKLIKE = "작품에 대한 좋아요 없음";
+    public static final String READ_ALL_ARTWORKLIKE = "작품에 대한 좋아요 수 조회 성공";
 
     public static final String READ_ALL_COMMENTS = "모든 댓글 조회 성공";
     public static final String READ_COMMENT = "댓글 조회 성공";
@@ -66,13 +68,15 @@ public class ResponseMessage {
     /* display - 다영 */
     public static final String READ_ALL_DISPLAY = "전시장 조회 성공";
     public static final String READ_DISPLAY = "전시 입장 성공";
-    public static final String NOT_FOUND_DISPLAY = "컨텐츠가 존재하지 않습니다.";
+    public static final String NOT_FOUND_DISPLAY = "전시회가 존재하지 않습니다. display_idx를 확인하세요.";
+    public static final String NOT_FOUND_DISPLAYCONTENT = "전시 작품이 존재하지 않습니다.";
+    public static final String FAIL_READ_DISPLAY = "전시회가 존재하지 않습니다.";
     public static final String CREATE_DISPLAY = "전시 등록 성공";
     public static final String FAIL_CREATE_DISPLAY = "전시 등록 실패";
     public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
     public static final String READ_DISPLAY_APPLICATION = "전시 신청서 조회 성공";
     public static final String DELETE_DISPLAY= "전시 취소 성공";
-    public static final String FAIL_DELETE_DISPLAY = "존재하지 않는 컨텐츠 입니다.";
+    public static final String FAIL_DELETE_DISPLAY = "전시 삭제 실패";
 
 
 

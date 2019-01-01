@@ -11,6 +11,7 @@
     <groupId>org.sopt</groupId>
     <artifactId>artoo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>artoo</name>
     <description>Artoo Server Spring Boot</description>
 

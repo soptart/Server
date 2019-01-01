@@ -63,7 +63,7 @@ public class DisplayService {
         }
 
         if(displayList == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_READ_DISPLAY);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
     }
 
@@ -111,7 +111,7 @@ public class DisplayService {
         Display display = displayMapper.findByDisplayidx(display_idx);
 
         if(display == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_READ_DISPLAY);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, display);
     }
 }

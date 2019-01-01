@@ -54,6 +54,12 @@ public interface ArtworkMapper {
     @Delete("DELETE FROM artwork WHERE a_idx = #{a_idx}")
     void deleteByArtIdx(@Param("a_idx") final int a_idx);
 
+    /**
+     * 좋아요 수
+     */
+    @Update("UPDATE artwork SET a_like_count = #{a_like_count} WHERE a_idx = #{a_idx}")
+    void like(@Param("a_idx") final int a_idx, @Param("a_like_count") final int a_like_count);
+
 
     /**
      * 미술작품 태그, a_idx
