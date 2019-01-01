@@ -76,22 +76,22 @@ public class UserController {
      * @return purchase
      */
 
-    @Auth
-    @GetMapping("/{u_idx}/purchase")
-    public ResponseEntity getUserPurchase(
-            @RequestHeader (value = "Authorization", required = false) final String header,
-            @PathVariable("u_idx") final int userIdx) {
-        if(jwtService.decode(header).getUser_idx()==userIdx) {
-            try {
-                DefaultRes<List<Purchase>> defaultRes = userService.findUserPurchase(userIdx);
-                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
-    }
+//    @Auth
+//    @GetMapping("/{u_idx}/purchase")
+//    public ResponseEntity getUserPurchase(
+//            @RequestHeader (value = "Authorization", required = false) final String header,
+//            @PathVariable("u_idx") final int userIdx) {
+//        if(jwtService.decode(header).getUser_idx()==userIdx) {
+//            try {
+//                DefaultRes<List<Purchase>> defaultRes = userService.findUserPurchase(userIdx);
+//                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+//            } catch (Exception e) {
+//                log.error(e.getMessage());
+//                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+//            }
+//        }
+//        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+//    }
 
     /**
      * 유저별 거래 후기 모음

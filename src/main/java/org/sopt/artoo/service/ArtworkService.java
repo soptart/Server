@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -34,14 +35,16 @@ public class ArtworkService {
     private final UserMapper userMapper;
     private final ArtworkLikeMapper artworkLikeMapper;
     private final S3FileUploadService s3FileUploadService;
+    private final PurchaseMapper purchaseMapper;
 
     public ArtworkService(ArtworkMapper artworkMapper, ArtworkPicMapper artworkPicMapper, S3FileUploadService s3FileUploadService,
-                          ArtworkLikeMapper artworkLikeMapper, UserMapper userMapper) {
+                          ArtworkLikeMapper artworkLikeMapper, UserMapper userMapper, PurchaseMapper purchaseMapper) {
         this.artworkMapper = artworkMapper;
         this.artworkPicMapper = artworkPicMapper;
         this.userMapper = userMapper;
         this.s3FileUploadService = s3FileUploadService;
         this.artworkLikeMapper = artworkLikeMapper;
+        this.purchaseMapper = purchaseMapper;
     }
 
     /**
@@ -199,40 +202,55 @@ public class ArtworkService {
     /**
      * 구매 Service - 구매 데이터 전달 + 가격 정보 올리기
      *
-     * @param u_idx 구매자 고유번호
+     * @param buyerIdx 구매자 고유번호
      * @param a_idx 작품 고유번호
      * @param purchaseReq 구매 정보
      * @return boolean
      */
      @Transactional
-     public DefaultRes purchaseArtwork(final int u_idx, final int a_idx, final PurchaseReq purchaseReq) {
+     public DefaultRes<PurchaseProduct> purchaseArtwork(final int buyerIdx, final int a_idx, final PurchaseReq purchaseReq) {
         if(purchaseReq.checkPurchaseReq()) {
             try {
+                //---------------------작품 데이터 전송--------------------
                 //작품 정보
                 PurchaseProduct purchaseProduct = new PurchaseProduct();
-                final Artwork purchaseArtwork = artworkMapper.findByIdx((a_idx));
-                final User artist = userMapper.findByUidx((u_idx));
+                final Artwork purchaseArtwork = artworkMapper.findByIdx(a_idx);
+                final User artist = userMapper.findByUidx(purchaseArtwork.getU_idx());
                 purchaseProduct.setArtworkName(purchaseArtwork.getA_name()); //작품 이름
                 purchaseProduct.setArtworkPrice(purchaseArtwork.getA_price()); // 작품 가격
                 purchaseProduct.setArtistName(artist.getU_name()); //작가 이름
                 purchaseProduct.setArtistSchool(artist.getU_school()); // 작가 학교
-//                final int productSize = purchaseArtwork.getA_size();
-//                if(purchaseArtwork.getA_price() >= 150000){
-//                    purchaseProduct.setDeliveryCharge(0);
-//                }
-//                else if(productSize < 2412) {
-//                    purchaseProduct.setDeliveryCharge(3000);
-//                }
-//                else if(productSize < 6609){
-//                    purchaseProduct.setDeliveryCharge(4000);
-//                }
-//                else {
-//                    purchaseProduct.setDeliveryCharge(5000);
-//                } //데이터 저장
+                final int productSize = purchaseArtwork.getA_size();
+                if(purchaseArtwork.getA_price() >= 150000){
+                    purchaseProduct.setDeliveryCharge(0);
+                }
+                else if(productSize < 2412) {
+                    purchaseProduct.setDeliveryCharge(3000);
+                }
+                else if(productSize < 6609){
+                    purchaseProduct.setDeliveryCharge(4000);
+                }
+                else {
+                    purchaseProduct.setDeliveryCharge(5000);
+                }
+                //---------------------구매 데이터 저장--------------------
 
-                //PurchaseMapper.savePurchaseData(u_idx, a_idx, purchaseArtwork.getU_idx(),purchaseReq);
-                // 구매 데아터 저장
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT, purchaseProduct);
+                if(purchaseReq.isP_isPost()) { //상태
+                    purchaseReq.setP_state(1);
+                }
+                else{
+                    purchaseReq.setP_state(11);
+                }
+                Calendar calendar = Calendar.getInstance(); // 시간
+                java.util.Date date = calendar.getTime();
+                purchaseReq.setP_currentTime(date);
+
+                purchaseReq.setA_idx(a_idx);
+                purchaseReq.setP_sellerIdx(artist.getU_idx());
+                purchaseReq.setP_buyerIdx(buyerIdx);
+
+                purchaseMapper.savePurchaseData(purchaseReq);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseProduct);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
