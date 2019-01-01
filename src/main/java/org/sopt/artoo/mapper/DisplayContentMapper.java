@@ -16,6 +16,9 @@ public interface DisplayContentMapper {
     @Select("SELECT * FROM display_content WHERE dc_idx = #{dc_idx}")
     DisplayContent findByDisplayContentIdx(@Param("dc_idx") final int dc_idx);
 
+    @Select("SELECT * FROM display_content WHERE u_idx = #{u_idx}")
+    List<DisplayContent> findByUidx(@Param("u_idx") final int u_idx);
+
     @Select("SELECT  dc.dc_idx, a.a_idx, a.a_name, a.a_width, a.a_height, a.a_depth, a.a_form, a.a_year, a.u_idx FROM artwork a, display_content dc " +
             "WHERE a.a_idx=dc.a_idx and dc.d_idx=#{d_idx}")
     List<DisplayContentRes> findArtworksByDisplayIdx(@Param("d_idx") final int d_idx);

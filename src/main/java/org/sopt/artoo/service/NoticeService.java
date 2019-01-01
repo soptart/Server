@@ -59,6 +59,7 @@ public class NoticeService {
 
                 // 판매자 정보 저장
                 User user = userMapper.findByUidx(purchase.getP_seller_idx());
+                noticeRes.setU_name(user.getU_name());
                 noticeRes.setU_idx(user.getU_idx());
                 noticeRes.setU_address(user.getU_address());
                 noticeRes.setU_phone(user.getU_phone());

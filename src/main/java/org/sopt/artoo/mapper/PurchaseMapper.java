@@ -39,17 +39,15 @@ public interface PurchaseMapper {
      * @param p_buyer_idx
      * @return List<Purchase> 구매
      */
-    @Select("SELECT * FROM purchase WHERE p_buyer_idx=#{p_buyer_idx}")
+    @Select("SELECT * FROM purchase WHERE p_buyer_idx=#{p_buyer_idx} order by p_date DESC")
     List<Purchase> findByBuyerIdx(@Param("p_buyer_idx") final int p_buyer_idx);
 
     /**
      * 판매 조회 - p_state 가 판매 완료인 로우만
      *
-     * @param p_buyer_idx
+     * @param p_seller_idx
      * @return List<Purchase> 판매
      */
-    @Select("SELECT * FROM purchase WHERE p_seller_idx=#{p_seller_idx}")
-    List<Purchase> findBySellerIdx(@Param("p_buyer_idx") final int p_buyer_idx);
-
-
+    @Select("SELECT * FROM purchase WHERE p_seller_idx=#{p_seller_idx} order by p_date DESC")
+    List<Purchase> findBySellerIdx(@Param("p_seller_idx") final int p_seller_idx);
 }
