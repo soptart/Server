@@ -92,7 +92,7 @@ public class ArtworkController {
     @PostMapping("/artworks/{a_idx}/purchase/{u_idx}")
     public ResponseEntity buyArtwork(
             @RequestHeader(value = "Authorization", required = false) final String header,
-            @PathVariable("u_idx") final int a_idx,
+            @PathVariable("a_idx") final int a_idx,
             @PathVariable("u_idx") final int u_idx,
             @RequestBody PurchaseReq purchaseReq){
         if(jwtService.decode(header).getUser_idx() == u_idx) {

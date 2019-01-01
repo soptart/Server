@@ -42,4 +42,6 @@ public class Artwork {
     private String a_tags;
     // 작품 라이센스
     private String a_license;
+    // 작품 사이즈
+    private int a_size;
 }
