@@ -86,6 +86,8 @@ public class ArtworkController {
      *
      * @param header jwt token
      * @param a_idx  미술작품 고유 번호
+     * @param u_idx  구매자 고유 번호
+     * @param purchaseReq 구매 요구 정보
      * @return ResponseEntity
      */
     @Auth
@@ -201,13 +203,5 @@ public class ArtworkController {
         }
     }
 
-
-    /*@Auth
-    @GetMapping("/artworks/{a_idx}/purchase")
-    public ResponseEntity purchasePage(
-            @RequestHeader(value = "Authorization") final String header,
-            @PathVariable("a_idx") final int a_idx){
-
-    }*/
 
 }

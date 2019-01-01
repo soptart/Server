@@ -10,6 +10,12 @@ import java.util.List;
 public interface PurchaseMapper {
 
 
+    /**
+     * 구매 정보 저장
+     *
+     * @param purchaseReq
+     * @return 구매 고유 번호
+     */
     @Insert("INSERT INTO purchase(p_state, p_date, p_comment, a_idx, p_seller_idx, p_buyer_idx, p_recipient, p_address, p_phone, p_isCard) " +
             "VALUES(#{purchaseReq.p_state}, #{purchaseReq.p_currentTime}, #{purchaseReq.p_comment}, #{purchaseReq.a_idx}, #{purchaseReq.p_sellerIdx}, " +
             "#{purchaseReq.p_buyerIdx}, #{purchaseReq.p_recipient}, #{purchaseReq.p_address}, #{purchaseReq.p_phone}, #{purchaseReq.p_payment})")
