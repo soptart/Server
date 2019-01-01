@@ -20,9 +20,9 @@ public class ArtworkReq {
     // 작품 높이
     private int a_depth;
     // 작품 카테고리
-    private int a_category;
+    private String a_category;
     // 작품 형태
-    private int a_form;
+    private String a_form;
     // 작품 가격
     private int a_price;
     // 작품 좋아요 수
