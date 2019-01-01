@@ -2,6 +2,7 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.model.ArtworkReq;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.service.ArtworkService;
@@ -136,6 +137,23 @@ public class ArtworkController {
             /*if(artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
                 return new ResponseEntity<>(artworkService.deleteByArtIdx(a_idx), HttpStatus.OK);
             return new ResponseEntity<>(UNAUTHORIZED_RES,HttpStatus.OK);*/
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 미술 작품 필터
+     */
+    @GetMapping("/artworks/filter")
+    public ResponseEntity filterArtwork(
+            @RequestBody final ArtworkFilterReq artworkFilterReq){
+        try {
+
+            DefaultRes<Artwork> defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
