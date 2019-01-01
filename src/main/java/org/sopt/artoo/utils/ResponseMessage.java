@@ -84,6 +84,8 @@ public class ResponseMessage {
     public static final String READ_BUYS = "알림 구매 내역 조회 성공";
     public static final String FAIL_READ_BUYS = "알림 구매 내역 조회 실패";
 
+    public static final String READ_SELLS = "알림 판매 내역 조회 성공";
+    public static final String FAIL_READ_SELLS = "알림 판매 내역 조회 실패";
 
 
 

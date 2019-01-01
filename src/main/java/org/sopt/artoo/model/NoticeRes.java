@@ -36,7 +36,6 @@ public class NoticeRes {
     // (판매자 혹은 구매자) 주소
     private String u_address;
 
-
     public NoticeRes(Purchase purchase) throws Exception{
         this.p_idx = purchase.getP_idx();
         this.p_state = purchase.getP_state();

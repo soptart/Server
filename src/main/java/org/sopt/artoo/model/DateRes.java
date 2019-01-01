@@ -77,5 +77,4 @@ public class DateRes {
 //        log.info(eDate.toString());
         return sDate.toString() + "~" + eDate.toString();
     }
-
 }
