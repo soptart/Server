@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.DisplayContent;
+import org.sopt.artoo.dto.User;
 import org.sopt.artoo.mapper.*;
 import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -110,8 +111,15 @@ public class DisplayContentService {
             // 이미 등록된 전시인지 확인
             if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
                 try{
-                    int idx = displayContentMapper.save(displayReq);
-                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, idx);
+                    displayContentMapper.save(displayReq);
+                    Artwork a = artworkMapper.findByIdx(displayReq.getA_idx());
+                    User u = userMapper.findByUidx(displayReq.getU_idx());
+                    Display d = displayMapper.findByDisplayidx(displayReq.getD_idx());
+
+                    DisplayApplyConfirmRes displayApplyConfirmRes = new DisplayApplyConfirmRes(
+                            d.getD_idx(), d.getD_title(), d.getD_subTitle(),
+                            u.getU_idx(), u.getU_name(), displayReq.getA_idx(), a.getA_name());
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, displayApplyConfirmRes);
                 }catch(Exception e){
                     log.info(e.getMessage());
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

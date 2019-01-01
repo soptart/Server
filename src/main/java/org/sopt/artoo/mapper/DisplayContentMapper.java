@@ -24,8 +24,8 @@ public interface DisplayContentMapper {
     List<DisplayContentRes> findArtworksByDisplayIdx(@Param("d_idx") final int d_idx);
 
     @Insert("INSERT INTO display_content(d_idx, a_idx, u_idx) VALUES (#{displayReq.d_idx}, #{displayReq.a_idx}, #{displayReq.u_idx})")
-    @Options(useGeneratedKeys = true, keyProperty = "displayReq.a_idx")
-    int save(@Param("displayReq") final DisplayReq displayReq);
+//    @Options(useGeneratedKeys = true, keyProperty = "displayReq.a_idx")
+    void save(@Param("displayReq") final DisplayReq displayReq);
 
     @Delete("DELETE FROM display_content WHERE dc_idx=#{dc_idx}")
     void deleteByDcIdx(@Param("dc_idx") final int dc_idx);

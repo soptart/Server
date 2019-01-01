@@ -74,7 +74,7 @@ public class ResponseMessage {
     public static final String NOT_FOUND_DISPLAYCONTENT = "전시 작품이 존재하지 않습니다.";
     public static final String FAIL_READ_DISPLAY = "전시회가 존재하지 않습니다.";
     public static final String CREATE_DISPLAY = "전시 등록 성공";
-    public static final String FAIL_CREATE_DISPLAY = "전시 등록 실패";
+    public static final String FAIL_CREATE_DISPLAY = "전시와 작품을 선택해주세요.";
     public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
     public static final String READ_DISPLAY_APPLICATION = "전시 신청서 조회 성공";
     public static final String DELETE_DISPLAY= "전시 취소 성공";
