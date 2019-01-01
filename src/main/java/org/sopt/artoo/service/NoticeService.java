@@ -2,7 +2,6 @@ package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.mapper.ArtworkMapper;
@@ -10,18 +9,15 @@ import org.sopt.artoo.mapper.PurchaseMapper;
 import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.DisplayApplyRes;
+import org.sopt.artoo.model.DisplayContentRes;
 import org.sopt.artoo.model.NoticeRes;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 @Slf4j
 @Service
@@ -40,7 +36,7 @@ public class NoticeService {
      * 구매 내역 조회
      *
      * @param u_idx  유저 idx
-     * @return ResponseEntity - List<NoticeRes>
+     * @return DefaultRes - List<NoticeRes>
      */
     public DefaultRes findBuysByUidx(final int u_idx){
         try{
@@ -69,7 +65,6 @@ public class NoticeService {
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BUYS, noticeResList);
         }catch(Exception e){
             log.info(e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
     }
@@ -115,10 +110,17 @@ public class NoticeService {
 
         }catch(Exception e){
             log.info(e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
     }
 
-
+    /**
+     * 전시내역 조회
+     *
+     * @param u_idx  유저 idx
+     * @return DefaultRes - List<Display>
+     */
+//    public DefaultRes findDisplayApply(final int u_idx) {
+//        DisplayContentRes displayContentRes =
+//    }
 }

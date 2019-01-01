@@ -98,6 +98,7 @@ public class NoticeController {
 //        }
 //    }
 //
+
 //    /**
 //     * 	구매 환불
 //     *
@@ -123,22 +124,21 @@ public class NoticeController {
 //    }
 
 
-
-//    /**
-//     * 전시내역 조회
-//     *
-//     * @param header     jwt token
-//     * @param user_idx  유저 idx
-//     * @return ResponseEntity - List<Display>
-//     */
-//    @GetMapping("/notices/displays/users/{user_idx}}")
+    /**
+     * 전시내역 조회
+     *
+     * @param header     jwt token
+     * @param user_idx  유저 idx
+     * @return ResponseEntity - List<Display>
+     */
+//    @GetMapping("/notices/displays/users/{user_idx}")
 //    public ResponseEntity getSells(@RequestHeader(value="Authorization" ,required = false) final String header,
 //                                   @PathVariable(value="user_idx") final int user_idx){
 //        try {
 //            //권한 체크
 //            if(jwtService.checkAuth(header, user_idx)){
 //                final int u_idx = jwtService.decode(header).getUser_idx();
-//                return new ResponseEntity<>(noticeService.findSellsByUidx(u_idx), HttpStatus.OK);
+//                return new ResponseEntity<>(noticeService.findDisplayApply(u_idx), HttpStatus.OK);
 //            }
 //            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
 //        } catch (Exception e) {

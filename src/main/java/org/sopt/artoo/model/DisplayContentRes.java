@@ -14,7 +14,6 @@ public class DisplayContentRes {
     private int a_width;
     private int a_height;
     private int a_depth;
-
     private String a_form;
     private String a_year;
 
