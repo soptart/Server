@@ -5,10 +5,7 @@ import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.DisplayContent;
 import org.sopt.artoo.mapper.*;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.DisplayApplyRes;
-import org.sopt.artoo.model.DisplayContentRes;
-import org.sopt.artoo.model.DisplayReq;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -44,16 +41,16 @@ public class DisplayContentService {
      * @return DefaultRes - List<DisplayContentRes>
      */
     public DefaultRes<List<DisplayContentRes>> findByDisplayIdx(final int d_idx){
-        // 존재하지 않는 전시
-        if(displayMapper.findByDisplayidx(d_idx) == null){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT); }
+//         존재하지 않는 전시
+        if(displayMapper.findByDisplayidx(d_idx) == null){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY); }
 
         // 전시 타이틀
         String d_title = displayMapper.findByDisplayidx(d_idx).getD_title();
         log.info(d_title);
         List<DisplayContentRes> dcList = displayContentMapper.findArtworksByDisplayIdx(d_idx);
 
-        // 전시회에 신청한 작품이 없을 경우
-        if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT); }
+//         전시회에 신청한 작품이 없을 경우
+        if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_DISPLAYCONTENT); }
 
         for(DisplayContentRes displayContent : dcList) {
             displayContent.setU_name(userMapper.findByUidx(displayContent.getU_idx()).getU_name());
@@ -87,7 +84,7 @@ public class DisplayContentService {
 
             // 현재 신청 중인 전시만 저장
             for(Display display : Alldisplays){
-                if(displayService.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
+                if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
                     display.setIsNow(0);
                     nowDisplay.add(display);
                 }
@@ -114,7 +111,7 @@ public class DisplayContentService {
             if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
                 try{
                     int idx = displayContentMapper.save(displayReq);
-                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY,idx);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, idx);
                 }catch(Exception e){
                     log.info(e.getMessage());
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
