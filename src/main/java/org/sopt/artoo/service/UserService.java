@@ -6,7 +6,7 @@ import org.sopt.artoo.dto.ArtworkLike;
 import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.mapper.ArtworkMapper;
-import org.sopt.artoo.mapper.LikeMapper;
+import org.sopt.artoo.mapper.ArtworkLikeMapper;
 import org.sopt.artoo.mapper.PurchaseMapper;
 import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DefaultRes;
@@ -28,15 +28,15 @@ public class UserService {
     private final UserMapper userMapper;
     private final ArtworkMapper artworkMapper;
     private final PurchaseMapper purchaseMapper;
-    private final LikeMapper likeMapper;
+    private final ArtworkLikeMapper artworkLikeMapper;
 
 
     public UserService(final UserMapper userMapper, final ArtworkMapper artworkMapper, final PurchaseMapper purchaseMapper,
-    final LikeMapper likeMapper){
+    final ArtworkLikeMapper artworkLikeMapper){
         this.userMapper = userMapper;
         this.artworkMapper = artworkMapper;
         this.purchaseMapper = purchaseMapper;
-        this.likeMapper = likeMapper;
+        this.artworkLikeMapper = artworkLikeMapper;
     }
 
     /**
@@ -106,7 +106,7 @@ public class UserService {
      * @return DefaultRes - List<ArtworkLike>
      */
     public DefaultRes<List<ArtworkLike>> findUserLikes(final int userIdx){
-        List<ArtworkLike> listUserLike = likeMapper.findArtworkLikeByUserIdx(userIdx);
+        List<ArtworkLike> listUserLike = artworkLikeMapper.findArtworkLikeByUserIdx(userIdx);
         if(userMapper.findByUidx(userIdx) != null) {
             try {
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_LIKES, listUserLike);
