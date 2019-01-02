@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -110,6 +111,8 @@ public class DisplayContentService {
             // 이미 등록된 전시인지 확인
             if(displayContentMapper.findByUidxAndDidx(displayReq.getU_idx(), displayReq.getD_idx()) == null){
                 try{
+                    Date date = new Date();
+                    displayReq.setDc_date(date);
                     displayContentMapper.save(displayReq);
                     Artwork a = artworkMapper.findByIdx(displayReq.getA_idx());
                     User u = userMapper.findByUidx(displayReq.getU_idx());
@@ -117,7 +120,7 @@ public class DisplayContentService {
 
                     DisplayApplyConfirmRes displayApplyConfirmRes = new DisplayApplyConfirmRes(
                             d.getD_idx(), d.getD_title(), d.getD_subTitle(),
-                            u.getU_idx(), u.getU_name(), displayReq.getA_idx(), a.getA_name());
+                            u.getU_idx(), u.getU_name(), displayReq.getA_idx(), a.getA_name(), displayReq.getDc_date());
                     return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, displayApplyConfirmRes);
                 }catch(Exception e){
                     log.info(e.getMessage());

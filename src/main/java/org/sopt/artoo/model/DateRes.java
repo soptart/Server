@@ -33,7 +33,9 @@ public class DateRes {
      */
     public static boolean isContain( final String sdate, final String edate) {
         try{
+            log.info("isContain");
             java.util.Date date = new java.util.Date();
+
             SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date sdate_date = dt.parse(sdate);
             java.util.Date edate_date = dt.parse(edate);
@@ -63,18 +65,34 @@ public class DateRes {
         return parseDate;
     }
     /**
-     * ex. yyyy.MM. ~ yyyy.MM
+     * ex. 현재와 날짜 비교
      *
-     * 전시신청서 사용 date 포맷
+     *
      * @param
-     * @return   yyyy.MM. ~ yyyy.MM
+     * @return
      */
-    public static String getDate2( final String sdate, final String edate) throws Exception{
-        SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM");
-        Date sDate = dt.parse(sdate);
-        Date eDate = dt.parse(edate);
-//        log.info(sDate.toString());
-//        log.info(eDate.toString());
-        return sDate.toString() + "~" + eDate.toString();
+    public static Boolean isCompareFromNow( final String date){
+        try{
+            log.info("isCompareFromNow");
+            java.util.Date now = new java.util.Date();
+            log.info(now.toString());
+
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parseDate = df.parse(date);
+
+            // 현재 시간이 더 이후이면 true 리턴
+            if((parseDate.getTime() <= now.getTime())){
+                log.info("true");
+                return true;
+            }else{
+                log.info("false");
+                return false;
+            }
+        }catch(Exception e){
+            log.info("exception");
+            log.error(e.getMessage());
+            return false;
+        }
+
     }
 }
