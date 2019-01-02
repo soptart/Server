@@ -32,7 +32,7 @@ public class HomeController {
     @GetMapping("/today")
     public ResponseEntity getAllTodayArtist(){
         try{
-            DefaultRes<List<Home>> defaultRes = homeService.getAllTodayContents(); //작가 이름, 작가 사진들, 작품연도
+            DefaultRes defaultRes = homeService.getAllTodayContents(); //작가 이름, 작가 사진들, 작품연도
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());
