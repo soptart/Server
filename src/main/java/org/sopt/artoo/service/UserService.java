@@ -99,56 +99,57 @@ public class UserService {
         List<Display> listDisplay = displayMapper.findAllDisplay();
         List<Display> curDisplay = new LinkedList<>();
         List<Integer> curDisplayContentAidx = new LinkedList<>();
-
-        if (!listArt.isEmpty()) {
-            try {
-                //전시 중인 display 찾기
-                for (Display d : listDisplay) {
-                    if (DateRes.isContain(d.getD_sDateNow(), d.getD_eDateNow())) {
-                        curDisplay.add(d);
-                    }
-                }
-                //전시 중인 display_content 작품 고유 번호 찾기
-                for (Display d : curDisplay) {
-                    for (DisplayContent dc : displayContentMapper.findDisplayContentByDisplay(d.getD_idx())) {
-                        if (dc.getU_idx() == userIdx) {
-                            curDisplayContentAidx.add(dc.getA_idx());
+        if(userMapper.findByUidx(userIdx)!=null) {
+            if (!listArt.isEmpty()) {
+                try {
+                    //전시 중인 display 찾기
+                    for (Display d : listDisplay) {
+                        if (DateRes.isContain(d.getD_sDateNow(), d.getD_eDateNow())) {
+                            curDisplay.add(d);
                         }
                     }
-                }
-
-                //display_content와 user의 작품 비교 -> 전시중인 작품 Mapping
-                for (Integer i : curDisplayContentAidx) {
-                    for (Artwork a : listArt) {
-                        if (a.getA_idx() == i) {
-                            a.setA_isDisplay(true);
+                    //전시 중인 display_content 작품 고유 번호 찾기
+                    for (Display d : curDisplay) {
+                        for (DisplayContent dc : displayContentMapper.findDisplayContentByDisplay(d.getD_idx())) {
+                            if (dc.getU_idx() == userIdx) {
+                                curDisplayContentAidx.add(dc.getA_idx());
+                            }
                         }
                     }
-                }
 
-                List<MyArtwork> listMyArtwork = new LinkedList<>();
-
-                for (Artwork A : listArt) {
-                    MyArtwork myArtwork = new MyArtwork();
-                    myArtwork.setA_idx(A.getA_idx());
-                    myArtwork.setA_isDisplay(A.isA_isDisplay());
-                    if(artworkPicMapper.findByArtIdx(A.getA_idx()) != null) {
-                        myArtwork.setA_url(artworkPicMapper.findByArtIdx(A.getA_idx()).getPic_url());
+                    //display_content와 user의 작품 비교 -> 전시중인 작품 Mapping
+                    for (Integer i : curDisplayContentAidx) {
+                        for (Artwork a : listArt) {
+                            if (a.getA_idx() == i) {
+                                a.setA_isDisplay(true);
+                            }
+                        }
                     }
-                    else {
-                        myArtwork.setA_url(null);
-                    }
-                    listMyArtwork.add(myArtwork);
-                }
 
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_ARTWORK, listMyArtwork);
-            } catch (Exception e) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                    List<MyArtwork> listMyArtwork = new LinkedList<>();
+
+                    for (Artwork A : listArt) {
+                        MyArtwork myArtwork = new MyArtwork();
+                        myArtwork.setA_idx(A.getA_idx());
+                        myArtwork.setA_isDisplay(A.isA_isDisplay());
+                        if (artworkPicMapper.findByArtIdx(A.getA_idx()) != null) {
+                            myArtwork.setA_url(artworkPicMapper.findByArtIdx(A.getA_idx()).getPic_url());
+                        } else {
+                            myArtwork.setA_url(null);
+                        }
+                        listMyArtwork.add(myArtwork);
+                    }
+
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_ARTWORK, listMyArtwork);
+                } catch (Exception e) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    log.error(e.getMessage());
+                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                }
             }
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+        return  DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     /**
