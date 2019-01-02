@@ -48,5 +48,10 @@ public class Artwork {
     // 전시 유무
     private boolean a_isDisplay;
     // 작품 활성화
+<<<<<<< Updated upstream
+    // 작품 활성화/비활성화
     private boolean a_active;
+=======
+
+>>>>>>> Stashed changes
 }
