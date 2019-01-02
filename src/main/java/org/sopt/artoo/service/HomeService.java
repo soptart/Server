@@ -105,7 +105,9 @@ public class HomeService {
             String[] tagNum = a_tags.split(","); // {3,4,5}
             for (String aTagNum : tagNum) {
                 if (String.valueOf(t_idx).equals(aTagNum)) { //tag index와 aTagNum가 같으면
-                    themePicList.add(artworkPicMapper.findByArtIdx(artwork.getA_idx())); //사진 가져오기
+                    if(artworkPicMapper.findByArtIdx(artwork.getA_idx())!=null){
+                        themePicList.add(artworkPicMapper.findByArtIdx(artwork.getA_idx())); //사진 가져오기
+                    }
                 }
             }
         }

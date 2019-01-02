@@ -5,6 +5,7 @@ import org.sopt.artoo.dto.*;
 import org.sopt.artoo.mapper.*;
 import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.TransactionReq;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,16 +28,21 @@ public class UserService {
     private final ArtworkLikeMapper artworkLikeMapper;
     private final DisplayMapper displayMapper;
     private final DisplayContentMapper displayContentMapper;
+    private final ArtworkPicMapper artworkPicMapper;
+
+
 
 
     public UserService(final UserMapper userMapper, final ArtworkMapper artworkMapper, final PurchaseMapper purchaseMapper,
-                       final ArtworkLikeMapper artworkLikeMapper, final DisplayMapper displayMapper, final DisplayContentMapper displayContentMapper) {
+                       final ArtworkLikeMapper artworkLikeMapper, final DisplayMapper displayMapper,
+                       final DisplayContentMapper displayContentMapper, final ArtworkPicMapper artworkPicMapper) {
         this.userMapper = userMapper;
         this.artworkMapper = artworkMapper;
         this.purchaseMapper = purchaseMapper;
         this.artworkLikeMapper = artworkLikeMapper;
         this.displayMapper = displayMapper;
         this.displayContentMapper = displayContentMapper;
+        this.artworkPicMapper = artworkPicMapper;
     }
 
     /**
@@ -89,47 +96,62 @@ public class UserService {
      * @return DefaultRes - List<Artwork>
      */
     @Transactional
-    public DefaultRes<List<Artwork>> findUserWork(final int userIdx) {
+    public DefaultRes<List<MyArtwork>> findUserWork(final int userIdx) {
         List<Artwork> listArt = artworkMapper.findArtworkByUserIdx(userIdx);
         List<Display> listDisplay = displayMapper.findAllDisplay();
         List<Display> curDisplay = new LinkedList<>();
         List<Integer> curDisplayContentAidx = new LinkedList<>();
-
-        if (!listArt.isEmpty()) {
-            try {
-                //전시 중인 display 찾기
-                for(Display d : listDisplay){
-                    if(DateRes.isContain(d.getD_sDateNow(), d.getD_eDateNow())){
-                        curDisplay.add(d);
-                    }
-                }
-                //전시 중인 display_content 작품 고유 번호 찾기
-                for(Display d : curDisplay){
-                    for(DisplayContent dc : displayContentMapper.findDisplayContentByDisplay(d.getD_idx())){
-                        if(dc.getU_idx() == userIdx){
-                            curDisplayContentAidx.add(dc.getA_idx());
+        if(userMapper.findByUidx(userIdx)!=null) {
+            if (!listArt.isEmpty()) {
+                try {
+                    //전시 중인 display 찾기
+                    for (Display d : listDisplay) {
+                        if (DateRes.isContain(d.getD_sDateNow(), d.getD_eDateNow())) {
+                            curDisplay.add(d);
                         }
                     }
-                }
-
-                //display_content와 user의 작품 비교 -> 전시중인 작품 Mapping
-                for(Integer i : curDisplayContentAidx){
-                    for(Artwork a : listArt){
-                        if(a.getA_idx() == i){
-                            a.setA_isDisplay(true);
+                    //전시 중인 display_content 작품 고유 번호 찾기
+                    for (Display d : curDisplay) {
+                        for (DisplayContent dc : displayContentMapper.findDisplayContentByDisplay(d.getD_idx())) {
+                            if (dc.getU_idx() == userIdx) {
+                                curDisplayContentAidx.add(dc.getA_idx());
+                            }
                         }
                     }
+
+                    //display_content와 user의 작품 비교 -> 전시중인 작품 Mapping
+                    for (Integer i : curDisplayContentAidx) {
+                        for (Artwork a : listArt) {
+                            if (a.getA_idx() == i) {
+                                a.setA_isDisplay(true);
+                            }
+                        }
+                    }
+
+                    List<MyArtwork> listMyArtwork = new LinkedList<>();
+
+                    for (Artwork A : listArt) {
+                        MyArtwork myArtwork = new MyArtwork();
+                        myArtwork.setA_idx(A.getA_idx());
+                        myArtwork.setA_isDisplay(A.isA_isDisplay());
+                        if (artworkPicMapper.findByArtIdx(A.getA_idx()) != null) {
+                            myArtwork.setA_url(artworkPicMapper.findByArtIdx(A.getA_idx()).getPic_url());
+                        } else {
+                            myArtwork.setA_url(null);
+                        }
+                        listMyArtwork.add(myArtwork);
+                    }
+
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_ARTWORK, listMyArtwork);
+                } catch (Exception e) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    log.error(e.getMessage());
+                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                 }
-
-
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_ARTWORK, listArt);
-            } catch (Exception e) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return  DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     /**
@@ -151,23 +173,34 @@ public class UserService {
         }
         return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
+
     /**
      * 유저별 거래 내역 조회 (구매 + 판매)
      *
      * @param userIdx 유저 인덱스
      * @return DefaultRes - List<Purchase>
      */
-    public DefaultRes<List<Purchase>> findUserPurchase(final int userIdx) {
+    public DefaultRes<List<TransactionReq>> findUserPurchase(final int userIdx) {
         if (userMapper.findByUidx(userIdx) == null) {
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
         } else {
-            List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
-            for (Purchase purchase : listTransaction) {
+            List<Purchase> listPurchase = purchaseMapper.findTransactionByUserIdx(userIdx);
+            ArrayList<TransactionReq> listTransaction = new ArrayList<>();
+            for (Purchase purchase : listPurchase) {
                 if(purchase.getP_buyer_idx()==userIdx){
                     purchase.setP_isBuyer(true);
                 } else {
                     purchase.setP_isBuyer(false);
                 }
+                TransactionReq transactionReq = new TransactionReq();
+                Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
+                transactionReq.setA_name(artwork.getA_name());
+                transactionReq.setPerson_name(userMapper.findByUidx(userIdx).getU_name());
+                transactionReq.setPicUrl(artworkPicMapper.findByArtIdx(artwork.getA_idx()));
+                transactionReq.setPrice(artwork.getA_price());
+                transactionReq.setDate(purchase.getP_date().toString());
+                transactionReq.setBuyer(purchase.isP_isBuyer());
+                listTransaction.add(transactionReq);
             }
             try {
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
@@ -196,6 +229,7 @@ public class UserService {
         }
         return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);*/
     }
+
     /**
      * 유저별 거래 후기 조회
      *

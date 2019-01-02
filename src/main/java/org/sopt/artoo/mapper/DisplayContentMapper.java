@@ -31,7 +31,7 @@ public interface DisplayContentMapper {
             "WHERE a.a_idx=dc.a_idx and dc.d_idx=#{d_idx}")
     List<DisplayContentRes> findArtworksByDisplayIdx(@Param("d_idx") final int d_idx);
 
-    @Insert("INSERT INTO display_content(d_idx, a_idx, u_idx) VALUES (#{displayReq.d_idx}, #{displayReq.a_idx}, #{displayReq.u_idx})")
+    @Insert("INSERT INTO display_content(d_idx, a_idx, u_idx, dc_date) VALUES (#{displayReq.d_idx}, #{displayReq.a_idx}, #{displayReq.u_idx},  #{displayReq.dc_date})")
 //    @Options(useGeneratedKeys = true, keyProperty = "displayReq.a_idx")
     void save(@Param("displayReq") final DisplayReq displayReq);
 
