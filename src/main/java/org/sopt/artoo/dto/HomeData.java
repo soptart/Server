@@ -15,7 +15,7 @@ public class HomeData {
     private int a_idx;
     private String a_name;
     private String a_year;
-    private ArtworkPic pic_url;
+    private String pic_url;
 
 
 }

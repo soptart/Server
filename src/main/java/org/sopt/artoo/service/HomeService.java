@@ -46,7 +46,7 @@ public class HomeService {
 
                 List<HomeData> artPicData = homeMapper.findArtistContentsByUserIdx(todayUserIdxList.get(i)); //u_name, u_year 리스트, pic_url은 null
                 for (HomeData artData : artPicData) {
-                    artData.setPic_url(artworkPicMapper.findByArtIdx(artData.getA_idx())); // artData의 pic_url 설정
+                    artData.setPic_url(artworkPicMapper.findByArtIdx(artData.getA_idx()).getPic_url()); // artData의 pic_url 설정
                 }
                 Home todayArtist = new Home();
                 todayArtist.setU_idx(todayUserIdxList.get(i));
