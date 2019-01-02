@@ -2,7 +2,6 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.model.ArtworkReq;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.service.ArtworkService;
@@ -80,6 +79,34 @@ public class ArtworkController {
     }
 
     /**
+     * 미술작품 구매
+     *
+     * @param header jwt token
+     * @param a_idx  미술작품 고유 번호
+     * @param u_idx  구매자 고유 번호
+     * @param purchaseReq 구매 요구 정보
+     * @return ResponseEntity
+     */
+    @Auth
+    @PostMapping("/artworks/{a_idx}/purchase/{u_idx}")
+    public ResponseEntity buyArtwork(
+            @RequestHeader(value = "Authorization", required = false) final String header,
+            @PathVariable("a_idx") final int a_idx,
+            @PathVariable("u_idx") final int u_idx,
+            @RequestBody PurchaseReq purchaseReq){
+        if(jwtService.decode(header).getUser_idx() == u_idx) {
+            try {
+                DefaultRes<PurchaseProduct> defaultRes = artworkService.purchaseArtwork(u_idx, a_idx, purchaseReq);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
      * 미술작품 작성
      *
      * @param header
@@ -92,8 +119,8 @@ public class ArtworkController {
             @RequestHeader(value = "Authorization") final String header,
             ArtworkReq artworkReq, final MultipartFile picUrl) {
         try {
-            //artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
-            artworkReq.setU_idx(1);
+            artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
+            //artworkReq.setU_idx(1);
             artworkReq.setPic_url(picUrl);
             return new ResponseEntity<>(artworkService.save(artworkReq), HttpStatus.OK);
         } catch (Exception e) {
@@ -116,10 +143,9 @@ public class ArtworkController {
             ArtworkReq artworkReq) {
         try {
             artworkReq.setA_idx(a_idx);
-            return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK); // 여기 지우면 됨
-            /*if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
+            if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
                 return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);*/
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -159,5 +185,37 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * 작품에 대한 좋아요 수 조회
+     *
+     * @param a_idx
+     * @return
+     */
+    @GetMapping("/artworks/{a_idx}/likes")
+    public ResponseEntity getArtworkLikes(
+            @PathVariable("a_idx") final int a_idx) {
+        try {
+            return new ResponseEntity<>(artworkService.getLikecountByArtIdx(a_idx), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Auth
+    @PostMapping("/artworks/{a_idx}/likes")
+    public ResponseEntity like(
+            @RequestHeader(value = "Authorization") final String header,
+            @PathVariable("a_idx") final int a_idx) {
+        try {
+            final int u_idx = jwtService.decode(header).getUser_idx();
+            return new ResponseEntity<>(artworkService.saveArtworkLike(a_idx, u_idx), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

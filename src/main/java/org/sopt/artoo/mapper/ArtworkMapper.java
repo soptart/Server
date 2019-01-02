@@ -14,7 +14,7 @@ public interface ArtworkMapper {
      *
      * @return 미술작품전체
      */
-    @Select("SELECT * FROM artwork")
+    @Select("SELECT * FROM artwork ORDER BY artwork.a_date DESC")
     List<Artwork> findAll();
 
     /**
@@ -53,6 +53,12 @@ public interface ArtworkMapper {
 
     @Delete("DELETE FROM artwork WHERE a_idx = #{a_idx}")
     void deleteByArtIdx(@Param("a_idx") final int a_idx);
+
+    /**
+     * 좋아요 수
+     */
+    @Update("UPDATE artwork SET a_like_count = #{a_like_count} WHERE a_idx = #{a_idx}")
+    void like(@Param("a_idx") final int a_idx, @Param("a_like_count") final int a_like_count);
 
 
     /**

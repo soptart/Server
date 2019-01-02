@@ -75,4 +75,24 @@ public class CommentController {
         }
     }
 
+    @Auth
+    @PutMapping("/comments/{u_idx}")
+    public ResponseEntity editComment(
+            @RequestHeader(value = "Authorization") final String header,
+            @RequestBody final CommentReq commentReq,
+            @PathVariable("u_idx") final int u_idx) {
+        final int userIdx;
+        try {
+            userIdx = jwtService.decode(header).getUser_idx();
+            if(userIdx==u_idx){
+                return new ResponseEntity<>(commentService.updateComment(commentReq), HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

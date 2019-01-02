@@ -17,9 +17,9 @@ public class Artwork {
     // 작품 높이
     private int a_depth;
     // 작품 카테고리
-    private int a_category;
+    private String a_category;
     // 작품 형태
-    private int a_form;
+    private String a_form;
     // 작품 가격
     private int a_price;
     // 작품 좋아요 수
@@ -36,8 +36,12 @@ public class Artwork {
     private ArtworkPic pic_url;
     //수정삭제권한
     private boolean auth;
+    // 좋아요 여부
+    private boolean islike;
     // 작품 테그
     private String a_tags;
     // 작품 라이센스
     private String a_license;
+    // 작품 사이즈
+    private int a_size;
 }

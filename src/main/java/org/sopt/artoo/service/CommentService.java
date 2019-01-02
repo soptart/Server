@@ -66,7 +66,7 @@ public class CommentService {
      */
     @Transactional
     public DefaultRes saveComment(final CommentReq commentReq) {
-        if(commentReq.checkProperties()){
+        if (commentReq.checkProperties()) {
             try {
                 Date date = new Date();
                 commentReq.setC_date(date);
@@ -77,8 +77,25 @@ public class CommentService {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
-        }else {
+        } else {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_COMMENT);
+        }
+    }
+
+    public DefaultRes updateComment(final CommentReq commentReq) {
+        if (commentReq.checkProperties()) {
+            try {
+                Date date = new Date();
+                commentReq.setC_date(date);
+                commentMapper.updateComment(commentReq);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_COMMENT);
+            } catch (Exception e) {
+                log.info(e.getMessage());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+        } else {
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_COMMENT);
         }
     }
 }
