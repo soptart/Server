@@ -9,6 +9,7 @@ import org.sopt.artoo.mapper.HomeMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,7 @@ public class HomeService {
 
                 List<HomeData> artPicData = homeMapper.findArtistContentsByUserIdx(todayUserIdxList.get(i)); //u_name, u_year 리스트, pic_url은 null
                 for (HomeData artData : artPicData) {
-                    artData.setPic_url(artworkPicMapper.findByArtIdx(artData.getA_idx()).getPic_url()); // artData의 pic_url 설정
+                    artData.setPic_url(artworkPicMapper.findByArtIdx(artData.getA_idx()).getPic_url());// artData의 pic_url 설정
                 }
                 Home todayArtist = new Home();
                 todayArtist.setU_idx(todayUserIdxList.get(i));
@@ -57,7 +58,7 @@ public class HomeService {
                 todayArtistList.add(todayArtist);
             }
         }catch (Exception e){
-            return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.NOT_FOUND_PICTURES);
         }
         if(todayArtistList.isEmpty()) {
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
