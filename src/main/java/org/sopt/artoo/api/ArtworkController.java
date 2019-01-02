@@ -5,6 +5,7 @@ import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.model.ArtworkReq;
+import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.service.ArtworkService;
@@ -173,17 +174,18 @@ public class ArtworkController {
         }
     }
 
+
     /**
      * 미술 작품 필터
+     * @param artworkFilterReq
      */
     @GetMapping("/artworks/filter")
     public ResponseEntity filterArtwork(
-            @RequestBody final ArtworkFilterReq artworkFilterReq){
+            @RequestBody final ArtworkFilterReq artworkFilterReq) {
         try {
 
             DefaultRes<Artwork> defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
