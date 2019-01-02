@@ -64,9 +64,9 @@ public class CommentController {
         // 토큰으로 유저인덱스 가져오기
         try {
             final int userIdx = jwtService.decode(header).getUser_idx();
-            if(userService.findUser(userIdx)!=null){
+            if (userService.findUser(userIdx) != null) {
                 return new ResponseEntity<>(commentService.saveComment(commentReq), HttpStatus.OK);
-            }else {
+            } else {
                 return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED), HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
@@ -84,9 +84,27 @@ public class CommentController {
         final int userIdx;
         try {
             userIdx = jwtService.decode(header).getUser_idx();
-            if(userIdx==u_idx){
+            if (userIdx == u_idx) {
                 return new ResponseEntity<>(commentService.updateComment(commentReq), HttpStatus.OK);
-            }else{
+            } else {
+                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Auth
+    @DeleteMapping("/comments")
+    public ResponseEntity deleteComment(
+            @RequestHeader(value = "Authorization") final String header,
+            @RequestBody final CommentReq commentReq) {
+        try {
+            final int userIdx = jwtService.decode(header).getUser_idx();
+            if (userIdx == commentReq.getU_idx()) {
+                return new ResponseEntity<>(commentService.deleteComment(commentReq.getC_idx()), HttpStatus.OK);
+            } else {
                 return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED), HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {

@@ -97,4 +97,20 @@ public class CommentService {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_COMMENT);
         }
     }
+
+    public DefaultRes deleteComment(final int c_idx) {
+        try {
+            if(commentMapper.findCommentByCommentIdx(c_idx)!=null){
+                commentMapper.deleteCommentByCommentIdx(c_idx);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_COMMENT);
+            }else{
+                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_COMMENT);
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+
+        }
+    }
 }

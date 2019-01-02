@@ -8,10 +8,10 @@ import java.util.List;
 public class ArtworkFilterReq {
     //filter category, size, type
     //작품 사이즈
-    String size;
+    String a_size;
     //작품 형태
-    String form;
+    String a_form;
     //작품 카테고리
-    String category;
+    String a_category;
 
 }

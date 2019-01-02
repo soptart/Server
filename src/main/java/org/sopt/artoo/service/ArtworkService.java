@@ -3,14 +3,17 @@ package org.sopt.artoo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.ArtworkPic;
+import org.sopt.artoo.dto.PurchaseProduct;
+import org.sopt.artoo.dto.ArtworkPic;
+import org.sopt.artoo.dto.ArtworkPic;
 import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.ArtworkPicMapper;
 import org.sopt.artoo.model.ArtworkFilterReq;
-import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.dto.ArtworkLike;
 import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.ArtworkPicMapper;
+import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.mapper.PurchaseMapper;
 import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.mapper.ArtworkLikeMapper;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -272,8 +276,9 @@ public class ArtworkService {
 
 
     /**
-     * 필터
-     *
+     * size, form, category를 이용하여 작품 필터
+     * @param artworkFilterReq
+     * @return Artwork
      */
     @Transactional
     public DefaultRes filterArtworkPic(final ArtworkFilterReq artworkFilterReq){
@@ -281,9 +286,9 @@ public class ArtworkService {
             List<ArtworkPic> artworkPicList = new ArrayList<>();
             List<Integer> artworkIdxList = new ArrayList<>();
 
-            String size = artworkFilterReq.getSize();
-            String form = artworkFilterReq.getForm();
-            String category = artworkFilterReq.getCategory();
+            String size = artworkFilterReq.getA_size();
+            String form = artworkFilterReq.getA_form();
+            String category = artworkFilterReq.getA_category();
 
             if(size != null){
                 switch (size) {
