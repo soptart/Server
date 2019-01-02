@@ -280,9 +280,9 @@ public class ArtworkService {
             List<ArtworkPic> artworkPicList = new ArrayList<>();
             List<Integer> artworkIdxList = new ArrayList<>();
 
-            String size = artworkFilterReq.getSize();
-            String form = artworkFilterReq.getForm();
-            String category = artworkFilterReq.getCategory();
+            String size = artworkFilterReq.getA_size();
+            String form = artworkFilterReq.getA_form();
+            String category = artworkFilterReq.getA_category();
 
             if(size != null){
                 switch (size) {
