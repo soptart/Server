@@ -2,6 +2,10 @@ package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.dto.ArtworkPic;
+import org.sopt.artoo.mapper.ArtworkMapper;
+import org.sopt.artoo.mapper.ArtworkPicMapper;
+import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.dto.ArtworkLike;
@@ -22,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -266,4 +271,69 @@ public class ArtworkService {
 
 
 
+    /**
+     * 필터
+     *
+     */
+    @Transactional
+    public DefaultRes filterArtworkPic(final ArtworkFilterReq artworkFilterReq){
+        try{
+            List<ArtworkPic> artworkPicList = new ArrayList<>();
+            List<Integer> artworkIdxList = new ArrayList<>();
+
+            String size = artworkFilterReq.getSize();
+            String form = artworkFilterReq.getForm();
+            String category = artworkFilterReq.getCategory();
+
+            if(size != null){
+                switch (size) {
+                    case "S":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(0, 2411); //사이즈가 S인 a_idx List
+
+                        break;
+                    case "M":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(2412, 6608); //사이즈가 M인 a_idx List
+
+                        break;
+                    case "L":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(6609, 10628); //사이즈가 L인 a_idx List
+
+                        break;
+                    case "XL":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(10629, 21134); //사이즈가 XL인 a_idx List
+
+                        break;
+                }
+            }
+            if(form != null){
+                List<Integer> artworkIdxByFormList = artworkMapper.findArtIdxByForm(form);
+                if(artworkIdxList.size() != 0) {
+                    artworkIdxList.retainAll(artworkIdxByFormList); //artworkIdxList에서 artworkIdxByFormList와  공통 요소만 저장 공통 요소만 저장
+
+                }
+            }
+            if(category != null){
+                List<Integer> artworkIdxByCategoryList = artworkMapper.findArtIdxByCategory(category);
+                if(artworkIdxList.size() != 0){
+                    artworkIdxList.retainAll(artworkIdxByCategoryList);//artworkIdxList에서 artworkIdxByCategoryList와 공통 요소만 저장
+                }
+            }
+            if(size == null && form == null && category == null){
+                artworkPicList = artworkPicMapper.findAllArtworkPic();
+            }
+            for(int a_idx : artworkIdxList){
+                artworkPicList.add(artworkPicMapper.findByArtIdx(a_idx));
+            }
+
+            if(artworkPicList.isEmpty()){
+                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+            }
+
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkPicList);
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
 }

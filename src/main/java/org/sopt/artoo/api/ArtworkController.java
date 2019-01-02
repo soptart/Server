@@ -2,6 +2,7 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.ArtworkReq;
 import org.sopt.artoo.model.DefaultRes;
@@ -86,6 +87,8 @@ public class ArtworkController {
      *
      * @param header jwt token
      * @param a_idx  미술작품 고유 번호
+     * @param u_idx  구매자 고유 번호
+     * @param purchaseReq 구매 요구 정보
      * @return ResponseEntity
      */
     @Auth
@@ -171,10 +174,27 @@ public class ArtworkController {
     }
 
     /**
+     * 미술 작품 필터
+     * @param artworkFilterReq
+     */
+    @GetMapping("/artworks/filter")
+    public ResponseEntity filterArtwork(
+            @RequestBody final ArtworkFilterReq artworkFilterReq) {
+        try {
+
+            DefaultRes<Artwork> defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+      
+    /**
      * 작품에 대한 좋아요 수 조회
      *
-     * @param a_idx
-     * @return
+     * @param a_idx 작품 고유 번호
+     * @return a_like_count 좋아요 수
      */
     @GetMapping("/artworks/{a_idx}/likes")
     public ResponseEntity getArtworkLikes(
@@ -187,6 +207,12 @@ public class ArtworkController {
         }
     }
 
+    /**
+     * 작품에 좋아요 선택
+     *
+     * @param a_idx 작품 고유 번호
+     * @return artwork 작품
+     */
     @Auth
     @PostMapping("/artworks/{a_idx}/likes")
     public ResponseEntity like(

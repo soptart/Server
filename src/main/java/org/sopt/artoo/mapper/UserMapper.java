@@ -12,10 +12,9 @@ public interface UserMapper {
      *
      * @param userSignUpReq 객체
      */
-    @Insert("INSERT INTO user(u_email, u_pw, u_school, u_address, u_name, u_bank, u_account, u_dept, u_phone) " +
+    @Insert("INSERT INTO user(u_email, u_pw, u_school, u_address, u_name, u_bank, u_account, u_phone) " +
             "VALUES(#{userSignUpReq.u_email}, #{userSignUpReq.u_pw}, #{userSignUpReq.u_school}, " +
-            "#{userSignUpReq.u_address}, #{userSignUpReq.u_name}, #{userSignUpReq.u_bank}, #{userSignUpReq.u_account}, " +
-            "#{userSignUpReq.u_dept}, #{userSignUpReq.u_phone})")
+            "#{userSignUpReq.u_address}, #{userSignUpReq.u_name}, #{userSignUpReq.u_bank}, #{userSignUpReq.u_account}, #{userSignUpReq.u_phone})")
     @Options(useGeneratedKeys = true, keyColumn = "user.u_idx")
     int save(@Param("userSignUpReq") final UserSignUpReq userSignUpReq);
 
