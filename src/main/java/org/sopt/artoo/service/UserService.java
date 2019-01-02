@@ -129,7 +129,6 @@ public class UserService {
                 List<MyArtwork> listMyArtwork = new LinkedList<>();
 
                 for (Artwork A : listArt) {
-
                     MyArtwork myArtwork = new MyArtwork();
                     myArtwork.setA_idx(A.getA_idx());
                     myArtwork.setA_isDisplay(A.isA_isDisplay());
@@ -149,7 +148,7 @@ public class UserService {
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
     }
 
     /**
