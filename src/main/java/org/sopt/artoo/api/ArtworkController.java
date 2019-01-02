@@ -86,9 +86,9 @@ public class ArtworkController {
     /**
      * 미술작품 구매
      *
-     * @param header jwt token
-     * @param a_idx  미술작품 고유 번호
-     * @param u_idx  구매자 고유 번호
+     * @param header      jwt token
+     * @param a_idx       미술작품 고유 번호
+     * @param u_idx       구매자 고유 번호
      * @param purchaseReq 구매 요구 정보
      * @return ResponseEntity
      */
@@ -98,8 +98,8 @@ public class ArtworkController {
             @RequestHeader(value = "Authorization", required = false) final String header,
             @PathVariable("a_idx") final int a_idx,
             @PathVariable("u_idx") final int u_idx,
-            @RequestBody PurchaseReq purchaseReq){
-        if(jwtService.decode(header).getUser_idx() == u_idx) {
+            @RequestBody PurchaseReq purchaseReq) {
+        if (jwtService.decode(header).getUser_idx() == u_idx) {
             try {
                 DefaultRes<PurchaseProduct> defaultRes = artworkService.purchaseArtwork(u_idx, a_idx, purchaseReq);
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
@@ -195,8 +195,8 @@ public class ArtworkController {
     /**
      * 작품에 대한 좋아요 수 조회
      *
-     * @param a_idx
-     * @return
+     * @param a_idx 작품 고유 번호
+     * @return a_like_count 좋아요 수
      */
     @GetMapping("/artworks/{a_idx}/likes")
     public ResponseEntity getArtworkLikes(
@@ -209,6 +209,12 @@ public class ArtworkController {
         }
     }
 
+    /**
+     * 작품에 좋아요 선택
+     *
+     * @param a_idx 작품 고유 번호
+     * @return artwork 작품
+     */
     @Auth
     @PostMapping("/artworks/{a_idx}/likes")
     public ResponseEntity like(

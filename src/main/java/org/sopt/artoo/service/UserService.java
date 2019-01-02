@@ -1,16 +1,10 @@
 package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.dto.ArtworkLike;
-import org.sopt.artoo.dto.Purchase;
-import org.sopt.artoo.dto.User;
-import org.sopt.artoo.mapper.ArtworkMapper;
-import org.sopt.artoo.mapper.ArtworkLikeMapper;
-import org.sopt.artoo.mapper.PurchaseMapper;
-import org.sopt.artoo.mapper.UserMapper;
+import org.sopt.artoo.dto.*;
+import org.sopt.artoo.mapper.*;
+import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
@@ -30,14 +24,18 @@ public class UserService {
     private final ArtworkMapper artworkMapper;
     private final PurchaseMapper purchaseMapper;
     private final ArtworkLikeMapper artworkLikeMapper;
+    private final DisplayMapper displayMapper;
+    private final DisplayContentMapper displayContentMapper;
 
 
     public UserService(final UserMapper userMapper, final ArtworkMapper artworkMapper, final PurchaseMapper purchaseMapper,
-                       final ArtworkLikeMapper artworkLikeMapper) {
+                       final ArtworkLikeMapper artworkLikeMapper, final DisplayMapper displayMapper, final DisplayContentMapper displayContentMapper) {
         this.userMapper = userMapper;
         this.artworkMapper = artworkMapper;
         this.purchaseMapper = purchaseMapper;
         this.artworkLikeMapper = artworkLikeMapper;
+        this.displayMapper = displayMapper;
+        this.displayContentMapper = displayContentMapper;
     }
 
     /**
@@ -90,10 +88,40 @@ public class UserService {
      * @param userIdx 유저 인덱스
      * @return DefaultRes - List<Artwork>
      */
+    @Transactional
     public DefaultRes<List<Artwork>> findUserWork(final int userIdx) {
         List<Artwork> listArt = artworkMapper.findArtworkByUserIdx(userIdx);
+        List<Display> listDisplay = displayMapper.findAllDisplay();
+        List<Display> curDisplay = new LinkedList<>();
+        List<Integer> curDisplayContentAidx = new LinkedList<>();
+
         if (!listArt.isEmpty()) {
             try {
+                //전시 중인 display 찾기
+                for(Display d : listDisplay){
+                    if(DateRes.isContain(d.getD_sDateNow(), d.getD_eDateNow())){
+                        curDisplay.add(d);
+                    }
+                }
+                //전시 중인 display_content 작품 고유 번호 찾기
+                for(Display d : curDisplay){
+                    for(DisplayContent dc : displayContentMapper.findDisplayContentByDisplay(d.getD_idx())){
+                        if(dc.getU_idx() == userIdx){
+                            curDisplayContentAidx.add(dc.getA_idx());
+                        }
+                    }
+                }
+
+                //display_content와 user의 작품 비교 -> 전시중인 작품 Mapping
+                for(Integer i : curDisplayContentAidx){
+                    for(Artwork a : listArt){
+                        if(a.getA_idx() == i){
+                            a.setA_isDisplay(true);
+                        }
+                    }
+                }
+
+
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_ARTWORK, listArt);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
