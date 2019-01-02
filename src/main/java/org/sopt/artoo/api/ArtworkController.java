@@ -5,7 +5,6 @@ import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.model.ArtworkReq;
-import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.service.ArtworkService;
@@ -18,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.sopt.artoo.model.DefaultRes.FAIL_AUTHORIZATION_RES;
@@ -125,8 +125,8 @@ public class ArtworkController {
             ArtworkReq artworkReq, final MultipartFile picUrl) {
         try {
             artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
-            //artworkReq.setU_idx(1);
             artworkReq.setPic_url(picUrl);
+            artworkReq.setA_size(calculateSize(artworkReq));
             return new ResponseEntity<>(artworkService.save(artworkReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -148,6 +148,7 @@ public class ArtworkController {
             ArtworkReq artworkReq) {
         try {
             artworkReq.setA_idx(a_idx);
+            artworkReq.setA_size(calculateSize(artworkReq));
             if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
                 return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK);
             return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
@@ -183,7 +184,6 @@ public class ArtworkController {
     public ResponseEntity filterArtwork(
             @RequestBody final ArtworkFilterReq artworkFilterReq) {
         try {
-
             DefaultRes<Artwork> defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
@@ -228,5 +228,16 @@ public class ArtworkController {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private Integer calculateSize(ArtworkReq artworkReq){
+        final int width = artworkReq.getA_width();
+        final int height = artworkReq.getA_height();
+        final int depth = artworkReq.getA_depth();
+
+        int list[] = {width, height, depth};
+        Arrays.sort(list);
+
+        return list[2] * list[1];
     }
 }
