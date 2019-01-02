@@ -192,6 +192,7 @@ public class ArtworkController {
         }
     }
 
+  
     /**
      * 작품에 대한 좋아요 수 조회
      *
