@@ -3,6 +3,8 @@ package org.sopt.artoo.dto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Date;
+
 @Slf4j
 @Data
 public class DisplayContent {
@@ -14,4 +16,6 @@ public class DisplayContent {
     private int u_idx;
     // display idx
     private int d_idx;
+    // 전시 신청 날짜
+    private Date dc_date;
 }
