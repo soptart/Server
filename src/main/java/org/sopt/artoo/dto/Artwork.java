@@ -44,4 +44,6 @@ public class Artwork {
     private String a_license;
     // 작품 사이즈
     private int a_size;
+    // 전시 유무
+    private boolean a_isDisplay;
 }

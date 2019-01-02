@@ -192,11 +192,12 @@ public class ArtworkController {
         }
     }
 
+  
     /**
      * 작품에 대한 좋아요 수 조회
      *
-     * @param a_idx
-     * @return
+     * @param a_idx 작품 고유 번호
+     * @return a_like_count 좋아요 수
      */
     @GetMapping("/artworks/{a_idx}/likes")
     public ResponseEntity getArtworkLikes(
@@ -209,6 +210,12 @@ public class ArtworkController {
         }
     }
 
+    /**
+     * 작품에 좋아요 선택
+     *
+     * @param a_idx 작품 고유 번호
+     * @return artwork 작품
+     */
     @Auth
     @PostMapping("/artworks/{a_idx}/likes")
     public ResponseEntity like(
