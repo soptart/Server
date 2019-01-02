@@ -12,9 +12,12 @@ import java.util.List;
 @Mapper
 public interface HomeMapper {
 
-//    좋아요가 많은 순서대로 5명의 작가 index
-    @Select("SELECT DISTINCT artwork.u_idx FROM artworkLike, artwork " +
-            "WHERE artwork.a_idx = artworkLike.a_idx  GROUP BY artworkLike.a_idx ORDER BY COUNT(*) DESC LIMIT 5")
+    /**
+     * 좋아요가 많은 5명의 작가 순서대로
+     */
+    @Select("SELECT  a.u_idx, sum(C) AS likeAmount FROM (SELECT artworkLike.a_idx, artwork.u_idx, COUNT(artworkLike.a_idx) AS C \n" +
+            "FROM artworkLike, artwork WHERE artwork.a_idx = artworkLike.a_idx AND artwork.a_active = 1 GROUP BY artworkLike.a_idx) a " +
+            "GROUP BY a.u_idx ORDER BY sum(C) DESC LIMIT 5")
     List<Integer> findTodayUserIdx();
 
 

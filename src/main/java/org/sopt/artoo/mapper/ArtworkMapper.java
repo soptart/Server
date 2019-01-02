@@ -70,7 +70,6 @@ public interface ArtworkMapper {
     List<Artwork> findTagsArtworkIdx();
 
 
-
     /**
      * 미술작품 크기 필터
      * @param max_size
