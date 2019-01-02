@@ -61,7 +61,7 @@ public class UserController {
     public ResponseEntity getUserCollectionLike(
             @PathVariable("u_idx") final int userIdx) {
         try {
-            DefaultRes<List<ArtworkLike>> defaultRes = userService.findUserLikes(userIdx);
+            DefaultRes<List<MyArtwork>> defaultRes = userService.findUserLikes(userIdx);
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
