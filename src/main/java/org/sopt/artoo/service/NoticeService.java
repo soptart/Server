@@ -1,18 +1,12 @@
 package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.dto.Purchase;
-import org.sopt.artoo.dto.User;
-import org.sopt.artoo.mapper.ArtworkMapper;
-import org.sopt.artoo.mapper.PurchaseMapper;
-import org.sopt.artoo.mapper.UserMapper;
-import org.sopt.artoo.model.DateRes;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.DisplayContentRes;
-import org.sopt.artoo.model.NoticeRes;
+import org.sopt.artoo.dto.*;
+import org.sopt.artoo.mapper.*;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
+import org.sopt.artoo.utils.constants.NoticeConstant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
@@ -25,11 +19,15 @@ public class NoticeService {
     private PurchaseMapper purchaseMapper;
     private ArtworkMapper artworkMapper;
     private UserMapper userMapper;
+    private DisplayContentMapper displayContentMapper;
+    private DisplayMapper displayMapper;
 
-    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper) {
+    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper, DisplayContentMapper displayContentMapper, DisplayMapper displayMapper) {
         this.purchaseMapper = purchaseMapper;
         this.artworkMapper = artworkMapper;
         this.userMapper = userMapper;
+        this.displayContentMapper = displayContentMapper;
+        this.displayMapper = displayMapper;
     }
 
     /**
@@ -118,9 +116,53 @@ public class NoticeService {
      * 전시내역 조회
      *
      * @param u_idx  유저 idx
-     * @return DefaultRes - List<Display>
+     * @return DefaultRes - List<DisplayRes>
      */
-//    public DefaultRes findDisplayApply(final int u_idx) {
-//        DisplayContentRes displayContentRes =
-//    }
+    public DefaultRes findNoticeDisplayApply(final int u_idx) {
+        List<Display> displayList = displayMapper.findAllDisplay();
+        List<DisplayContent> displayContents_apply = new ArrayList<>(); // 신청 중인 전시
+        List<DisplayContent> displayContents =  new ArrayList<>(); // 전시 완료된 전시
+        List<DisplayContent> displayContents_wait =  new ArrayList<>(); // 확정되어서 대기 중인 전시
+
+        for(Display display : displayList){
+            // 신청 중인 전시회 (신청 완료)
+            if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
+                displayContents_apply.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
+            }// 전시 완료된 전시
+            else if(DateRes.isCompareFromNow(display.getD_eDateNow())){
+                displayContents.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
+            }// 확정되어서 대기 중인 전시
+            else if(DateRes.isContain(display.getD_eDateApply(), display.getD_sDateNow())){
+                displayContents_wait.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
+            }
+        }
+
+        // 신청 중인 전시 반환 리스트 생성
+        List<DisplayRes> displayResList = new ArrayList<>();
+        if(!displayContents_apply.isEmpty()) insertRes(displayContents_apply, displayResList,NoticeConstant.displayContents_apply);
+        if(!displayContents.isEmpty()) insertRes(displayContents, displayResList, NoticeConstant.displayContents);
+        if(!displayContents_wait.isEmpty()) insertRes(displayContents_wait, displayResList, NoticeConstant.displayContents_wait);
+
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLY, displayResList);
+    }
+
+    public  List<DisplayRes> insertRes(List<DisplayContent> displayContentList, List<DisplayRes> displayResList, int state){
+        try{
+            if(!displayContentList.isEmpty()){
+                for(DisplayContent displayContent :  displayContentList){
+                    User user = userMapper.findByUidx(displayContent.getU_idx());
+                    Artwork artwork = artworkMapper.findByIdx(displayContent.getA_idx());
+                    Display display = displayMapper.findByDisplayidx(displayContent.getD_idx());
+
+                    DisplayRes displayRes = new DisplayRes(display, artwork.getA_idx(),artwork.getA_name(),user.getU_idx(), user.getU_name(), state, displayContent.getDc_date());
+                    displayResList.add(displayRes);
+                }
+            }
+            return displayResList;
+        }
+        catch(Exception e){
+            log.info(e.getMessage());
+            return displayResList;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package org.sopt.artoo.dto;
 
 import lombok.Data;
+import org.sopt.artoo.model.DefaultRes;
 
 import java.util.Date;
 

@@ -1,8 +1,8 @@
 package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.ArtworkLike;
+import org.sopt.artoo.dto.MyArtwork;
 import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.TransactionReq;
@@ -42,7 +42,7 @@ public class UserController {
     public ResponseEntity getUserItem(
             @PathVariable("u_idx") final int userIdx){
         try {
-            DefaultRes<List<Artwork>> defaultRes = userService.findUserWork(userIdx);
+            DefaultRes<List<MyArtwork>> defaultRes = userService.findUserWork(userIdx);
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
 
         } catch (Exception e){
