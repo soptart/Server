@@ -2,9 +2,10 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.dto.PurchaseProduct;
+import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.model.ArtworkReq;
+import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.service.ArtworkService;
@@ -173,6 +174,7 @@ public class ArtworkController {
         }
     }
 
+
     /**
      * 미술 작품 필터
      * @param artworkFilterReq
@@ -189,7 +191,8 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-      
+
+  
     /**
      * 작품에 대한 좋아요 수 조회
      *
@@ -226,5 +229,6 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 }
