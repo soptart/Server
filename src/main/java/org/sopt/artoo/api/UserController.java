@@ -5,6 +5,7 @@ import org.sopt.artoo.dto.ArtworkLike;
 import org.sopt.artoo.dto.MyArtwork;
 import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.TransactionReq;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.service.UserService;
@@ -83,7 +84,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx) {
         if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
-                DefaultRes<List<Purchase>> defaultRes = userService.findUserPurchase(userIdx);
+                DefaultRes<List<TransactionReq>> defaultRes = userService.findUserPurchase(userIdx);
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
