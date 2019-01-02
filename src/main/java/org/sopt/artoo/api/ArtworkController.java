@@ -200,14 +200,4 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-    /*@Auth
-    @GetMapping("/artworks/{a_idx}/purchase")
-    public ResponseEntity purchasePage(
-            @RequestHeader(value = "Authorization") final String header,
-            @PathVariable("a_idx") final int a_idx){
-
-    }*/
-
 }
