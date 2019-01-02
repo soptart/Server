@@ -30,5 +30,8 @@ public interface CommentMapper {
     @Delete("DELETE FROM comment WHERE c_idx = #{c_idx}")
     void deleteCommentByCommentIdx(@Param("c_idx") final int c_idx);
 
+    @Delete("DELETE FROM comment WHERE a_idx = #{a_idx}")
+    void deleteByArtIdx(@Param("a_idx") final int a_idx);
+
 
 }
