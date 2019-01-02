@@ -142,7 +142,7 @@ public class ArtworkService {
                 artworkMapper.save(artworkReq);
                 final int artIdx = artworkReq.getA_idx();
                 if(artworkReq.getPic_url()==null){
-                    return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.ARTWORK_NOPICUTRE);
+                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
                 }
                 artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
