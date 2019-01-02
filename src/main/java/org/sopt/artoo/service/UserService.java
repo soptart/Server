@@ -5,6 +5,7 @@ import org.sopt.artoo.dto.*;
 import org.sopt.artoo.mapper.*;
 import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.TransactionReq;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -194,17 +196,27 @@ public class UserService {
      * @param userIdx 유저 인덱스
      * @return DefaultRes - List<Purchase>
      */
-    public DefaultRes<List<Purchase>> findUserPurchase(final int userIdx) {
+    public DefaultRes<List<TransactionReq>> findUserPurchase(final int userIdx) {
         if (userMapper.findByUidx(userIdx) == null) {
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
         } else {
-            List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
-            for (Purchase purchase : listTransaction) {
-                if (purchase.getP_buyer_idx() == userIdx) {
+            List<Purchase> listPurchase = purchaseMapper.findTransactionByUserIdx(userIdx);
+            ArrayList<TransactionReq> listTransaction = new ArrayList<>();
+            for (Purchase purchase : listPurchase) {
+                if(purchase.getP_buyer_idx()==userIdx){
                     purchase.setP_isBuyer(true);
                 } else {
                     purchase.setP_isBuyer(false);
                 }
+                TransactionReq transactionReq = new TransactionReq();
+                Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
+                transactionReq.setA_name(artwork.getA_name());
+                transactionReq.setPerson_name(userMapper.findByUidx(userIdx).getU_name());
+                transactionReq.setPicUrl(artworkPicMapper.findByArtIdx(artwork.getA_idx()));
+                transactionReq.setPrice(artwork.getA_price());
+                transactionReq.setDate(purchase.getP_date().toString());
+                transactionReq.setBuyer(purchase.isP_isBuyer());
+                listTransaction.add(transactionReq);
             }
             try {
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);

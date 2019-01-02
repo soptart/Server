@@ -47,6 +47,6 @@ public class ArtworkReq {
     private boolean a_active;
 
     public boolean checkProperties() {
-        return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null /*&&a_date!=null*/ && a_year!=null);
+        return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null && a_year!=null);
     }
 }

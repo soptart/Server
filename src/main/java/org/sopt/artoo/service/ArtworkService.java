@@ -141,8 +141,10 @@ public class ArtworkService {
                 artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
                 final int artIdx = artworkReq.getA_idx();
-                MultipartFile artwork = artworkReq.getPic_url();
-                artworkPicMapper.save(artIdx, s3FileUploadService.upload(artwork));
+                if(artworkReq.getPic_url()==null){
+                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
+                }
+                artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
             } catch (IOException e) {
                 log.info(e.getMessage());
