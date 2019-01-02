@@ -30,4 +30,7 @@ public interface ArtworkLikeMapper {
 
     @Delete("DELETE FROM artworkLike WHERE artworkLike.u_idx = #{u_idx} AND artworkLike.a_idx = #{a_idx}")
     void deleteByUserIdxAndArtworkIdx(@Param("u_idx") final int u_idx, @Param("a_idx") final int a_idx);
+
+    @Delete("DELETE FROM artworkLike WHERE artworkLike.a_idx = #{a_idx}")
+    void deleteByArtIdx(@Param("a_idx") final int a_idx);
 }

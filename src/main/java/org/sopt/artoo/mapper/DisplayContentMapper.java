@@ -40,4 +40,11 @@ public interface DisplayContentMapper {
 
     @Delete("DELETE FROM display_content WHERE u_idx=#{u_idx} and dc_idx=#{dc_idx}")
     void deleteByUidxAndDidx(@Param("u_idx") final int u_idx, @Param("dc_idx") final int dc_idx);
+
+    @Delete("DELETE FROM display_content WHERE a_idx=#{a_idx}")
+    void deleteByArtIdx(@Param("a_idx") final int a_idx);
+
+    @Select("SELECT * FROM display_content WHERE a_idx=#{a_idx}")
+    DisplayContent findByArtworkIdx(@Param("a_idx") final int a_idx);
+
 }

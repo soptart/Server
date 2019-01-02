@@ -158,23 +158,6 @@ public class ArtworkController {
         }
     }
 
-    @Auth
-    @DeleteMapping("/artworks/{a_idx}")
-    public ResponseEntity deleteArtwork(
-            @RequestHeader(value = "Authorization") final String header,
-            @PathVariable("a_idx") final int a_idx) {
-        try {
-            return new ResponseEntity<>(artworkService.deleteByArtIdx(a_idx), HttpStatus.OK);
-            //임시 주석
-            /*if(artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
-                return new ResponseEntity<>(artworkService.deleteByArtIdx(a_idx), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES,HttpStatus.OK);*/
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
 
     /**
      * 미술 작품 필터
@@ -224,6 +207,23 @@ public class ArtworkController {
         try {
             final int u_idx = jwtService.decode(header).getUser_idx();
             return new ResponseEntity<>(artworkService.saveArtworkLike(a_idx, u_idx), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Auth
+    @DeleteMapping("/artwork/delete/{a_idx}")
+    public ResponseEntity deleteArtwork(
+            @RequestHeader(value = "Authorization") final String header,
+            @PathVariable("a_idx") final int a_idx){
+        try {
+            if(jwtService.decode(header).getUser_idx() == artworkService.findByArtIdx(a_idx).getData().getU_idx()){
+                return new ResponseEntity<>(artworkService.deleteByArtIdx(a_idx), HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

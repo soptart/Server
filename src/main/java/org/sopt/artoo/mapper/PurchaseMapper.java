@@ -3,6 +3,7 @@ package org.sopt.artoo.mapper;
 import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.model.PurchaseReq;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -50,4 +51,18 @@ public interface PurchaseMapper {
      */
     @Select("SELECT * FROM purchase WHERE p_seller_idx=#{p_seller_idx} order by p_date DESC")
     List<Purchase> findBySellerIdx(@Param("p_seller_idx") final int p_seller_idx);
+
+    /**
+     * 미술작품 인덱스로 미완료 거래조회
+     */
+    @Select("SELECT * FROM purchase WHERE a_idx = #{a_idx} AND ((p_state BETWEEN 11 AND 13) OR (p_state BETWEEN 21 AND 23))")
+    List<Purchase> findUncompletedTransactions(@Param("a_idx") final int a_idx);
+
+    /**
+     * 미술작품 인덱스로 거래내역 조회
+     *
+     */
+    @Select("SELECT * FROM purchase WHERE a_idx = #{a_idx}")
+    List<Purchase> findTransactionsByArtIdx(@Param("a_idx") final int a_idx);
+
 }
