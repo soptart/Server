@@ -9,6 +9,11 @@ public class ResponseMessage {
     public static final String READ_ARTIST = "작가 정보 조회 성공";
     public static final String READ_PICTURES = "작품 정보 조회 성공";
 
+    /**
+     * Artwork
+     */
+    public static final String NOT_FOUND_PICTURES = "사진이 등록되지 않은 작품이 있습니다.";
+
 
     public static final String LOGIN_SUCCESS = "로그인 성공";
     public static final String LOGIN_FAIL = "로그인 실패";
