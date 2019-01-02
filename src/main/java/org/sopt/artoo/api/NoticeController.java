@@ -57,7 +57,7 @@ public class NoticeController {
      *
      * @param header     jwt token
      * @param user_idx  유저 idx
-     * @return ResponseEntity - List<Display>
+     * @return ResponseEntity
      */
     @GetMapping("/notices/sells/{user_idx}")
     public ResponseEntity getSells(@RequestHeader(value="Authorization" ,required = false) final String header,
@@ -74,7 +74,34 @@ public class NoticeController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    /**
+
+
+    /**
+     * 전시내역 조회
+     *
+     * @param header     jwt token
+     * @param user_idx  유저 idx
+     * @return ResponseEntity
+     */
+    @GetMapping("/notices/displays/{user_idx}")
+    public ResponseEntity getNoticeDisplayApply(@RequestHeader(value="Authorization" ,required = false) final String header,
+                                   @PathVariable(value="user_idx") final int user_idx){
+        try {
+            //권한 체크
+            if(jwtService.checkAuth(header, user_idx)){
+                final int u_idx = jwtService.decode(header).getUser_idx();
+                log.info(String.valueOf(u_idx));
+                return new ResponseEntity<>(noticeService.findNoticeDisplayApply(u_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    //    /**
 //     * 	후기 작성
 //     *
 //     * @param header     jwt token
@@ -122,29 +149,4 @@ public class NoticeController {
 //            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //    }
-
-    /**
-     * 전시내역 조회
-     *
-     * @param header     jwt token
-     * @param user_idx  유저 idx
-     * @return ResponseEntity - List<Display>
-     */
-    @GetMapping("/notices/displays/users/{user_idx}")
-    public ResponseEntity getNoticeDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header,
-                                   @PathVariable(value="user_idx") final int user_idx){
-        try {
-            //권한 체크
-            if(jwtService.checkAuth(header, user_idx)){
-                final int u_idx = jwtService.decode(header).getUser_idx();
-                log.info(String.valueOf(u_idx));
-
-                return new ResponseEntity<>(noticeService.findNoticeDisplayApply(u_idx), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
