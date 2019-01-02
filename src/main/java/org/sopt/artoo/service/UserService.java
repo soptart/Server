@@ -5,7 +5,6 @@ import org.sopt.artoo.dto.*;
 import org.sopt.artoo.mapper.*;
 import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.TransactionReq;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
@@ -196,30 +195,40 @@ public class UserService {
      * @param userIdx 유저 인덱스
      * @return DefaultRes - List<Purchase>
      */
-    public DefaultRes<List<TransactionReq>> findUserPurchase(final int userIdx) {
-        if (userMapper.findByUidx(userIdx) == null) {
+    @Transactional
+    public DefaultRes<List<UserPurchase>> findUserPurchase(final int userIdx) {
+        if (userMapper.findByUidx(userIdx) == null) { // 회원 존재 유무
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
         } else {
-            List<Purchase> listPurchase = purchaseMapper.findTransactionByUserIdx(userIdx);
-            ArrayList<TransactionReq> listTransaction = new ArrayList<>();
-            for (Purchase purchase : listPurchase) {
-                if(purchase.getP_buyer_idx()==userIdx){
-                    purchase.setP_isBuyer(true);
-                } else {
-                    purchase.setP_isBuyer(false);
+            try{
+                List<Purchase> listPurchase = purchaseMapper.findTransactionByUserIdx(userIdx); //유저 고유 번호에서 거래 목록 불러오기
+                if(!listPurchase.isEmpty()) {
+                    ArrayList<UserPurchase> listTransaction = new ArrayList<>();
+                    for (Purchase purchase : listPurchase) {
+                        if (purchase.getP_buyer_idx() == userIdx) {
+                            purchase.setP_isBuyer(true);
+                        } else {
+                            purchase.setP_isBuyer(false);
+                        }
+                        UserPurchase userPurchase = new UserPurchase();
+                        userPurchase.setP_idx(purchase.getP_idx());
+                        userPurchase.setA_idx(purchase.getA_idx());
+                        userPurchase.setA_name(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_name()); //조회 할때 비활성한 상품도 조회해야한다!
+                        userPurchase.setBuyer(purchase.isP_isBuyer());
+                        if (purchase.isP_isBuyer()) { //구매자일 경우
+                            userPurchase.setU_name(userMapper.findByUidx(purchase.getP_buyer_idx()).getU_name());
+                        } else {
+                            userPurchase.setU_name(userMapper.findByUidx(purchase.getP_seller_idx()).getU_name());
+                        }
+                        userPurchase.setA_price(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_price());
+                        userPurchase.setP_state(purchase.getP_state());
+                        userPurchase.setA_picUrl(artworkPicMapper.findByArtIdx(purchase.getA_idx()).getPic_url());
+                        userPurchase.setP_date(purchase.getP_date().toString());
+                        listTransaction.add(userPurchase);
+                    }
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
                 }
-                TransactionReq transactionReq = new TransactionReq();
-                Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
-                transactionReq.setA_name(artwork.getA_name());
-                transactionReq.setPerson_name(userMapper.findByUidx(userIdx).getU_name());
-                transactionReq.setPicUrl(artworkPicMapper.findByArtIdx(artwork.getA_idx()));
-                transactionReq.setPrice(artwork.getA_price());
-                transactionReq.setDate(purchase.getP_date().toString());
-                transactionReq.setBuyer(purchase.isP_isBuyer());
-                listTransaction.add(transactionReq);
-            }
-            try {
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
@@ -252,21 +261,34 @@ public class UserService {
      * @param userIdx 유저 인덱스
      * @return DefaultRes - List<Purchase>
      */
-    public DefaultRes<List<Purchase>> findUserTransReview(final int userIdx) {
+    public DefaultRes<List<UserReview>> findUserTransReview(final int userIdx) {
         List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
-        List<Purchase> listFinishedTrans = new LinkedList<>();
-        for (Purchase P : listTransaction) {
-            if (P.getP_state() == 10) { //10이 거래 완료라고 가정! 추후 수정 필요
-                listFinishedTrans.add(P);
+        List<UserReview> listFinishedTrans = new LinkedList<>();
+        if(userMapper.findByUidx(userIdx) != null) {
+            try {
+                for (Purchase p : listTransaction) {
+                    if (p.getP_state() == 14 && p.isP_isBuyer() == false) { //10이 거래 완료라고 가정! 추후 수정 필요 && 판매자 여야함
+                        UserReview userReview = new UserReview();
+                        userReview.setP_idx(p.getP_idx());
+                        userReview.setA_name(artworkMapper.findAllArtworkByIdx(p.getA_idx()).getA_name());
+                        userReview.setU_name(userMapper.findByUidx(p.getP_buyer_idx()).getU_name());
+                        userReview.setP_comment(p.getP_comment());
+                        userReview.setP_date(p.getP_date().toString());
+                        userReview.setA_picUrl(artworkPicMapper.findByArtIdx(p.getA_idx()).getPic_url());
+                        listFinishedTrans.add(userReview);
+                    }
+                }
+                if(!listFinishedTrans.isEmpty()) {
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_FINISHED_TRANSACTION, listFinishedTrans);
+                }
+                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        try {
-            return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_FINISHED_TRANSACTION, listFinishedTrans);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error(e.getMessage());
-            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-        }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     /**
