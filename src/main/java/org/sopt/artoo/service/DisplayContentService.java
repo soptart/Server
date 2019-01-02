@@ -49,7 +49,7 @@ public class DisplayContentService {
         log.info(d_title);
         List<DisplayContentRes> dcList = displayContentMapper.findArtworksByDisplayIdx(d_idx);
 
-//         전시회에 신청한 작품이 없을 경우
+        //전시회에 신청한 작품이 없을 경우
         if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_DISPLAYCONTENT); }
 
         for(DisplayContentRes displayContent : dcList) {
@@ -102,13 +102,13 @@ public class DisplayContentService {
      * 전시신청
      *
      * @param displayReq 전시 컨텐츠
-     * @return DefaultRes
+     * @return DefaultRes DisplayApplyConfirmRes
      */
     @Transactional
     public DefaultRes save(final DisplayReq displayReq) {
         if(displayReq.checkProperties()){
             // 이미 등록된 전시인지 확인
-            if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
+            if(displayContentMapper.findByUidxAndDidx(displayReq.getU_idx(), displayReq.getD_idx()) == null){
                 try{
                     displayContentMapper.save(displayReq);
                     Artwork a = artworkMapper.findByIdx(displayReq.getA_idx());
@@ -134,33 +134,6 @@ public class DisplayContentService {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_DISPLAY);
     }
 
-//    /**
-//     * 전시내역 - 알림
-//     *
-//     * @param user_idx user_idx
-//     * @return DefaultRes
-//     */
-//    public DefaultRes findByUidx(final int user_idx) {
-//        if(displayReq.checkProperties()){
-//            // 이미 등록된 전시인지 확인
-//            if(displayContentMapper.findByUidxAndDidx(displayReq) == null){
-//                try{
-//                    int idx = displayContentMapper.save(displayReq);
-//                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, idx);
-//                }catch(Exception e){
-//                    log.info(e.getMessage());
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-//                }
-//            }else {
-//                //이미 전시에 등록한 경우
-//                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
-//            }
-//        }
-//        // 요청 바디 부족
-//        else
-//            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_DISPLAY);
-//    }
 
     /**
      * 전시신청 취소
