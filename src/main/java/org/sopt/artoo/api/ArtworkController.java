@@ -229,6 +229,4 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 }
