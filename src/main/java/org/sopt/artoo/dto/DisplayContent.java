@@ -10,8 +10,8 @@ public class DisplayContent {
     private int dc_idx;
     // artwork idx
     private int a_idx;
-    // artwork idx
+    // user idx
     private int u_idx;
-    // artwork idx
+    // display idx
     private int d_idx;
 }

@@ -1,16 +1,9 @@
 package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.dto.Purchase;
-import org.sopt.artoo.dto.User;
-import org.sopt.artoo.mapper.ArtworkMapper;
-import org.sopt.artoo.mapper.PurchaseMapper;
-import org.sopt.artoo.mapper.UserMapper;
-import org.sopt.artoo.model.DateRes;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.DisplayContentRes;
-import org.sopt.artoo.model.NoticeRes;
+import org.sopt.artoo.dto.*;
+import org.sopt.artoo.mapper.*;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -25,11 +18,15 @@ public class NoticeService {
     private PurchaseMapper purchaseMapper;
     private ArtworkMapper artworkMapper;
     private UserMapper userMapper;
+    private DisplayContentMapper displayContentMapper;
+    private DisplayMapper displayMapper;
 
-    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper) {
+    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper, DisplayContentMapper displayContentMapper, DisplayMapper displayMapper) {
         this.purchaseMapper = purchaseMapper;
         this.artworkMapper = artworkMapper;
         this.userMapper = userMapper;
+        this.displayContentMapper = displayContentMapper;
+        this.displayMapper = displayMapper;
     }
 
     /**
@@ -118,9 +115,34 @@ public class NoticeService {
      * 전시내역 조회
      *
      * @param u_idx  유저 idx
-     * @return DefaultRes - List<Display>
+     * @return DefaultRes - List<DisplayRes>
      */
-//    public DefaultRes findDisplayApply(final int u_idx) {
-//        DisplayContentRes displayContentRes =
-//    }
+    public DefaultRes findNoticeDisplayApply(final int u_idx) {
+        List<Display> displayList = displayMapper.findAllDisplay();
+        List<Integer> displayIdxs = new ArrayList<Integer>();
+
+        // 신청 중인 전시
+        for(Display display : displayList){
+            if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){ displayIdxs.add(display.getD_idx()); }
+        }
+
+        // user가 신청 중인 전시
+        List<DisplayContent> displayContentList = new ArrayList<DisplayContent>();
+        for(int d_idx: displayIdxs){
+            displayContentList.add(displayContentMapper.findByUidxAndDidx(u_idx, d_idx));
+        }
+
+        // 신청 중인 전시 반환 리스트 생성
+        List<DisplayRes> displayResList = new ArrayList<>();
+
+        for(DisplayContent displayContent :  displayContentList){
+            User user = userMapper.findByUidx(displayContent.getU_idx());
+            Artwork artwork = artworkMapper.findByIdx(displayContent.getA_idx());
+            Display display = displayMapper.findByDisplayidx(displayContent.getD_idx());
+
+            DisplayRes displayRes = new DisplayRes(display, artwork.getA_idx(),artwork.getA_name(),user.getU_idx(), user.getU_name());
+            displayResList.add(displayRes);
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLY, displayResList);
+    }
 }

@@ -1,5 +1,6 @@
 package org.sopt.artoo.mapper;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,4 +17,7 @@ public interface DisplayMapper {
 
     @Select("SELECT * FROM display WHERE d_idx=#{d_idx}")
     Display findByDisplayidx(@Param("d_idx") final int d_idx);
+
+    @Delete("DELETE FROM display WHERE d_idx=#{d_idx}")
+    void deleteByDisplayIdx(@Param("d_idx") final int d_idx);
 }

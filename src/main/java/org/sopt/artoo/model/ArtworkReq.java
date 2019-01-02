@@ -41,6 +41,10 @@ public class ArtworkReq {
     private String a_tags;
     // 작품 라이센스
     private String a_license;
+    // 작품 사이즈(이거는 요구하지 않음)
+    private int a_size;
+    // 작품 활성화/비활성화
+    private boolean a_active;
 
     public boolean checkProperties() {
         return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null /*&&a_date!=null*/ && a_year!=null);

@@ -27,5 +27,11 @@ public interface CommentMapper {
     @Update("UPDATE comment SET c_content = #{commentReq.c_content}, c_date = #{commentReq.c_date} WHERE c_idx = #{commentReq.c_idx}")
     void updateComment(@Param("commentReq") final CommentReq commentReq);
 
+    @Delete("DELETE FROM comment WHERE c_idx = #{c_idx}")
+    void deleteCommentByCommentIdx(@Param("c_idx") final int c_idx);
+
+    @Delete("DELETE FROM comment WHERE a_idx = #{a_idx}")
+    void deleteByArtIdx(@Param("a_idx") final int a_idx);
+
 
 }

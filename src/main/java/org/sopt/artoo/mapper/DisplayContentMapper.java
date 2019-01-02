@@ -18,8 +18,8 @@ public interface DisplayContentMapper {
     List<DisplayContent> findDisplayContentByDisplay(@Param("d_idx") final int d_idx);
 
     // 전시 컨텐츠 테이블에서 이미 등록된 전시인지 확인
-    @Select("SELECT * FROM display_content WHERE u_idx = #{displayReq.u_idx} and d_idx=#{displayReq.d_idx}")
-    DisplayContent findByUidxAndDidx(@Param("displayReq") final DisplayReq displayReq);
+    @Select("SELECT * FROM display_content WHERE u_idx = #{u_idx} and d_idx=#{d_idx}")
+    DisplayContent findByUidxAndDidx(@Param("u_idx") final int u_idx, @Param("d_idx") final int d_idx);
 
     @Select("SELECT * FROM display_content WHERE dc_idx = #{dc_idx}")
     DisplayContent findByDisplayContentIdx(@Param("dc_idx") final int dc_idx);
@@ -40,4 +40,11 @@ public interface DisplayContentMapper {
 
     @Delete("DELETE FROM display_content WHERE u_idx=#{u_idx} and dc_idx=#{dc_idx}")
     void deleteByUidxAndDidx(@Param("u_idx") final int u_idx, @Param("dc_idx") final int dc_idx);
+
+    @Delete("DELETE FROM display_content WHERE a_idx=#{a_idx}")
+    void deleteByArtIdx(@Param("a_idx") final int a_idx);
+
+    @Select("SELECT * FROM display_content WHERE a_idx=#{a_idx}")
+    DisplayContent findByArtworkIdx(@Param("a_idx") final int a_idx);
+
 }

@@ -1,22 +1,11 @@
 package org.sopt.artoo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.dto.ArtworkPic;
-import org.sopt.artoo.dto.PurchaseProduct;
-import org.sopt.artoo.dto.ArtworkPic;
-import org.sopt.artoo.dto.ArtworkPic;
+import org.sopt.artoo.dto.*;
+import org.sopt.artoo.mapper.*;
+import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.ArtworkPicMapper;
-import org.sopt.artoo.model.ArtworkFilterReq;
-import org.sopt.artoo.dto.User;
-import org.sopt.artoo.dto.ArtworkLike;
-import org.sopt.artoo.mapper.ArtworkMapper;
-import org.sopt.artoo.mapper.ArtworkPicMapper;
-import org.sopt.artoo.model.ArtworkFilterReq;
-import org.sopt.artoo.mapper.PurchaseMapper;
-import org.sopt.artoo.mapper.UserMapper;
-import org.sopt.artoo.mapper.ArtworkLikeMapper;
 import org.sopt.artoo.model.ArtworkReq;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.PurchaseReq;
@@ -31,7 +20,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,15 +33,20 @@ public class ArtworkService {
     private final ArtworkLikeMapper artworkLikeMapper;
     private final S3FileUploadService s3FileUploadService;
     private final PurchaseMapper purchaseMapper;
+    private final CommentMapper commentMapper;
+    private final DisplayContentMapper displayContentMapper;
+    private final DisplayMapper displayMapper;
 
-    public ArtworkService(ArtworkMapper artworkMapper, ArtworkPicMapper artworkPicMapper, S3FileUploadService s3FileUploadService,
-                          ArtworkLikeMapper artworkLikeMapper, UserMapper userMapper, PurchaseMapper purchaseMapper) {
+    public ArtworkService(ArtworkMapper artworkMapper, ArtworkPicMapper artworkPicMapper, UserMapper userMapper, ArtworkLikeMapper artworkLikeMapper, S3FileUploadService s3FileUploadService, PurchaseMapper purchaseMapper, CommentMapper commentMapper, DisplayContentMapper displayContentMapper, DisplayMapper displayMapper) {
         this.artworkMapper = artworkMapper;
         this.artworkPicMapper = artworkPicMapper;
         this.userMapper = userMapper;
-        this.s3FileUploadService = s3FileUploadService;
         this.artworkLikeMapper = artworkLikeMapper;
+        this.s3FileUploadService = s3FileUploadService;
         this.purchaseMapper = purchaseMapper;
+        this.commentMapper = commentMapper;
+        this.displayContentMapper = displayContentMapper;
+        this.displayMapper = displayMapper;
     }
 
     /**
@@ -182,14 +175,29 @@ public class ArtworkService {
     /**
      * 컨텐츠 삭제
      *
-     * @param artIdx 컨텐츠 고유 번호
+     * @param artIdx
      * @return DefaultRes
      */
     @Transactional
     public DefaultRes deleteByArtIdx(final int artIdx) {
         try {
-            artworkMapper.deleteByArtIdx(artIdx);
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.DELETE_CONTENT);
+            if(purchaseMapper.findTransactionsByArtIdx(artIdx).isEmpty()){
+                artworkLikeMapper.deleteByArtIdx(artIdx);
+                artworkPicMapper.deleteByArtIdx(artIdx);
+                commentMapper.deleteByArtIdx(artIdx);
+                DisplayContent displayContent = displayContentMapper.findByArtworkIdx(artIdx);
+                if(displayContent!=null){
+                    displayMapper.deleteByDisplayIdx(displayContent.getD_idx());
+                }
+                displayContentMapper.deleteByArtIdx(artIdx);
+                artworkMapper.deleteByArtIdx(artIdx);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.DELETE_CONTENT);
+            }else{
+                Artwork artwork = artworkMapper.findByIdx(artIdx);
+                artwork.setA_active(false);
+                artworkMapper.updateByArtIdx(artwork, artIdx);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UNCOMPLETED_PURCHASE);
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

@@ -14,7 +14,7 @@ public interface ArtworkMapper {
      *
      * @return 미술작품전체
      */
-    @Select("SELECT * FROM artwork ORDER BY artwork.a_date DESC")
+    @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
     List<Artwork> findAll();
 
     /**
@@ -23,7 +23,7 @@ public interface ArtworkMapper {
      * @param a_idx
      * @return 미술작품객체
      */
-    @Select("SELECT * FROM artwork WHERE a_idx = #{a_idx}")
+    @Select("SELECT * FROM artwork WHERE a_idx = #{a_idx} AND a_active = 1")
     Artwork findByIdx(@Param("a_idx") final int a_idx);
 
     /**
@@ -32,7 +32,7 @@ public interface ArtworkMapper {
      * @param u_idx
      * @return 미술작품객체 리스트
      */
-    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx}")
+    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx} AND a_active = 1")
     List<Artwork> findArtworkByUserIdx(@Param("u_idx") final int u_idx);
 
 
@@ -48,8 +48,8 @@ public interface ArtworkMapper {
     @Options(useGeneratedKeys = true, keyProperty = "artworkReq.a_idx")
     void save(@Param("artworkReq") final ArtworkReq artworkReq);
 
-    @Update("UPDATE artwork SET a_name = #{artworkReq.a_name}, a_width = #{artworkReq.a_width}, a_height = #{artworkReq.a_height}, a_depth = #{artworkReq.a_depth}, a_category = #{artworkReq.a_category}, a_form = #{artworkReq.a_form}, a_price = #{artworkReq.a_price}, a_like_count = #{artworkReq.a_like_count}, a_detail = #{artworkReq.a_detail}, a_date = #{artworkReq.a_date}, a_year = #{artworkReq.a_year} WHERE a_idx = #{a_idx}")
-    void updateByArtIdx(@Param("artworkReq") final ArtworkReq artworkReq, @Param("a_idx") final int a_idx);
+    @Update("UPDATE artwork SET a_name = #{artworkReq.a_name}, a_width = #{artworkReq.a_width}, a_height = #{artworkReq.a_height}, a_depth = #{artworkReq.a_depth}, a_category = #{artworkReq.a_category}, a_form = #{artworkReq.a_form}, a_price = #{artworkReq.a_price}, a_like_count = #{artworkReq.a_like_count}, a_detail = #{artworkReq.a_detail}, a_date = #{artworkReq.a_date}, a_year = #{artworkReq.a_year}, a_active = #{artworkReq.a_active} WHERE a_idx = #{a_idx}")
+    void updateByArtIdx(@Param("artworkReq") final Artwork artworkReq, @Param("a_idx") final int a_idx);
 
     @Delete("DELETE FROM artwork WHERE a_idx = #{a_idx}")
     void deleteByArtIdx(@Param("a_idx") final int a_idx);
@@ -66,7 +66,7 @@ public interface ArtworkMapper {
      *
      * @return a_tags, a_idx
      */
-    @Select("SELECT a_tags, a_idx FROM artwork")
+    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1")
     List<Artwork> findTagsArtworkIdx();
 
 
@@ -78,7 +78,7 @@ public interface ArtworkMapper {
      * min_size, max_size 클라에서 'S', 'M' 인지 받아서 S면 min_size = 0, max_size = 2411 설정해서 a_idx받아오기,
      * ArtworkPicMapper findByArtIdx 함수 이용해서 art_pic 받아오기
      */
-    @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size}")
+    @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size} AND a_active = 1")
     List<Integer> findArtIdxBySize(@Param("min_size") final int min_size, @Param("max_size") final int max_size);
 
     /**
@@ -86,13 +86,13 @@ public interface ArtworkMapper {
      * @param a_form
      * @return a_idx
      */
-    @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form}")
+    @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form} AND a_active = 1")
     List<Integer> findArtIdxByForm(@Param("a_form") final String a_form);
 
     /**
      * 미술 작품 카테고리(인물, 동물, 식물, 사물, 추상, 풍경)
      */
-    @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category}")
+    @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1")
     List<Integer> findArtIdxByCategory(@Param("a_category") final String a_category);
 
 

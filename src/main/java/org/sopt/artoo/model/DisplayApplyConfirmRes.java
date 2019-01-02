@@ -8,6 +8,7 @@ public class DisplayApplyConfirmRes {
     private String d_title;
     private String d_subTitle;
 
+
     private int u_idx;
     private String u_name;
 
