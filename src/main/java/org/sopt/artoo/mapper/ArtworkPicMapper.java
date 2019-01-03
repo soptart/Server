@@ -28,6 +28,9 @@ public interface ArtworkPicMapper {
     @Insert("INSERT INTO artworkPic(a_idx, pic_url) VALUES(#{a_idx}, #{pic_url})")
     void save(@Param("a_idx") final int a_idx, @Param("pic_url") final String pic_url);
 
+    @Update("UPDATE artworkPic SET pic_url = #{pic_url} WHERE a_idx = #{a_idx}")
+    void update(@Param("a_idx") final int a_idx, @Param("pic_url") final String pic_url);
+
     @Delete("DELETE FROM artworkPic WHERE a_idx = #{a_idx}")
     void deleteByArtIdx(@Param("a_idx") final int a_idx);
 

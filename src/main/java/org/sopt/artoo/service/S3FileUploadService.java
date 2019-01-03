@@ -52,6 +52,7 @@ public class S3FileUploadService {
             file.delete();
         }catch (StringIndexOutOfBoundsException e) {
             //파일이 없을 경우 예외 처리
+            log.info("url이 null이 되어버림");
             url = null;
         }
         return url;

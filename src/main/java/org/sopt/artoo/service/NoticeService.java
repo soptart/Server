@@ -113,6 +113,32 @@ public class NoticeService {
     }
 
     /**
+     * 구매 후기 작성
+     * @param u_idx
+     * @param p_idx
+     * @param p_comment
+     * @return
+     */
+    public DefaultRes trySavePurchaseComment(final int u_idx, final int p_idx, final String p_comment){
+        try {
+            Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
+            if (purchase.getP_buyer_idx()==u_idx){
+                purchaseMapper.updatePurchaseComment(p_idx, p_comment);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
+            }else{
+                return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
+
+    /*public DefaultRes refundPurchase(final int u_idx, final int p_idx){
+        Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
+    }*/
+
+    /**
      * 전시내역 조회
      *
      * @param u_idx  유저 idx

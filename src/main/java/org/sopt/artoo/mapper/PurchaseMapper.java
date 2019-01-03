@@ -65,4 +65,14 @@ public interface PurchaseMapper {
     @Select("SELECT * FROM purchase WHERE a_idx = #{a_idx}")
     List<Purchase> findTransactionsByArtIdx(@Param("a_idx") final int a_idx);
 
+    @Select("SELECT * FROM purchase WHERE p_idx = #{p_idx}")
+    Purchase findPurchaseByPurchaseIdx(@Param("p_idx") final int p_idx);
+
+    /**
+     * purchase 인덱스로 purchase 업데이트 하기
+     * @param p_idx
+     */
+    @Update("UPDATE purchase SET p_comment = #{p_comment} WHERE p_idx = #{p_idx}")
+    void updatePurchaseComment(@Param("p_idx") final int p_idx, @Param("p_comment") final String p_comment);
+
 }
