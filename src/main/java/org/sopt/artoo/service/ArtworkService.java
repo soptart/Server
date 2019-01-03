@@ -137,13 +137,14 @@ public class ArtworkService {
     public DefaultRes save(final ArtworkReq artworkReq) {
         if (artworkReq.checkProperties()) {
             try {
+                log.info("artwork url: "+artworkReq.getPic_url().toString());
+                if(artworkReq.getPic_url()==null){
+                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
+                }
                 Date date = new Date();
                 artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
                 final int artIdx = artworkReq.getA_idx();
-                if(artworkReq.getPic_url()==null){
-                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
-                }
                 artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
             } catch (IOException e) {
@@ -151,7 +152,6 @@ public class ArtworkService {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
-
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
     }
@@ -164,14 +164,25 @@ public class ArtworkService {
      */
     @Transactional
     public DefaultRes update(final ArtworkReq artworkReq) {
-        try {
-            Artwork artwork = findByArtIdx(artworkReq.getA_idx()).getData();
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT, artwork);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        if (artworkReq.checkProperties()) {
+            try {
+                log.info("artwork url: "+artworkReq.getPic_url().toString());
+                if(artworkReq.getPic_url()==null){
+                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
+                }
+                Date date = new Date();
+                artworkReq.setA_date(date);
+                artworkReq.setA_active(true);
+                artworkPicMapper.update(artworkReq.getA_idx(), s3FileUploadService.upload(artworkReq.getPic_url()));
+                artworkMapper.updateByArtIdxReq(artworkReq, artworkReq.getA_idx());
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT, artworkReq);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
         }
+        return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_CONTENT);
     }
 
     /**
@@ -215,7 +226,7 @@ public class ArtworkService {
      * @return boolean
      */
     public boolean checkAuth(final int userIdx, final int artIdx) {
-        return userIdx == findByArtIdx(artIdx).getData().getU_idx();
+        return userIdx == artworkMapper.findByIdx(artIdx).getU_idx();
     }
 
     /**
