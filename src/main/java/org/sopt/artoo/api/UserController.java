@@ -2,7 +2,6 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.MyArtwork;
-import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.dto.UserPurchase;
 import org.sopt.artoo.dto.UserReview;
 import org.sopt.artoo.model.DefaultRes;
