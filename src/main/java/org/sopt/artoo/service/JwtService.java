@@ -8,6 +8,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -98,23 +99,19 @@ public class JwtService {
     }
 
     //반환될 토큰Res
+    @Data
     public static class TokenRes {
         //실제 토큰
         private String token;
+        //userIdx 반환
+        private int userIdx;
 
         public TokenRes() {
         }
 
-        public TokenRes(final String token) {
+        public TokenRes(final String token, final int userIdx) {
             this.token = token;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
+            this.userIdx = userIdx;
         }
     }
     /**
