@@ -166,7 +166,8 @@ public class ArtworkService {
     public DefaultRes update(final ArtworkReq artworkReq) {
         if (artworkReq.checkProperties()) {
             try {
-                log.info("artwork url: "+artworkReq.getPic_url().toString());
+                log.info("update artwork url: "+artworkReq.getPic_url().toString());
+                log.info("file name: "+artworkReq.getPic_url().getOriginalFilename());
                 if(artworkReq.getPic_url()==null){
                     return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
                 }

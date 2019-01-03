@@ -140,13 +140,14 @@ public class ArtworkController {
      * @param artworkReq 미술작품 데이터
      * @return
      */
+
     @Auth
     @PutMapping("/artworks")
     public ResponseEntity updateArtwork(
             @RequestHeader(value = "Authorization") final String header,
             final ArtworkReq artworkReq, final MultipartFile picUrl) {
         try {
-            //log.info(picUrl.toString());
+            log.info(picUrl.toString());
             if (picUrl.isEmpty()){
                 return new ResponseEntity<>(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE), HttpStatus.INTERNAL_SERVER_ERROR);
             }
