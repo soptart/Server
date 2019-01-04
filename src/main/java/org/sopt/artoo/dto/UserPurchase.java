@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class UserPurchase {
-    //MyPage 거래내역
+    //MyPageRes 거래내역
     private int p_idx;
     // 구매 인덱스
     private int a_idx;

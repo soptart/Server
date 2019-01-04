@@ -95,22 +95,24 @@ public class UserService {
      * @return DefaultRes - List<Artwork>
      */
     @Transactional
-    public DefaultRes<List<MyArtwork>> findUserWork(final int userIdx) {
+    public MyPageRes findUserWork(final int userIdx) {
+        String userDes = findUserDescription(userIdx);
         List<Artwork> listArt = artworkMapper.findArtworkByUserIdx(userIdx);
-        if(userMapper.findByUidx(userIdx)!=null) {
+        if(userMapper.findByUidx(userIdx) != null) {
             List<MyArtwork> myArtworks  = findMyArtWorklist(userIdx, listArt);
             if (!myArtworks.isEmpty()) {
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, myArtworks);
+                return MyPageRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, myArtworks, myArtworks.size(), userDes);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+            return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        return  DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return  MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     public List<MyArtwork> findMyArtWorklist(final int userIdx, List<Artwork> listArt){ //주어진 Artwork List -> 작품 번호, 사진 번호, 전시 상태 찾기
         List<Display> listDisplay = displayMapper.findAllDisplay();
         List<Display> curDisplay = new LinkedList<>();
         List<Integer> curDisplayContentAidx = new LinkedList<>();
+
         try {
             //전시 중인 display 찾기
             for (Display d : listDisplay) {
@@ -164,9 +166,10 @@ public class UserService {
      * @return DefaultRes - List<ArtworkLike>
      */
     @Transactional
-    public DefaultRes<List<MyArtwork>> findUserLikes(final int userIdx) {
+    public MyPageRes findUserLikes(final int userIdx) {
         List<ArtworkLike> listUserLike = artworkLikeMapper.findArtworkLikeByUserIdx(userIdx); //유저 ArtworkLike 객체 호출
         List<Artwork> listArtworks = new LinkedList<>();
+        String userDes = findUserDescription(userIdx);
         for(ArtworkLike a : listUserLike){  // ArtworkLike -> artwork List로 변환
             Artwork artwork = artworkMapper.findByIdx(a.getA_idx());
             if(artwork != null) { // 비활성화 artwork 제외
@@ -177,16 +180,16 @@ public class UserService {
             try {
                 List<MyArtwork> myArtworks = findMyArtWorklist(userIdx, listArtworks); //userIdx와 artworkList로 Mypage에 해당하는 형식으로 변환
                 if(!myArtworks.isEmpty()) {
-                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_LIKES, myArtworks);
+                    return MyPageRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_LIKES, myArtworks, myArtworks.size(), userDes);
                 }
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.NOT_FOUND_CONTENT);
+                return MyPageRes.res(StatusCode.CREATED, ResponseMessage.NOT_FOUND_CONTENT);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                return MyPageRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
     /**
@@ -196,9 +199,10 @@ public class UserService {
      * @return DefaultRes - List<Purchase>
      */
     @Transactional
-    public DefaultRes<List<UserPurchase>> findUserPurchase(final int userIdx) {
+    public MyPageRes findUserPurchase(final int userIdx) {
+        String userDes = findUserDescription(userIdx);
         if (userMapper.findByUidx(userIdx) == null) { // 회원 존재 유무
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+            return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
         } else {
             try{
                 List<Purchase> listPurchase = purchaseMapper.findTransactionByUserIdx(userIdx); //유저 고유 번호에서 거래 목록 불러오기
@@ -226,33 +230,15 @@ public class UserService {
                         userPurchase.setP_date(purchase.getP_date().toString());
                         listTransaction.add(userPurchase);
                     }
-                    return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
+                    return MyPageRes.res(StatusCode.OK, ResponseMessage.READ_ALL_TRANSACTION, listTransaction, listTransaction.size(), userDes);
                 }
-                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT);
+                return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                return MyPageRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        /*if(userMapper.findByUidx(userIdx) != null) {
-            for(Purchase P : listTransaction){
-                if(P.getU_idx() == userIdx){
-                    P.setP_isBuyer(true);
-                }
-                else{
-                    P.setP_isBuyer(false);
-                }
-            }
-            try {
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_ALL_TRANSACTION, listTransaction);
-            } catch (Exception e) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-            }
-        }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);*/
     }
 
     /**
@@ -261,9 +247,10 @@ public class UserService {
      * @param userIdx 유저 인덱스
      * @return DefaultRes - List<Purchase>
      */
-    public DefaultRes<List<UserReview>> findUserTransReview(final int userIdx) {
+    public MyPageRes findUserTransReview(final int userIdx) {
         List<Purchase> listTransaction = purchaseMapper.findTransactionByUserIdx(userIdx);
         List<UserReview> listFinishedTrans = new LinkedList<>();
+        String userDes = findUserDescription(userIdx);
         if(userMapper.findByUidx(userIdx) != null) {
             try {
                 for (Purchase p : listTransaction) {
@@ -279,36 +266,21 @@ public class UserService {
                     }
                 }
                 if(!listFinishedTrans.isEmpty()) {
-                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.READ_FINISHED_TRANSACTION, listFinishedTrans);
+                    return MyPageRes.res(StatusCode.CREATED, ResponseMessage.READ_FINISHED_TRANSACTION, listFinishedTrans, listFinishedTrans.size(), userDes);
                 }
-                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+                return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                return MyPageRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
-    /**
-     * 유저 자기 소개 반환
-     *
-     * @param userIdx 유저 인덱스
-     * @return DefaultRes - List<Purchase>
-     */
-    public DefaultRes<String> findUserDescription(final int userIdx) {
+    public String findUserDescription(final int userIdx) {
         final String userDescription = userMapper.findByUidx(userIdx).getU_description();
-        if (userMapper.findByUidx(userIdx) != null) {
-            try {
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, userDescription);
-            } catch (Exception e) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-            }
-        }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return userDescription;
     }
 
     /**
@@ -328,4 +300,5 @@ public class UserService {
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
     }
+
 }
