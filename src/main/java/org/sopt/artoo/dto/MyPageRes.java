@@ -14,31 +14,35 @@ public class MyPageRes<T> {
 
     private String message;
 
+    private String u_name;
+
+    private String u_description;
+
     private T data;
 
     private int dataNum;
 
-    private String userDescription;
-
-
     public MyPageRes(final int status, final String message){
         this.status = status;
         this.message = message;
+        this.u_name = u_name;
+        this.u_description = null;
         this.data = null;
         this.dataNum = 0;
-        this.userDescription = null;
+
     }
 
     public static <T> MyPageRes<T> res(final int status, final String message) {
-        return res(status, message, null, 0, null);
+        return res(status, message, null, null, null, 0);
     }
 
-    public static <T> MyPageRes<T> res(final int status, final String message, final T t, final int dataNum, final String Description) {
+    public static <T> MyPageRes<T> res(final int status, final String message, final String u_name, final String Description, final T t, final int dataNum) {
         return MyPageRes.<T>builder()
                 .status(status)
                 .message(message)
+                .u_name(u_name)
+                .u_description(Description)
                 .data(t)
-                .userDescription(Description)
                 .dataNum(dataNum)
                 .build();
     }
