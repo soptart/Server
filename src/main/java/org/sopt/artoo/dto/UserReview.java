@@ -14,6 +14,6 @@ public class UserReview {
     // 구매자 리뷰
     private String p_date;
     // 구매일
-    private String a_picUrl;
+    private String a_pic_url;
     // 작품 사진 Url
 }
