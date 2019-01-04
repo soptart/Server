@@ -142,7 +142,6 @@ public class ArtworkController {
      * @param artworkReq 미술작품 데이터
      * @return
      */
-
     @Auth
     @PutMapping("/artworks")
     public ResponseEntity updateArtwork(
@@ -175,7 +174,7 @@ public class ArtworkController {
      * 미술 작품 필터
      * @param artworkFilterReq
      */
-    @GetMapping("/artworks/filter")
+    @PostMapping("/artworks/filter")
     public ResponseEntity filterArtwork(
             @RequestBody final ArtworkFilterReq artworkFilterReq) {
         try {

@@ -17,7 +17,7 @@ public class DateRes {
      */
     public static String getDate() {
         Date date = new Date();
-        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String date_parse = dt.format(date);
 //        log.info(date_parse);
         return date_parse;
