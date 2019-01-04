@@ -147,6 +147,8 @@ public class ArtworkController {
     public ResponseEntity updateArtwork(
             @RequestHeader(value = "Authorization") final String header,
             final ArtworkReq artworkReq, final MultipartFile pic_url) {
+
+        ResponseEntity re = null;
         try {
             log.info(pic_url.toString());
             if (pic_url.isEmpty()){
@@ -176,7 +178,7 @@ public class ArtworkController {
     public ResponseEntity filterArtwork(
             @RequestBody final ArtworkFilterReq artworkFilterReq) {
         try {
-            DefaultRes<Artwork> defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
+            DefaultRes defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());

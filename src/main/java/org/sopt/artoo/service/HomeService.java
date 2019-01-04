@@ -52,6 +52,7 @@ public class HomeService {
                 Home todayArtist = new Home();
                 todayArtist.setU_idx(todayUserIdxList.get(i));
                 todayArtist.setU_name(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_name());
+                todayArtist.setU_school(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_school());
                 todayArtist.setU_description(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_description());
                 todayArtist.setList(artPicData);
 
