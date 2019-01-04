@@ -144,9 +144,11 @@ public class ArtworkService {
                 Date date = new Date();
                 artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
+
                 final int artIdx = artworkReq.getA_idx();
                 artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
+
             } catch (IOException e) {
                 log.info(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

@@ -78,7 +78,12 @@ public class DisplayContentService {
 
             // 유저 작품이 없을 경우-> null
             if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
-            else{ displayApplyRes.setArtworks(artworkMapper.findArtworkByUserIdx(u_idx));}
+            else{
+                for(Artwork artwork : artworks){
+                    artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                }
+                displayApplyRes.setArtworks(artworks);
+            }
 
             List<Display> Alldisplays = displayMapper.findAllDisplay();
             List<Display> nowDisplay = new ArrayList<Display>();

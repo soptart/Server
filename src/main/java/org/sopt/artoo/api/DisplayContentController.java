@@ -46,13 +46,13 @@ public class DisplayContentController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     /**
      * 전시신청서
      *
      * @param header      jwt token
      * @return ResponseEntity - List<DisplayApplyRes>
      */
-
     @GetMapping("/discontents/application/{user_idx}")
     public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header,
                                           @PathVariable(value="user_idx") final int user_idx) {

@@ -22,14 +22,13 @@ public class DisplayRes {
 
     private String dc_date;
 
-    public DisplayRes(Display display, int a_idx, String a_name, int u_idx, String u_name, int state, Date dc_date) throws Exception{
-        this.display = display;
-        this.a_idx = a_idx;
-        this.a_name = a_name;
-        this.u_idx = u_idx;
-        this.u_name = u_name;
-        this.state = state;
-        this.dc_date = DateRes.getDate1(dc_date);
-    }
+//    public DisplayRes(Display display, int a_idx, String a_name, int u_idx, String u_name, int state, String dc_date) {
+//        this.display = display;
+//        this.a_idx = a_idx;
+//        this.a_name = a_name;
+//        this.u_idx = u_idx;
+//        this.u_name = u_name;
+//        this.state = state;
+//    }
 }
 
