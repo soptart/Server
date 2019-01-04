@@ -222,7 +222,7 @@ public class UserService {
                         }
                         userPurchase.setA_price(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_price());
                         userPurchase.setP_state(purchase.getP_state());
-                        userPurchase.setA_picUrl(artworkPicMapper.findByArtIdx(purchase.getA_idx()).getPic_url());
+                        userPurchase.setA_pic_url(artworkPicMapper.findByArtIdx(purchase.getA_idx()).getPic_url());
                         userPurchase.setP_date(purchase.getP_date().toString());
                         listTransaction.add(userPurchase);
                     }
@@ -274,7 +274,7 @@ public class UserService {
                         userReview.setU_name(userMapper.findByUidx(p.getP_buyer_idx()).getU_name());
                         userReview.setP_comment(p.getP_comment());
                         userReview.setP_date(p.getP_date().toString());
-                        userReview.setA_picUrl(artworkPicMapper.findByArtIdx(p.getA_idx()).getPic_url());
+                        userReview.setA_pic_url(artworkPicMapper.findByArtIdx(p.getA_idx()).getPic_url());
                         listFinishedTrans.add(userReview);
                     }
                 }

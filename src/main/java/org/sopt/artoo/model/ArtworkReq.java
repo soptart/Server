@@ -41,6 +41,10 @@ public class ArtworkReq {
     private String a_tags;
     // 작품 라이센스
     private String a_license;
+    // 작품 표현재료
+    private String a_material;
+    // 작품 표현방법
+    private String a_expression;
     // 작품 사이즈(이거는 요구하지 않음)
     private int a_size;
     // 작품 활성화/비활성화
