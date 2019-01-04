@@ -1,7 +1,6 @@
 package org.sopt.artoo.model;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -58,34 +57,31 @@ public class DateRes {
      * @param
      * @return  12.03(목)
      */
-    public static String getDate1(final Date date) throws Exception{
+    public static String getDate1(final Date date) {
+
         SimpleDateFormat dt = new SimpleDateFormat("MM.dd(E)", Locale.KOREA);
         String parseDate = dt.format(date);
 //        log.info(parseDate.toString());
         return parseDate;
     }
+
     /**
      * ex. 현재와 날짜 비교
-     *
      *
      * @param
      * @return
      */
     public static Boolean isCompareFromNow( final String date){
         try{
-            log.info("isCompareFromNow");
             java.util.Date now = new java.util.Date();
-            log.info(now.toString());
 
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date parseDate = df.parse(date);
 
             // 현재 시간이 더 이후이면 true 리턴
             if((parseDate.getTime() <= now.getTime())){
-                log.info("true");
                 return true;
             }else{
-                log.info("false");
                 return false;
             }
         }catch(Exception e){

@@ -29,7 +29,6 @@ public class NoticeController {
 
     /**
      * 구매 내역 조회
-
      *
      * @param header     jwt token
      * @param user_idx  유저 idx
@@ -147,4 +146,5 @@ public class NoticeController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

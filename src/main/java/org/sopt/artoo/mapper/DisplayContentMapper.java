@@ -28,7 +28,7 @@ public interface DisplayContentMapper {
     List<DisplayContent> findByUidx(@Param("u_idx") final int u_idx);
 
     @Select("SELECT  dc.dc_idx, a.a_idx, a.a_name, a.a_width, a.a_height, a.a_depth, a.a_form, a.a_year, a.u_idx FROM artwork a, display_content dc " +
-            "WHERE a.a_idx=dc.a_idx and dc.d_idx=#{d_idx}")
+            "WHERE a.a_idx=dc.a_idx and dc.d_idx=#{d_idx} AND a.a_active = 1")
     List<DisplayContentRes> findArtworksByDisplayIdx(@Param("d_idx") final int d_idx);
 
     @Insert("INSERT INTO display_content(d_idx, a_idx, u_idx, dc_date) VALUES (#{displayReq.d_idx}, #{displayReq.a_idx}, #{displayReq.u_idx},  #{displayReq.dc_date})")
