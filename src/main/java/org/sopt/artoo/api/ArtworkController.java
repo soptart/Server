@@ -147,6 +147,8 @@ public class ArtworkController {
     public ResponseEntity updateArtwork(
             @RequestHeader(value = "Authorization") final String header,
             final ArtworkReq artworkReq, final MultipartFile pic_url) {
+
+        ResponseEntity re = null;
         try {
             log.info(pic_url.toString());
             if (pic_url.isEmpty()){
