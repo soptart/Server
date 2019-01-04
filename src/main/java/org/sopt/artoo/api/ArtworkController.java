@@ -127,6 +127,7 @@ public class ArtworkController {
             artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
             artworkReq.setPic_url(pic_url);
             artworkReq.setA_size(calculateSize(artworkReq));
+            log.info(artworkReq.toString());
             return new ResponseEntity<>(artworkService.save(artworkReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
