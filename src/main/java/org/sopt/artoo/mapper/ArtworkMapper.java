@@ -25,6 +25,11 @@ public interface ArtworkMapper {
      */
     @Select("SELECT * FROM artwork WHERE a_idx = #{a_idx} AND a_active = 1")
     Artwork findByIdx(@Param("a_idx") final int a_idx);
+
+
+    @Select("SELECT * FROM artwork WHERE a_idx = #{a_idx} AND a_active = 1 AND u_idx=#{u_idx}")
+    Artwork findByIdxAndUidx(@Param("a_idx") final int a_idx, @Param("u_idx") final int u_idx );
+
     /**
      * 미술작품 인덱스로 조회 (비활성도 조회)
      *

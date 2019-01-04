@@ -198,11 +198,11 @@ public class NoticeService {
                     Artwork artwork = artworkMapper.findByIdx(displayContent.getA_idx());
                     Display display = displayMapper.findByDisplayidx(displayContent.getD_idx());
 
-                    log.info(artwork.getA_name());
-                    log.info(String.valueOf(artwork.getA_idx()));
+//                    log.info(artwork.getA_name());
+//                    log.info(String.valueOf(artwork.getA_idx()));
 //                    DisplayRes displayRes = new DisplayRes(display, artwork.getA_idx(), artwork.getA_name(), user.getU_idx(), user.getU_name(), state, DateRes.getDate1(date));
                     DisplayRes displayRes = new DisplayRes();
-                    log.info(displayContent.getDc_date().toString());
+//                    log.info(displayContent.getDc_date().toString());
 
                     Date date = displayContent.getDc_date();
                     displayRes.setDc_date(DateRes.getDate1(date));
@@ -212,6 +212,7 @@ public class NoticeService {
                     displayRes.setU_idx(user.getU_idx());
                     displayRes.setU_name(user.getU_name());
                     displayRes.setState(state);
+                    displayRes.setDc_idx(displayContent.getDc_idx());
 
                     displayResList.add(displayRes);
                 }

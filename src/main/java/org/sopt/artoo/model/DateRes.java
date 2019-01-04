@@ -15,13 +15,12 @@ public class DateRes {
      *
      * @return int month
      */
-    public static String getMonth() {
-        java.util.Date date = new java.util.Date();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        int month = cal.get(Calendar.MONTH);
-        log.info(Integer.toString(month));
-        return Integer.toString(month);
+    public static String getDate() {
+        Date date = new Date();
+        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+        String date_parse = dt.format(date);
+//        log.info(date_parse);
+        return date_parse;
     }
 
     /**
@@ -85,7 +84,7 @@ public class DateRes {
                 return false;
             }
         }catch(Exception e){
-            log.info("exception");
+//            log.info("exception");
             log.error(e.getMessage());
             return false;
         }

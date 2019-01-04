@@ -116,17 +116,35 @@ public class DisplayContentService {
             // 이미 등록된 전시인지 확인
             if(displayContentMapper.findByUidxAndDidx(displayReq.getU_idx(), displayReq.getD_idx()) == null){
                 try{
-                    Date date = new Date();
-                    displayReq.setDc_date(date);
-                    displayContentMapper.save(displayReq);
-                    Artwork a = artworkMapper.findByIdx(displayReq.getA_idx());
+                    displayReq.setDc_date(DateRes.getDate());
                     User u = userMapper.findByUidx(displayReq.getU_idx());
+
+                    if(artworkMapper.findByIdxAndUidx(displayReq.getA_idx(), displayReq.getU_idx())==null)
+                        return DefaultRes.res(StatusCode.SERVICE_UNAVAILABLE, ResponseMessage.NOT_FOUND_ARTWORK);
+                    Artwork a = artworkMapper.findByIdx(displayReq.getA_idx());
+
+                    if(displayMapper.findByDisplayidx(displayReq.getD_idx())==null)
+                        return DefaultRes.res(StatusCode.SERVICE_UNAVAILABLE, ResponseMessage.NOT_FOUND_DISPLAY);
                     Display d = displayMapper.findByDisplayidx(displayReq.getD_idx());
 
-                    DisplayApplyConfirmRes displayApplyConfirmRes = new DisplayApplyConfirmRes(
-                            d.getD_idx(), d.getD_title(), d.getD_subTitle(),
-                            u.getU_idx(), u.getU_name(), displayReq.getA_idx(), a.getA_name(), displayReq.getDc_date());
-                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, displayApplyConfirmRes);
+                    displayContentMapper.save(displayReq);
+
+                    try{
+                        DisplayApplyConfirmRes displayApplyConfirmRes = new DisplayApplyConfirmRes();
+                        displayApplyConfirmRes.setA_idx(a.getA_idx());
+                        displayApplyConfirmRes.setA_name(a.getA_name());
+                        displayApplyConfirmRes.setD_idx(d.getD_idx());
+                        displayApplyConfirmRes.setD_subTitle(d.getD_subTitle());
+                        displayApplyConfirmRes.setD_title( d.getD_title());
+                        displayApplyConfirmRes.setDc_date(displayReq.getDc_date());
+                        displayApplyConfirmRes.setU_idx(u.getU_idx());
+                        displayApplyConfirmRes.setU_name(u.getU_name());
+                        return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_DISPLAY, displayApplyConfirmRes);
+                    }catch(Exception e){
+                        log.info(e.getMessage());
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        return DefaultRes.res(StatusCode.SERVICE_UNAVAILABLE, e.getMessage());
+                    }
                 }catch(Exception e){
                     log.info(e.getMessage());
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -161,8 +179,7 @@ public class DisplayContentService {
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }else{
-            // 존재하지 않는 컨텐츠입니다.
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_DELETE_DISPLAY);
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_READ_DISPLAY);
         }
     }
 }
