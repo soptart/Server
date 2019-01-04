@@ -30,16 +30,16 @@ public class NoticeController {
     /**
      * 구매 내역 조회
      *
-     * @param header     jwt token
-     * @param user_idx  유저 idx
+     * @param header   jwt token
+     * @param user_idx 유저 idx
      * @return ResponseEntity - List<Display>
      */
     @GetMapping("/notices/buys/{user_idx}")
-    public ResponseEntity getBuys(@RequestHeader(value="Authorization" ,required = false) final String header,
-                                  @PathVariable(value="user_idx") final int user_idx){
+    public ResponseEntity getBuys(@RequestHeader(value = "Authorization", required = false) final String header,
+                                  @PathVariable(value = "user_idx") final int user_idx) {
         try {
             //권한 체크
-            if(jwtService.checkAuth(header, user_idx)){
+            if (jwtService.checkAuth(header, user_idx)) {
                 final int u_idx = jwtService.decode(header).getUser_idx();
                 log.info(String.valueOf(u_idx));
                 return new ResponseEntity<>(noticeService.findBuysByUidx(u_idx), HttpStatus.OK);
@@ -54,16 +54,16 @@ public class NoticeController {
     /**
      * 판매 내역 조회
      *
-     * @param header     jwt token
-     * @param user_idx  유저 idx
+     * @param header   jwt token
+     * @param user_idx 유저 idx
      * @return ResponseEntity - List<Display>
      */
     @GetMapping("/notices/sells/{user_idx}")
-    public ResponseEntity getSells(@RequestHeader(value="Authorization" ,required = false) final String header,
-                                   @PathVariable(value="user_idx") final int user_idx){
+    public ResponseEntity getSells(@RequestHeader(value = "Authorization", required = false) final String header,
+                                   @PathVariable(value = "user_idx") final int user_idx) {
         try {
             //권한 체크
-            if(jwtService.checkAuth(header, user_idx)){
+            if (jwtService.checkAuth(header, user_idx)) {
                 final int u_idx = jwtService.decode(header).getUser_idx();
                 return new ResponseEntity<>(noticeService.findSellsByUidx(u_idx), HttpStatus.OK);
             }
@@ -73,7 +73,28 @@ public class NoticeController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    /**
+
+    /**
+     * 후기 작성
+     *
+     * @param header
+     * @param p_idx
+     * @param comment
+     * @return
+     */
+    @PostMapping("/notices/buys/{p_idx}")
+    public ResponseEntity savePurchaseComment(@RequestHeader(value = "Authorization") final String header,
+                                              @PathVariable(value = "p_idx") final int p_idx, @RequestBody String comment) {
+        try {
+            final int u_idx = jwtService.decode(header).getUser_idx();
+            return new ResponseEntity<>(noticeService.trySavePurchaseComment(u_idx, p_idx, comment), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //   /**
 //     * 	후기 작성
 //     *
 //     * @param header     jwt token
@@ -97,6 +118,14 @@ public class NoticeController {
 //        }
 //    }
 //
+    /*@DeleteMapping("/notices/{p_idx}/users/{u_idx}")
+    public ResponseEntity refundPurchase(@RequestHeader(value = "Authorization") final String header,
+                                         @PathVariable("p_idx") final int p_idx,
+                                         @PathVariable("u_idx") final int u_idx) {
+        if (jwtService.checkAuth(header, u_idx)) {
+
+        }
+    }*/
 
 //    /**
 //     * 	구매 환불
@@ -125,16 +154,16 @@ public class NoticeController {
     /**
      * 전시내역 조회
      *
-     * @param header     jwt token
-     * @param user_idx  유저 idx
+     * @param header   jwt token
+     * @param user_idx 유저 idx
      * @return ResponseEntity - List<Display>
      */
     @GetMapping("/notices/displays/users/{user_idx}")
     public ResponseEntity getNoticeDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header,
-                                                @PathVariable(value="user_idx") final int user_idx){
+                                                @PathVariable(value = "user_idx") final int user_idx) {
         try {
             //권한 체크
-            if(jwtService.checkAuth(header, user_idx)){
+            if (jwtService.checkAuth(header, user_idx)) {
                 final int u_idx = jwtService.decode(header).getUser_idx();
                 log.info(String.valueOf(u_idx));
 

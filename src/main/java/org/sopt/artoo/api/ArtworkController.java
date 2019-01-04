@@ -122,7 +122,7 @@ public class ArtworkController {
     @PostMapping("/artworks")
     public ResponseEntity saveArtwork(
             @RequestHeader(value = "Authorization") final String header,
-            ArtworkReq artworkReq, final MultipartFile picUrl) {
+            final ArtworkReq artworkReq, final MultipartFile picUrl) {
         try {
             artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
             artworkReq.setPic_url(picUrl);
@@ -136,24 +136,32 @@ public class ArtworkController {
 
     /**
      * @param header     jwt token
-     * @param a_idx      미술작품 인덱스
+     *
      * @param artworkReq 미술작품 데이터
      * @return
      */
+
     @Auth
-    @PutMapping("/artworks/{a_idx}")
+    @PutMapping("/artworks")
     public ResponseEntity updateArtwork(
             @RequestHeader(value = "Authorization") final String header,
-            @PathVariable("a_idx") final int a_idx,
-            ArtworkReq artworkReq) {
+            final ArtworkReq artworkReq, final MultipartFile picUrl) {
         try {
-            artworkReq.setA_idx(a_idx);
+            log.info(picUrl.toString());
+            if (picUrl.isEmpty()){
+                return new ResponseEntity<>(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            artworkReq.setPic_url(picUrl);
             artworkReq.setA_size(calculateSize(artworkReq));
-            if (artworkService.checkAuth(jwtService.decode(header).getUser_idx(), a_idx))
+            final int useridx = jwtService.decode(header).getUser_idx();
+            log.info("userIdx"+String.valueOf(useridx));
+            log.info("artworkIdx"+String.valueOf(artworkReq.getA_idx()));
+            if (artworkService.checkAuth(useridx, artworkReq.getA_idx()))
                 return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK);
             return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

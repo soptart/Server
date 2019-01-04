@@ -80,7 +80,7 @@ public class DisplayContentService {
             if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
             else{
                 for(Artwork artwork : artworks){
-                    artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()));
+                    artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                 }
                 displayApplyRes.setArtworks(artworks);
             }

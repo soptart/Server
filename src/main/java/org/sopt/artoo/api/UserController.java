@@ -1,9 +1,9 @@
 package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.Artwork;
-import org.sopt.artoo.dto.ArtworkLike;
-import org.sopt.artoo.dto.Purchase;
+import org.sopt.artoo.dto.MyArtwork;
+import org.sopt.artoo.dto.UserPurchase;
+import org.sopt.artoo.dto.UserReview;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.service.JwtService;
@@ -41,7 +41,7 @@ public class UserController {
     public ResponseEntity getUserItem(
             @PathVariable("u_idx") final int userIdx){
         try {
-            DefaultRes<List<Artwork>> defaultRes = userService.findUserWork(userIdx);
+            DefaultRes<List<MyArtwork>> defaultRes = userService.findUserWork(userIdx);
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
 
         } catch (Exception e){
@@ -61,7 +61,7 @@ public class UserController {
     public ResponseEntity getUserCollectionLike(
             @PathVariable("u_idx") final int userIdx) {
         try {
-            DefaultRes<List<ArtworkLike>> defaultRes = userService.findUserLikes(userIdx);
+            DefaultRes<List<MyArtwork>> defaultRes = userService.findUserLikes(userIdx);
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -83,7 +83,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx) {
         if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
-                DefaultRes<List<Purchase>> defaultRes = userService.findUserPurchase(userIdx);
+                DefaultRes<List<UserPurchase>> defaultRes = userService.findUserPurchase(userIdx);
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
@@ -103,7 +103,7 @@ public class UserController {
     public ResponseEntity getUserReview(
             @PathVariable("u_idx") final int userIdx) {
         try {
-            DefaultRes<List<Purchase>> defaultRes = userService.findUserTransReview(userIdx);
+            DefaultRes<List<UserReview>> defaultRes = userService.findUserTransReview(userIdx);
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -159,7 +159,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx) {
         if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
-                DefaultRes<String> defaultRes = userService.updateUserDescription(userIdx, userDescription);
+                DefaultRes defaultRes = userService.updateUserDescription(userIdx, userDescription);
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
