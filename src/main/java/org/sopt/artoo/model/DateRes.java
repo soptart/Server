@@ -31,7 +31,6 @@ public class DateRes {
      */
     public static boolean isContain( final String sdate, final String edate) {
         try{
-            log.info("isContain");
             java.util.Date date = new java.util.Date();
 
             SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");

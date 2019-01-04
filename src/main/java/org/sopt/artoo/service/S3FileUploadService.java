@@ -35,6 +35,7 @@ public class S3FileUploadService {
 
     public String upload(MultipartFile uploadFile) throws IOException {
         String origName = uploadFile.getOriginalFilename();
+        log.info("origName: " + origName);
         String url;
         try {
             //확장자

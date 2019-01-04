@@ -91,7 +91,6 @@ public class DisplayContentService {
             // 현재 신청 중인 전시만 저장
             for(Display display : Alldisplays){
                 if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
-                    display.setIsNow(0);
                     nowDisplay.add(display);
                 }
             }
