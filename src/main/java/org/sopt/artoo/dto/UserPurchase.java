@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class UserPurchase {
-    //MyPage 거래내역
+    //MyPageRes 거래내역
     private int p_idx;
     // 구매 인덱스
     private int a_idx;
@@ -20,7 +20,7 @@ public class UserPurchase {
     // 작품 가격
     private int p_state;
     // 거래 상태
-    private String a_picUrl;
+    private String a_pic_url;
     // 작품 그림 URL
     private String p_date;
     // 거래 시간

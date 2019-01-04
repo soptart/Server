@@ -57,7 +57,7 @@ public class ArtworkService {
     public DefaultRes<List<Artwork>> findAll() {
         List<Artwork> artworkList = artworkMapper.findAll();
         for (Artwork artwork : artworkList) {
-            artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()));
+            artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkList);
     }
@@ -73,7 +73,7 @@ public class ArtworkService {
         if (artwork == null) {
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
-        artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()));
+        artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artwork);
     }
 
@@ -144,9 +144,11 @@ public class ArtworkService {
                 Date date = new Date();
                 artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
+
                 final int artIdx = artworkReq.getA_idx();
                 artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
+
             } catch (IOException e) {
                 log.info(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

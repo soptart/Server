@@ -34,7 +34,7 @@ public class Artwork {
     // 작품 제작년도
     private String a_year;
     // 작품 사진
-    private ArtworkPic pic_url;
+    private String pic_url;
     //수정삭제권한
     private boolean auth;
     // 좋아요 여부

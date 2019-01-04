@@ -13,7 +13,8 @@ public class DisplayReq {
     // 전시회 고유 인덱스
     private int d_idx=-1;
     // 전시 등록 시간
-    private Date dc_date;
+    private String dc_date;
+
 
 
     public boolean checkProperties() {

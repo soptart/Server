@@ -46,13 +46,13 @@ public class DisplayContentController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     /**
      * 전시신청서
      *
      * @param header      jwt token
      * @return ResponseEntity - List<DisplayApplyRes>
      */
-
     @GetMapping("/discontents/application/{user_idx}")
     public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header,
                                           @PathVariable(value="user_idx") final int user_idx) {
@@ -99,13 +99,12 @@ public class DisplayContentController {
      * @param displaycontent_idx 전시 컨텐츠 고유 인덱스
      */
 //    @Auth
-    @DeleteMapping("/discontents/{displaycontent_idx}")
+    @DeleteMapping("/discontents/{displaycontent_idx}/users/{user_idx}")
     public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
-                                               @PathVariable(value = "displaycontent_idx") final int displaycontent_idx) {
+                                               @PathVariable(value = "displaycontent_idx") final int displaycontent_idx,
+                                               @PathVariable(value = "user_idx") final int user_idx) {
         try {
-            final int u_idx = jwtService.decode(header).getUser_idx();
-//            int u_idx = 1;
-            if(jwtService.checkAuth(header, u_idx))
+            if(jwtService.checkAuth(header, user_idx))
                 return new ResponseEntity<>(displayContentService.deleteDisplaycontent(displaycontent_idx), HttpStatus.OK);
             return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {

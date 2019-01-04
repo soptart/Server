@@ -25,6 +25,11 @@ public interface ArtworkMapper {
      */
     @Select("SELECT * FROM artwork WHERE a_idx = #{a_idx} AND a_active = 1")
     Artwork findByIdx(@Param("a_idx") final int a_idx);
+
+
+    @Select("SELECT * FROM artwork WHERE a_idx = #{a_idx} AND a_active = 1 AND u_idx=#{u_idx}")
+    Artwork findByIdxAndUidx(@Param("a_idx") final int a_idx, @Param("u_idx") final int u_idx );
+
     /**
      * 미술작품 인덱스로 조회 (비활성도 조회)
      *
@@ -51,8 +56,8 @@ public interface ArtworkMapper {
      */
 
 
-    @Insert("INSERT INTO artwork(a_idx, a_name, a_width, a_height, a_depth, a_category, a_form, a_price, a_like_count, u_idx, a_detail, a_date, a_year,a_tags,a_license, a_size) " +
-            "VALUES(#{artworkReq.a_idx}, #{artworkReq.a_name}, #{artworkReq.a_width},#{artworkReq.a_height},#{artworkReq.a_depth},#{artworkReq.a_category},#{artworkReq.a_form},#{artworkReq.a_price},#{artworkReq.a_like_count},#{artworkReq.u_idx}, #{artworkReq.a_detail},#{artworkReq.a_date}, #{artworkReq.a_year},#{artworkReq.a_tags}, #{artworkReq.a_license}, #{artworkReq.a_size})")
+    @Insert("INSERT INTO artwork(a_idx, a_name, a_width, a_height, a_depth, a_category, a_form, a_price, a_like_count, u_idx, a_detail, a_date, a_year,a_tags, a_material, a_expression, a_license, a_size) " +
+            "VALUES(#{artworkReq.a_idx}, #{artworkReq.a_name}, #{artworkReq.a_width},#{artworkReq.a_height},#{artworkReq.a_depth},#{artworkReq.a_category},#{artworkReq.a_form},#{artworkReq.a_price},#{artworkReq.a_like_count},#{artworkReq.u_idx}, #{artworkReq.a_detail},#{artworkReq.a_date}, #{artworkReq.a_year},#{artworkReq.a_tags}, #{artworkReq.a_material}, #{artworkReq.a_expression}, #{artworkReq.a_license}, #{artworkReq.a_size})")
     @Options(useGeneratedKeys = true, keyProperty = "artworkReq.a_idx")
     void save(@Param("artworkReq") final ArtworkReq artworkReq);
 

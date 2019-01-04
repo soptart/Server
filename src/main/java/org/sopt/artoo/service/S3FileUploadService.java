@@ -49,6 +49,7 @@ public class S3FileUploadService {
             //주소 할당
             url = defaultUrl + saveFileName;
             //파일 삭제
+            Thread.sleep(1000); // 01-04일 원정빈이 넣어봄
             file.delete();
         }catch (Exception e) {
             e.printStackTrace();

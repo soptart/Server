@@ -6,7 +6,6 @@ import org.sopt.artoo.utils.StatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.sopt.artoo.utils.StatusCode;
 
 @Data
 @Builder

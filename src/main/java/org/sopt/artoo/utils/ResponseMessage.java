@@ -13,6 +13,7 @@ public class ResponseMessage {
      * Artwork
      */
     public static final String NOT_FOUND_PICTURES = "사진이 등록되지 않은 작품이 있습니다.";
+    public static final String NOT_FOUND_ARTWORK = "작품이 없습니다. artwork_idx를 확인하세요.";
 
 
     public static final String LOGIN_SUCCESS = "로그인 성공";
@@ -85,7 +86,6 @@ public class ResponseMessage {
     public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
     public static final String READ_DISPLAY_APPLICATION = "전시 신청서 조회 성공";
     public static final String DELETE_DISPLAY= "전시 취소 성공";
-    public static final String FAIL_DELETE_DISPLAY = "전시 삭제 실패";
 
     /* notice */
     public static final String READ_BUYS = "알림 구매 내역 조회 성공";

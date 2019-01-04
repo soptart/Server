@@ -1,9 +1,7 @@
 package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.dto.MyArtwork;
-import org.sopt.artoo.dto.UserPurchase;
-import org.sopt.artoo.dto.UserReview;
+import org.sopt.artoo.dto.MyPageRes;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.service.JwtService;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 import static org.sopt.artoo.model.DefaultRes.FAIL_AUTHORIZATION_RES;
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
@@ -35,13 +32,17 @@ public class UserController {
     /**
      * 유저의 미술품 보여주기
      * @param userIdx
-     * @return List<artwork>
+     * @return MyPageRes
      */
     @GetMapping("/{u_idx}")
     public ResponseEntity getUserItem(
             @PathVariable("u_idx") final int userIdx){
         try {
-            DefaultRes<List<MyArtwork>> defaultRes = userService.findUserWork(userIdx);
+            MyPageRes defaultRes = userService.findUserWork(userIdx);
+            if(defaultRes.getDataNum() == 0){
+                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
+                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
+            }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
 
         } catch (Exception e){
@@ -54,14 +55,18 @@ public class UserController {
      * 유저가 좋아요 클릭한 현황 조회
      *
      * @param userIdx
-     * @return purchase
+     * @return MyPageRes
      */
 
     @GetMapping("/{u_idx}/likes") // 데이터 추가 후 확인
     public ResponseEntity getUserCollectionLike(
             @PathVariable("u_idx") final int userIdx) {
         try {
-            DefaultRes<List<MyArtwork>> defaultRes = userService.findUserLikes(userIdx);
+            MyPageRes defaultRes = userService.findUserLikes(userIdx);
+            if(defaultRes.getDataNum() == 0){
+                DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
+                return new ResponseEntity<>(errorRes, HttpStatus.OK);
+            }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -83,7 +88,11 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx) {
         if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
-                DefaultRes<List<UserPurchase>> defaultRes = userService.findUserPurchase(userIdx);
+                MyPageRes defaultRes = userService.findUserPurchase(userIdx);
+                if(defaultRes.getDataNum() == 0){
+                    DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
+                    return new ResponseEntity<>(errorRes, HttpStatus.OK);
+                }
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
@@ -103,7 +112,11 @@ public class UserController {
     public ResponseEntity getUserReview(
             @PathVariable("u_idx") final int userIdx) {
         try {
-            DefaultRes<List<UserReview>> defaultRes = userService.findUserTransReview(userIdx);
+            MyPageRes defaultRes = userService.findUserTransReview(userIdx);
+            if(defaultRes.getDataNum() == 0){
+                DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
+                return new ResponseEntity<>(errorRes, HttpStatus.OK);
+            }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -122,24 +135,6 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.save(userSignUpReq), HttpStatus.OK);
         } catch (Exception e){
-            log.error(e.getMessage());
-            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 유저 소개란 조회
-     *
-     * @param userIdx
-     * @return User.u_description
-     */
-    @GetMapping("/{u_idx}/description")
-    public ResponseEntity getUserDescription(
-            @PathVariable("u_idx") final int userIdx) {
-        try {
-            DefaultRes<String> defaultRes = userService.findUserDescription(userIdx);
-            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-        } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }

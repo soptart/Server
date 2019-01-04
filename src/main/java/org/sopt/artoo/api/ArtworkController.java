@@ -122,14 +122,15 @@ public class ArtworkController {
     @PostMapping("/artworks")
     public ResponseEntity saveArtwork(
             @RequestHeader(value = "Authorization") final String header,
-            final ArtworkReq artworkReq, final MultipartFile picUrl) {
+            final ArtworkReq artworkReq, final MultipartFile pic_url) {
         try {
             artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
-            artworkReq.setPic_url(picUrl);
+            artworkReq.setPic_url(pic_url);
             artworkReq.setA_size(calculateSize(artworkReq));
             return new ResponseEntity<>(artworkService.save(artworkReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -145,13 +146,13 @@ public class ArtworkController {
     @PutMapping("/artworks")
     public ResponseEntity updateArtwork(
             @RequestHeader(value = "Authorization") final String header,
-            final ArtworkReq artworkReq, final MultipartFile picUrl) {
+            final ArtworkReq artworkReq, final MultipartFile pic_url) {
         try {
-            log.info(picUrl.toString());
-            if (picUrl.isEmpty()){
+            log.info(pic_url.toString());
+            if (pic_url.isEmpty()){
                 return new ResponseEntity<>(DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            artworkReq.setPic_url(picUrl);
+            artworkReq.setPic_url(pic_url);
             artworkReq.setA_size(calculateSize(artworkReq));
             final int useridx = jwtService.decode(header).getUser_idx();
             log.info("userIdx"+String.valueOf(useridx));
