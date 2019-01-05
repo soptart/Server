@@ -94,30 +94,6 @@ public class NoticeController {
         }
     }
 
-    //   /**
-//     * 	후기 작성
-//     *
-//     * @param header     jwt token
-//     * @param user_idx  유저 idx
-//     * @return ResponseEntity - List<Display>
-//     */
-//    @PostMapping("/notices/buys/{purchase_idx}/comments/{user_idx}")
-//    public ResponseEntity insertPurchaseComment(@RequestHeader(value="Authorization" ,required = false) final String header,
-//                                     @PathVariable(value="user_idx") final int user_idx,
-//                                     @PathVariable(value="purchase_idx") final int purchase_idx){
-//        try {
-//            //권한 체크
-//            if(jwtService.checkAuth(header, user_idx)){
-//                final int u_idx = jwtService.decode(header).getUser_idx();
-//                return new ResponseEntity<>(noticeService.savePurchaseComment(u_idx, purchase_idx), HttpStatus.OK);
-//            }
-//            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
     /*@DeleteMapping("/notices/{p_idx}/users/{u_idx}")
     public ResponseEntity refundPurchase(@RequestHeader(value = "Authorization") final String header,
                                          @PathVariable("p_idx") final int p_idx,
@@ -151,6 +127,7 @@ public class NoticeController {
 //        }
 //    }
 
+
     /**
      * 전시내역 조회
      *
@@ -173,5 +150,4 @@ public class NoticeController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

@@ -2,8 +2,6 @@ package org.sopt.artoo.model;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class DisplayReq {
     // 작품 고유 인덱스
@@ -14,8 +12,6 @@ public class DisplayReq {
     private int d_idx=-1;
     // 전시 등록 시간
     private String dc_date;
-
-
 
     public boolean checkProperties() {
         return (a_idx >=0 && u_idx>=0 && d_idx >=0);
