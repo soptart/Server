@@ -174,7 +174,7 @@ public class ArtworkController {
      * 미술 작품 필터
      * @param artworkFilterReq
      */
-    @GetMapping("/artworks/filter")
+    @PostMapping("/artworks/filter")
     public ResponseEntity filterArtwork(
             @RequestBody final ArtworkFilterReq artworkFilterReq) {
         try {
