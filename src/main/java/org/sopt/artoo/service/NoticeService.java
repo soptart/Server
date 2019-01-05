@@ -55,6 +55,7 @@ public class NoticeService {
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
                 // 판매자 정보 저장
                 User user = userMapper.findByUidx(purchase.getP_seller_idx());
+                User adminUser = userMapper.findByUidx(0);
 
                 // 작품 정보 저장
                 Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
@@ -64,27 +65,38 @@ public class NoticeService {
                 String p_state = String.valueOf(purchase.getP_state());
 
                 if(p_state.endsWith("0")){ // 결제 전
-                    noticeRes.setU_bank(user.getU_bank());
-                    noticeRes.setU_account(user.getU_account());
-                    noticeRes.setP_state(0); // 결제전
-                    log.info(noticeRes.getA_idx() + "결제전");
-                    noticeResList.add(noticeRes);
-                }else if(p_state.startsWith("1") && p_state.endsWith("1")){ // 직거래
-                    noticeRes.setU_name(user.getU_name());
-                    noticeRes.setU_idx(user.getU_idx());
-                    noticeRes.setU_address(user.getU_address());
-                    noticeRes.setU_phone(user.getU_phone());
-                    noticeRes.setP_state(1); // 결제완료 - 직거래
-                    log.info(noticeRes.getA_idx() + "직거래");
-                    noticeResList.add(noticeRes);
-                }else if(p_state.startsWith("2") && p_state.endsWith("1")){ //택배
-                    noticeRes.setP_state(2); // 결제완료 - 택배
-                    log.info(noticeRes.getA_idx() + "택배");
+                    if(p_state.startsWith("1")){
+                        // 직거래 결제전
+                        noticeRes.setP_isDelivery(0);
+                        noticeRes.setU_bank(user.getU_bank());
+                        noticeRes.setU_account(user.getU_account());
+                    } else{
+                        // 택배 결제전
+                        noticeRes.setP_isDelivery(1);
+                        noticeRes.setU_bank(adminUser.getU_bank());
+                        noticeRes.setU_account(adminUser.getU_account());
+                    }
+                    noticeRes.setA_price(artwork.getA_price());
+                    noticeRes.setP_isPay(0); // 결제전
+                    log.info(noticeRes.getA_idx() + ": 결제전");
                     noticeResList.add(noticeRes);
                 }
-
+                if(p_state.endsWith("1")){ //결제 완료
+                    if(p_state.startsWith("1")){ // 직거래
+                        noticeRes.setP_isDelivery(0);
+                        noticeRes.setU_name(user.getU_name());
+                        noticeRes.setU_idx(user.getU_idx());
+                        noticeRes.setU_address(user.getU_address());
+                        noticeRes.setU_phone(user.getU_phone());
+                        log.info(noticeRes.getA_idx() + "직거래");
+                    }else{ // 택배
+                        noticeRes.setP_isDelivery(1);
+                        log.info(noticeRes.getA_idx() + "택배");
+                    }
+                    noticeRes.setP_isPay(1); // 결제완료
+                    noticeResList.add(noticeRes);
+                }
             }
-
             if(noticeResList.isEmpty())
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_READ_BUYS, noticeResList);
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BUYS, noticeResList);
@@ -109,7 +121,7 @@ public class NoticeService {
 
             User adminUser = userMapper.findByUidx(0);
 
-            for(Purchase purchase : purchaseList){
+            for(Purchase purchase : purchaseList) {
                 NoticeRes noticeRes = new NoticeRes(purchase);
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
                 // 구매자 정보 저장
@@ -122,20 +134,20 @@ public class NoticeService {
 
                 String p_state = String.valueOf(purchase.getP_state());
 
-                if(p_state.startsWith("1") && p_state.endsWith("1")) { // 직거래
+                if (p_state.startsWith("1") && p_state.endsWith("1")) { // 직거래
+                    noticeRes.setU_idx(user.getU_idx());
                     noticeRes.setU_name(user.getU_name());
                     noticeRes.setU_phone(user.getU_phone());
                     noticeRes.setU_address(user.getU_address());
-                    noticeRes.setP_state(3); // 직거래
+                    noticeRes.setP_isDelivery(0); // 직거래
                     noticeResList.add(noticeRes);
-                }else if(p_state.startsWith("2") && p_state.endsWith("1")){ //택배 -artoo 배송지 정보
+                } else if (p_state.startsWith("2") && p_state.endsWith("1")) { //택배 -artoo 배송지 정보
                     noticeRes.setU_name(adminUser.getU_name());
                     noticeRes.setU_phone(adminUser.getU_phone());
                     noticeRes.setU_address(adminUser.getU_address());
-                    noticeRes.setP_state(4); // 택배 -artoo 배송지 정보
+                    noticeRes.setP_isDelivery(1); // 택배 -artoo 배송지 정보
                     noticeResList.add(noticeRes);
                 }
-
             }
             if(noticeResList.isEmpty())
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_READ_SELLS, noticeResList);
