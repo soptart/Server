@@ -127,6 +127,7 @@ public class ArtworkController {
             artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
             artworkReq.setPic_url(pic_url);
             artworkReq.setA_size(calculateSize(artworkReq));
+            log.info(artworkReq.toString());
             return new ResponseEntity<>(artworkService.save(artworkReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -141,7 +142,6 @@ public class ArtworkController {
      * @param artworkReq 미술작품 데이터
      * @return
      */
-
     @Auth
     @PutMapping("/artworks")
     public ResponseEntity updateArtwork(
@@ -172,20 +172,24 @@ public class ArtworkController {
 
     /**
      * 미술 작품 필터
-     * @param artworkFilterReq
+     * @param
      */
     @PostMapping("/artworks/filter")
     public ResponseEntity filterArtwork(
-            @RequestBody final ArtworkFilterReq artworkFilterReq) {
+            @RequestParam(value="a_size", defaultValue = "") final String a_size,
+            @RequestParam(value="a_form", defaultValue = "") final String a_form,
+            @RequestParam(value="a_category", defaultValue = "") final String a_category,
+            @RequestParam(value="a_keyword", defaultValue = "") final String a_keyword) {
         try {
-            DefaultRes defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
-            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+                ArtworkFilterReq artworkFilterReq = new ArtworkFilterReq(a_size, a_form, a_category, a_keyword);
+                DefaultRes defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
   
     /**
      * 작품에 대한 좋아요 수 조회
@@ -225,7 +229,7 @@ public class ArtworkController {
     }
 
     @Auth
-    @DeleteMapping("/artwork/delete/{a_idx}")
+    @DeleteMapping("/artworks/delete/{a_idx}")
     public ResponseEntity deleteArtwork(
             @RequestHeader(value = "Authorization") final String header,
             @PathVariable("a_idx") final int a_idx){

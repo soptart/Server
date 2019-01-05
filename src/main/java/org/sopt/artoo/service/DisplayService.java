@@ -1,13 +1,19 @@
 package org.sopt.artoo.service;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Display;
+import org.sopt.artoo.dto.DisplayContent;
+import org.sopt.artoo.mapper.DisplayContentMapper;
 import org.sopt.artoo.mapper.DisplayMapper;
+import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,9 +21,14 @@ import java.util.List;
 @Service
 public class DisplayService {
     private DisplayMapper displayMapper;
+    private DisplayContentMapper displayContentMapper;
+    private UserMapper userMapper;
 
-    public DisplayService(DisplayMapper displayMapper) {
+
+    public DisplayService(DisplayMapper displayMapper, DisplayContentMapper displayContentMapper, UserMapper userMapper) {
         this.displayMapper = displayMapper;
+        this.displayContentMapper = displayContentMapper;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -28,35 +39,23 @@ public class DisplayService {
 
     public DefaultRes<List<Display>> findDisplays(){
         List<Display> displayList = displayMapper.findAllDisplay();
-
-        //v1
-//        for(Display display : displayList){
-//            Calendar sCalApp = Calendar.getInstance();
-//            Calendar eCalApp = Calendar.getInstance();
-//            sCalApp.setTime(Date.valueOf(display.getD_sdateApply()));
-//            eCalApp.setTime(Date.valueOf(display.getD_edateApply()));
-//
-//            Calendar sCalNow = Calendar.getInstance();
-//            Calendar eCalNow = Calendar.getInstance();
-//            sCalNow.setTime(Date.valueOf(display.getD_sdateNow()));
-//            eCalNow.setTime(Date.valueOf(display.getD_edateNow()));
-//
-//            //신청 중
-//            if(now.compareTo(sCalApp) != -1 && now.compareTo(eCalApp)  != 1){ display.setIsNow("0");}
-//            //전시 중
-//            if(now.compareTo(sCalNow) != -1 && now.compareTo(eCalNow)  != 1){ display.setIsNow("1"); }
-//
-//        }
+        List<Display> nowDisplayList = new ArrayList<>();
 
         //v2
         for(Display display : displayList){
-            if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())) {display.setIsNow(0); }
-            if(DateRes.isContain(display.getD_sDateNow(), display.getD_eDateNow())) {display.setIsNow(1);}
+            if(DateRes.isContain(display.getD_sDateNow(), display.getD_eDateNow())) {nowDisplayList.add(display);}
+        }
+        for(Display nowDisplay: nowDisplayList){
+            List<String> userList = new ArrayList<>();
+            for(DisplayContent displayContent : displayContentMapper.findByDisplay(nowDisplay.getD_idx())){
+                userList.add(userMapper.findByUidx(displayContent.getU_idx()).getU_name());
+            }
+            nowDisplay.setD_artworkUser(userList);
         }
 
-        if(displayList == null)
+        if(nowDisplayList == null)
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_READ_DISPLAY);
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, displayList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, nowDisplayList);
     }
 
 

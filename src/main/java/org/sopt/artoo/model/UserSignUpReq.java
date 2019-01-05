@@ -10,19 +10,19 @@ public class UserSignUpReq {
     // 유저 ID(이메일)
     private String u_pw;
     // 유저 비밀번호
-    private String u_school;
+    private String u_school =" ";
     // 유저 학교
-    private String u_phone;
+    private String u_phone =" ";
     // 유저 핸드폰 번호
-    private String u_address;
+    private String u_address=" ";
     // 유저 주소
-    private String u_name;
+    private String u_name=" ";
     // 유저 이름
-    private String u_bank;
+    private String u_bank=" ";
     // 은행명
-    private String u_account;
+    private String u_account=" ";
     // 유저 계좌 번호
-    private String u_dept;
+    private String u_dept=" ";
     //유저 전공
 
     public boolean checkQualification() {

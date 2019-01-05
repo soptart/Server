@@ -111,6 +111,12 @@ public interface ArtworkMapper {
     @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1")
     List<Integer> findArtIdxByCategory(@Param("a_category") final String a_category);
 
+    /**
+     * 미술 작품 keyword 검색
+     */
+    @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
+            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1")
+    List<Integer> findArtIdxByKeyword(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword);
 
 
 
