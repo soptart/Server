@@ -2,6 +2,7 @@ package org.sopt.artoo.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.User;
+import org.sopt.artoo.model.UserDescriptionReq;
 import org.sopt.artoo.model.UserSignUpReq;
 
 @Mapper
@@ -35,8 +36,8 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE u_idx = #{userIdx}")
     User findByUidx(@Param("userIdx") final int userIdx);
 
-    @Update("UPDATE user SET u_description = #{userDes} WHERE u_idx = #{userIdx}")
-    void saveUserDescription(@Param("userIdx") final int userIdx, @Param("userDes") final String userDes);
+    @Update("UPDATE user SET u_description = #{userDescriptionReq.u_description} WHERE u_idx = #{userIdx}")
+    void saveUserDescription(@Param("userIdx") final int userIdx, @Param("userDescriptionReq") final UserDescriptionReq userDescriptionReq);
 
     /**
      * 이메일와 비밀번호로 조회

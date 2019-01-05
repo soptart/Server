@@ -33,7 +33,7 @@ public class MyPageRes<T> {
     }
 
     public static <T> MyPageRes<T> res(final int status, final String message) {
-        return res(status, message, null, null, null, 0);
+        return res(status, message, null, null, null, -1);
     }
 
     public static <T> MyPageRes<T> res(final int status, final String message, final String u_name, final String Description, final T t, final int dataNum) {
