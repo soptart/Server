@@ -31,6 +31,8 @@ public class NoticeRes {
     private String a_u_name;
     // 작품 가격
     private int a_price;
+    // 작품 사진
+    private String a_pic_url;
 
     // (판매자 혹은 구매자) u_idx
     private int u_idx;
