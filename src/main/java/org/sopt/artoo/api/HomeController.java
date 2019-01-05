@@ -47,7 +47,7 @@ public class HomeController {
     @GetMapping("/themes")
     public ResponseEntity getAllTagInfo(){
         try{
-            DefaultRes<List<Tag>> defaultRes = homeService.getAllTagInfo(); // 모든 Tag 정보
+            DefaultRes defaultRes = homeService.getAllTagInfo(); // 모든 Tag 정보
 
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         }catch (Exception e){

@@ -165,8 +165,6 @@ public class NoticeController {
             //권한 체크
             if (jwtService.checkAuth(header, user_idx)) {
                 final int u_idx = jwtService.decode(header).getUser_idx();
-                log.info(String.valueOf(u_idx));
-
                 return new ResponseEntity<>(noticeService.findNoticeDisplayApply(u_idx), HttpStatus.OK);
             }
             return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);

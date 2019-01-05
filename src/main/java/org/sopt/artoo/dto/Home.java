@@ -10,6 +10,8 @@ public class Home {
     private int u_idx;
     //작가 이름
     private String u_name;
+    //작가 대학교
+    private String u_school;
     //작가 소개
     private String u_description;
     //사진 정보

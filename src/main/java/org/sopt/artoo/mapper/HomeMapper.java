@@ -35,7 +35,7 @@ public interface HomeMapper {
      * @param u_idx
      * @return Home
      */
-    @Select("SELECT DISTINCT u_name, u_description FROM artwork, user WHERE artwork.u_idx = #{u_idx} AND user.u_idx = #{u_idx}")
+    @Select("SELECT DISTINCT u_name, u_description, u_school FROM artwork, user WHERE artwork.u_idx = #{u_idx} AND user.u_idx = #{u_idx}")
     Home findArtistNameDescriptByUserIdx(@Param("u_idx") final int u_idx);
 
 

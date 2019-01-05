@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Data
@@ -30,7 +31,5 @@ public class Display {
     //전시 설명
     private String d_longDetail;
     private String d_shortDetail;
-
-    //진행중 전시 - 1, 신청중 전시 - 0
-    private int isNow;
+    private List<String> d_artworkUser;
 }

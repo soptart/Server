@@ -123,7 +123,7 @@ public class UserService {
             }
             //전시 중인 display_content 작품 고유 번호 찾기
             for (Display d : curDisplay) {
-                for (DisplayContent dc : displayContentMapper.findDisplayContentByDisplay(d.getD_idx())) {
+                for (DisplayContent dc : displayContentMapper.findByDisplay(d.getD_idx())) {
                     if (dc.getU_idx() == userIdx) {
                         curDisplayContentAidx.add(dc.getA_idx());
                     }
