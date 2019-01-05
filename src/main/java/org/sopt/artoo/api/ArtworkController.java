@@ -223,7 +223,7 @@ public class ArtworkController {
     }
 
     @Auth
-    @DeleteMapping("/artwork/delete/{a_idx}")
+    @DeleteMapping("/artworks/delete/{a_idx}")
     public ResponseEntity deleteArtwork(
             @RequestHeader(value = "Authorization") final String header,
             @PathVariable("a_idx") final int a_idx){
