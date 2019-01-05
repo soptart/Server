@@ -70,13 +70,16 @@ public class NoticeService {
                         noticeRes.setP_isDelivery(0);
                         noticeRes.setU_bank(user.getU_bank());
                         noticeRes.setU_account(user.getU_account());
+                        int price = ((int)Math.ceil(artwork.getA_price()*0.9));
+                        noticeRes.setA_price(price);
                     } else{
                         // 택배 결제전
                         noticeRes.setP_isDelivery(1);
                         noticeRes.setU_bank(adminUser.getU_bank());
                         noticeRes.setU_account(adminUser.getU_account());
+                        noticeRes.setA_price(artwork.getA_price());
+                        log.info(String.valueOf(artwork.getA_price()));
                     }
-                    noticeRes.setA_price(artwork.getA_price());
                     noticeRes.setP_isPay(0); // 결제전
                     log.info(noticeRes.getA_idx() + ": 결제전");
                     noticeResList.add(noticeRes);
