@@ -1,5 +1,6 @@
 package org.sopt.artoo.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Slf4j
 @Data
+@AllArgsConstructor
 public class Display {
     // 고유 idx
     private int d_idx;

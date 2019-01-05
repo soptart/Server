@@ -86,6 +86,7 @@ public class ResponseMessage {
     public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
     public static final String READ_DISPLAY_APPLICATION = "전시 신청서 조회 성공";
     public static final String DELETE_DISPLAY= "전시 취소 성공";
+    public static final String UPDATE_DISPLAY = "전시회 수정 성공";
 
     /* notice */
     public static final String READ_BUYS = "알림 구매 내역 조회 성공";

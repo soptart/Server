@@ -9,10 +9,13 @@ import org.sopt.artoo.mapper.DisplayMapper;
 import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DateRes;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.DisplayAddReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +26,15 @@ public class DisplayService {
     private DisplayMapper displayMapper;
     private DisplayContentMapper displayContentMapper;
     private UserMapper userMapper;
+    private final S3FileUploadService s3FileUploadService;
 
 
-    public DisplayService(DisplayMapper displayMapper, DisplayContentMapper displayContentMapper, UserMapper userMapper) {
+    public DisplayService(DisplayMapper displayMapper, DisplayContentMapper displayContentMapper, UserMapper userMapper, S3FileUploadService s3FileUploadService) {
         this.displayMapper = displayMapper;
         this.displayContentMapper = displayContentMapper;
         this.userMapper = userMapper;
+        this.s3FileUploadService = s3FileUploadService;
+
     }
 
     /**
@@ -73,4 +79,64 @@ public class DisplayService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, display);
     }
 
+    /**
+     * 전시장 추가
+     * @param displayAddReq
+     * @return DefaultRes
+     */
+    public DefaultRes addDisplay(final DisplayAddReq displayAddReq){
+        if(displayAddReq.checkProperties()){
+
+            try {
+                if(displayAddReq.getM_d_mainImg_url() != null){
+                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url()));
+                }
+
+                if(displayAddReq.getM_d_titleImg_url() != null ){
+                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url()));
+                }
+                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url()));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
+            }
+
+            displayMapper.addDisplay(displayAddReq);
+
+//            artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
+
+        }
+        else {
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_DISPLAY, displayAddReq);
+    }
+
+    /**
+     * 전시장 수정
+     * @param displayAddReq
+     * @return DefaultRes
+     */
+    public DefaultRes updateDisplay(final DisplayAddReq displayAddReq){
+
+        try {
+            if(displayAddReq.getM_d_mainImg_url() != null) {
+//                s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url());
+                displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url()));
+            }
+            if(displayAddReq.getM_d_repImg_url() != null) {
+//                s3FileUploadService.upload(displayAddReq.getM_d_repImg_url());
+                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url()));
+            }
+            if(displayAddReq.getM_d_mainImg_url() != null) {
+                displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url()));
+            }
+            displayMapper.updateDisplay(displayAddReq);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_CONTENT);
+        }
+
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_DISPLAY, displayAddReq);
+    }
 }
