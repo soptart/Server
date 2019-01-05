@@ -45,7 +45,6 @@ public class NoticeRes {
     // (판매자 혹은 구매자) 계좌번호
     private String u_account;
 
-
     public NoticeRes(Purchase purchase) throws Exception{
         this.p_idx = purchase.getP_idx();
         this.p_isPay = purchase.getP_state();
