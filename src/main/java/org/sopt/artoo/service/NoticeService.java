@@ -28,13 +28,15 @@ public class NoticeService {
     private UserMapper userMapper;
     private DisplayContentMapper displayContentMapper;
     private DisplayMapper displayMapper;
+    private ArtworkPicMapper artworkPicMapper;
 
-    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper, DisplayContentMapper displayContentMapper, DisplayMapper displayMapper) {
+    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper, DisplayContentMapper displayContentMapper, DisplayMapper displayMapper, ArtworkPicMapper artworkPicMapper) {
         this.purchaseMapper = purchaseMapper;
         this.artworkMapper = artworkMapper;
         this.userMapper = userMapper;
         this.displayContentMapper = displayContentMapper;
         this.displayMapper = displayMapper;
+        this.artworkPicMapper = artworkPicMapper;
     }
 
     /**
@@ -80,6 +82,7 @@ public class NoticeService {
                         noticeRes.setA_price(artwork.getA_price());
                         log.info(String.valueOf(artwork.getA_price()));
                     }
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeRes.setP_isPay(0); // 결제전
                     log.info(noticeRes.getA_idx() + ": 결제전");
                     noticeResList.add(noticeRes);
@@ -96,6 +99,7 @@ public class NoticeService {
                         noticeRes.setP_isDelivery(1);
                         log.info(noticeRes.getA_idx() + "택배");
                     }
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeRes.setP_isPay(1); // 결제완료
                     noticeResList.add(noticeRes);
                 }
@@ -143,12 +147,14 @@ public class NoticeService {
                     noticeRes.setU_phone(user.getU_phone());
                     noticeRes.setU_address(user.getU_address());
                     noticeRes.setP_isDelivery(0); // 직거래
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeResList.add(noticeRes);
                 } else if (p_state.startsWith("2") && p_state.endsWith("1")) { //택배 -artoo 배송지 정보
                     noticeRes.setU_name(adminUser.getU_name());
                     noticeRes.setU_phone(adminUser.getU_phone());
                     noticeRes.setU_address(adminUser.getU_address());
                     noticeRes.setP_isDelivery(1); // 택배 -artoo 배송지 정보
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeResList.add(noticeRes);
                 }
             }
