@@ -63,6 +63,18 @@ public class ArtworkService {
     }
 
     /**
+     * 모든 작품 조회(인덱스랑 url만)
+     *
+     */
+    public DefaultRes<List<ArtworkMini>> findAllIndexAndUrl(){
+        List<ArtworkMini> artworkMiniList = artworkMapper.findAllIndexAndUrl();
+        for (ArtworkMini artworkMini: artworkMiniList){
+            artworkMini.setPic_url(artworkPicMapper.findByArtIdx(artworkMini.getA_idx()).getPic_url());
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkMiniList);
+    }
+
+    /**
      * 작품 인덱스로 조회
      *
      * @param a_idx 작품 인덱스
@@ -230,6 +242,27 @@ public class ArtworkService {
      */
     public boolean checkAuth(final int userIdx, final int artIdx) {
         return userIdx == artworkMapper.findByIdx(artIdx).getU_idx();
+    }
+
+    /**
+     * 구매할 작품에 대한 정보 GET
+     *
+     */
+    public DefaultRes<PurchaseProduct> getPurchaseArtworkInfo(final int a_idx, final int u_dx){
+        try {
+            Artwork artwork = artworkMapper.findByIdx(a_idx);
+            User user = userMapper.findByUidx(artwork.getU_idx());
+            PurchaseProduct purchaseProduct = new PurchaseProduct();
+            purchaseProduct.setArtistSchool(user.getU_school());
+            purchaseProduct.setArtistName(user.getU_name());
+            purchaseProduct.setArtworkName(artwork.getA_name());
+            purchaseProduct.setArtworkPrice(artwork.getA_price());
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, purchaseProduct);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
     }
 
     /**
