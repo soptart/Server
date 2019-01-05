@@ -127,29 +127,29 @@ public class NoticeController {
         }
     }*/
 
-//    /**
-//     * 	구매 환불
-//     *
-//     * @param header     jwt token
-//     * @param user_idx  유저 idx
-//     * @return ResponseEntity - List<Display>
-//     */
-//    @DeleteMapping("/notices/{purchase_idx}/users/{user_idx}")
-//    public ResponseEntity getDisplay(@RequestHeader(value="Authorization" ,required = false) final String header,
-//                                     @PathVariable(value="user_idx") final int user_idx,
-//                                     @PathVariable(value="purchase_idx") final int purchase_idx){
-//        try {
-//            //권한 체크
-//            if(jwtService.checkAuth(header, user_idx)){
-//                final int u_idx = jwtService.decode(header).getUser_idx();
-//                return new ResponseEntity<>(noticeService.deletePurchaseComment(u_idx, purchase_idx), HttpStatus.OK);
-//            }
-//            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    /**
+     * 	구매 환불
+     *
+     * @param header jwt token
+     * @param u_idx  유저 idx
+     * @param p_idx 구매 idx
+     * @return ResponseEntity - List<Display>
+     */
+    @PutMapping("/notices/buys/{u_idx}/{p_idx}")
+    public ResponseEntity requestRefund(@RequestHeader(value="Authorization" ,required = false) final String header,
+                                     @PathVariable(value="u_idx") final int u_idx,
+                                     @PathVariable(value="p_idx") final int p_idx){
+        try {
+            //권한 체크
+            if(jwtService.checkAuth(header, u_idx)){
+                return new ResponseEntity<>(noticeService.requestRefund(p_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     /**
      * 전시내역 조회

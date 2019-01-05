@@ -111,6 +111,13 @@ public interface ArtworkMapper {
     @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1")
     List<Integer> findArtIdxByCategory(@Param("a_category") final String a_category);
 
+    /**
+     * 작품 고유 번호로 작품 판매 상태 변환
+     * @param a_state
+     * @param a_idx
+     */
+    @Update("UPDATE artwork SET a_purchaseState = #{a_state} WHERE a_idx = #{a_idx}")
+    void updatePurchaseStateByAIdx(@Param("a_state") final int a_state, @Param("a_idx") final int a_idx);
 
 
 

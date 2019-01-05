@@ -3,7 +3,6 @@ package org.sopt.artoo.mapper;
 import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.Purchase;
 import org.sopt.artoo.model.PurchaseReq;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -60,19 +59,37 @@ public interface PurchaseMapper {
 
     /**
      * 미술작품 인덱스로 거래내역 조회
-     *
+     * @param a_idx
+     * @return 거래 내역 리스트
      */
     @Select("SELECT * FROM purchase WHERE a_idx = #{a_idx}")
     List<Purchase> findTransactionsByArtIdx(@Param("a_idx") final int a_idx);
 
+    /**
+     *
+     * @param p_idx 거래 고유 번호
+     * @return Purchase 거래 내역
+     */
     @Select("SELECT * FROM purchase WHERE p_idx = #{p_idx}")
     Purchase findPurchaseByPurchaseIdx(@Param("p_idx") final int p_idx);
 
     /**
      * purchase 인덱스로 purchase 업데이트 하기
      * @param p_idx
+     * @param p_comment
      */
     @Update("UPDATE purchase SET p_comment = #{p_comment} WHERE p_idx = #{p_idx}")
     void updatePurchaseComment(@Param("p_idx") final int p_idx, @Param("p_comment") final String p_comment);
+
+    /**
+     * purchase 고유 번호로 purchase state 업데이트
+     * @param p_idx
+     * @param p_state
+     */
+    @Update("Update purchase SET p_state = #{p_state} WHERE p_idx = #{p_idx}")
+    void updatePurchaseState(@Param("p_idx") final int p_idx, @Param("p_state") final int p_state);
+
+    @Delete("DELETE FROM purchase WHERE p_idx = #{p_idx}")
+    void deletePurchaseRow(@Param("p_idx") final int p_idx);
 
 }

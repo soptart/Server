@@ -259,7 +259,7 @@ public class UserService {
         if(userMapper.findByUidx(userIdx) != null) {
             try {
                 for (Purchase p : listTransaction) {
-                    if (p.getP_state() == 14 && p.isP_isBuyer() == false) { //10이 거래 완료라고 가정! 추후 수정 필요 && 판매자 여야함
+                    if (p.getP_state() == 13 && p.isP_isBuyer() == false) { //13이 후기 작성 완료라고 가정! 추후 수정 필요 && 판매자 여야함
                         UserReview userReview = new UserReview();
                         userReview.setP_idx(p.getP_idx());
                         userReview.setA_name(artworkMapper.findAllArtworkByIdx(p.getA_idx()).getA_name());

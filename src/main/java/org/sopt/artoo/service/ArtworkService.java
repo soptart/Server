@@ -269,7 +269,7 @@ public class ArtworkService {
                 //---------------------구매 데이터 저장--------------------
 
                 if(purchaseReq.isP_isPost()) { //상태
-                    purchaseReq.setP_state(1);
+                    purchaseReq.setP_state(21);
                 }
                 else{
                     purchaseReq.setP_state(11);

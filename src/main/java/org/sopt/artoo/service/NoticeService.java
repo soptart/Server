@@ -141,9 +141,28 @@ public class NoticeService {
         }
     }
 
-    /*public DefaultRes refundPurchase(final int u_idx, final int p_idx){
-        Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
-    }*/
+    /**
+     * 환불 요청 상태 변경
+     * @param p_idx
+     * @return
+     */
+    public DefaultRes requestRefund(final int p_idx){
+        try {
+            Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
+            if(purchase.getP_state() == 10 || purchase.getP_state() == 20){ //purchase table
+                purchaseMapper.deletePurchaseRow(p_idx);
+            }
+            else if (21 <= purchase.getP_state() && 23 >= purchase.getP_state()) {
+                purchaseMapper.updatePurchaseState(p_idx, 30); //purchase 상태 수정
+                artworkMapper.updatePurchaseStateByAIdx(30, purchase.getA_idx());
+            }
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.REFUND_REQUEST_SUCCESS);
+        }catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
 
     /**
      * 전시내역 조회
