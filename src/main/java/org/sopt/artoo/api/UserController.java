@@ -3,6 +3,7 @@ package org.sopt.artoo.api;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.MyPageRes;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.UserDescriptionReq;
 import org.sopt.artoo.model.UserSignUpReq;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.service.UserService;
@@ -39,7 +40,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx){
         try {
             MyPageRes defaultRes = userService.findUserWork(userIdx);
-            if(defaultRes.getDataNum() == 0){
+            if(defaultRes.getDataNum() == -1){
                  DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
                  return new ResponseEntity<>(errorRes, HttpStatus.OK);
             }
@@ -63,7 +64,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx) {
         try {
             MyPageRes defaultRes = userService.findUserLikes(userIdx);
-            if(defaultRes.getDataNum() == 0){
+            if(defaultRes.getDataNum() == -1){
                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
             }
@@ -82,14 +83,14 @@ public class UserController {
      */
 
     @Auth
-    @GetMapping("/{u_idx}/purchase")
+    @GetMapping("/{u_idx}/purchases")
     public ResponseEntity getUserPurchase(
             @RequestHeader (value = "Authorization", required = false) final String header,
             @PathVariable("u_idx") final int userIdx) {
         if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
                 MyPageRes defaultRes = userService.findUserPurchase(userIdx);
-                if(defaultRes.getDataNum() == 0){
+                if(defaultRes.getDataNum() == -1){
                     DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
                     return new ResponseEntity<>(errorRes, HttpStatus.OK);
                 }
@@ -108,12 +109,12 @@ public class UserController {
      * @param userIdx
      * @return purchase
      */
-    @GetMapping("/{u_idx}/review")
+    @GetMapping("/{u_idx}/reviews")
     public ResponseEntity getUserReview(
             @PathVariable("u_idx") final int userIdx) {
         try {
             MyPageRes defaultRes = userService.findUserTransReview(userIdx);
-            if(defaultRes.getDataNum() == 0){
+            if(defaultRes.getDataNum() == -1){
                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
             }
@@ -147,14 +148,14 @@ public class UserController {
      * @param userIdx
      * @return User.u_description
      */
-    @PostMapping("/{u_idx}/description")
+    @PutMapping("/{u_idx}/descriptions")
     public ResponseEntity updateUserDescription(
             @RequestHeader (value = "Authorization", required = false) final String header,
-            @RequestBody final String userDescription,
+            @RequestBody final UserDescriptionReq userDescriptionReq,
             @PathVariable("u_idx") final int userIdx) {
         if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
-                DefaultRes defaultRes = userService.updateUserDescription(userIdx, userDescription);
+                DefaultRes defaultRes = userService.updateUserDescription(userIdx, userDescriptionReq);
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());

@@ -302,7 +302,7 @@ public class ArtworkService {
                 //---------------------구매 데이터 저장--------------------
 
                 if(purchaseReq.isP_isPost()) { //상태
-                    purchaseReq.setP_state(1);
+                    purchaseReq.setP_state(21);
                 }
                 else{
                     purchaseReq.setP_state(11);
@@ -349,7 +349,7 @@ public class ArtworkService {
             String keyword = artworkFilterReq.getA_keyword();
 
             log.info(size + " " +form + " " +  category + " " + keyword);
-            artworkIdxList = artworkMapper.findArtIdxBySize(0, 21134);
+            artworkIdxList = artworkMapper.findArtIdxBySize(0, 100000);
             switch (size) {
                     case "S":
                         artworkIdxList = artworkMapper.findArtIdxBySize(0, 2411); //사이즈가 S인 a_idx List
@@ -387,7 +387,7 @@ public class ArtworkService {
                 artworkPicList.add(artworkPicMapper.findByArtIdx(a_idx));
             }
             if(artworkPicList.isEmpty()){
-                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT, artworkPicList);
             }
 
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkPicList);
