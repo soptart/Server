@@ -2,6 +2,7 @@ package org.sopt.artoo.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.dto.ArtworkMini;
 import org.sopt.artoo.model.ArtworkReq;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface ArtworkMapper {
      */
     @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
     List<Artwork> findAll();
+
+    @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
+    List<ArtworkMini> findAllIndexAndUrl();
 
     /**
      * 미술작품 인덱스로 조회
