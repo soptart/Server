@@ -9,7 +9,6 @@ import java.util.List;
 
 @Slf4j
 @Data
-@AllArgsConstructor
 public class Display {
     // 고유 idx
     private int d_idx;

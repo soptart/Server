@@ -13,6 +13,7 @@ import org.sopt.artoo.model.DisplayAddReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -109,7 +110,7 @@ public class DisplayService {
         else {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.INSERT_DISPLAYS, displayAddReq);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.INSERT_DISPLAYS);
     }
 
     /**
@@ -137,7 +138,7 @@ public class DisplayService {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_CONTENT);
         }
 
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_DISPLAYS, displayAddReq);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_DISPLAYS);
     }
 
 
