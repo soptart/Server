@@ -41,8 +41,8 @@ public class UserController {
         try {
             MyPageRes defaultRes = userService.findUserWork(userIdx);
             if(defaultRes.getDataNum() == -1){
-                DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
-                return new ResponseEntity<>(errorRes, HttpStatus.OK);
+                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
+                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
             }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
 
