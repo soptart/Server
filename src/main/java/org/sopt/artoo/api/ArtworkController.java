@@ -159,6 +159,7 @@ public class ArtworkController {
     public ResponseEntity saveArtwork(
             @RequestHeader(value = "Authorization") final String header,
             final ArtworkReq artworkReq, final MultipartFile pic_url) {
+
         try {
             artworkReq.setU_idx(jwtService.decode(header).getUser_idx());
             artworkReq.setPic_url(pic_url);
@@ -208,7 +209,7 @@ public class ArtworkController {
      * 미술 작품 필터
      * @param
      */
-    @GetMapping("/artworks/filter")
+    @PostMapping("/artworks/filter")
     public ResponseEntity filterArtwork(
             @RequestParam(value="a_size", defaultValue = "") final String a_size,
             @RequestParam(value="a_form", defaultValue = "") final String a_form,
