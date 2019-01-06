@@ -105,7 +105,7 @@ public class NoticeService {
                 }
             }
             if(noticeResList.isEmpty())
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_READ_BUYS, noticeResList);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_READ_BUYS, noticeResList);
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BUYS, noticeResList);
         }catch(Exception e){
             log.info(e.getMessage());
@@ -159,7 +159,7 @@ public class NoticeService {
                 }
             }
             if(noticeResList.isEmpty())
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_READ_SELLS, noticeResList);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_READ_SELLS, noticeResList);
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_SELLS, noticeResList);
 
         }catch(Exception e){
@@ -231,12 +231,12 @@ public class NoticeService {
                 if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
                     displayContents_apply.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
                 }// 전시 완료된 전시
-                else if(DateRes.isCompareFromNow(display.getD_eDateNow())){
-                    displayContents.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
-                }// 확정되어서 대기 중인 전시
-                else if(DateRes.isContain(display.getD_eDateApply(), display.getD_sDateNow())){
-                    displayContents_wait.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
-                }
+//                else if(DateRes.isCompareFromNow(display.getD_eDateNow())){
+//                    displayContents.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
+//                }// 확정되어서 대기 중인 전시
+//                else if(DateRes.isContain(display.getD_eDateApply(), display.getD_sDateNow())){
+//                    displayContents_wait.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
+//                }
             }
             // 신청 중인 전시 반환 리스트 생성
             List<DisplayRes> displayResList = new ArrayList<>();
@@ -246,7 +246,7 @@ public class NoticeService {
 
             if(!displayResList.isEmpty())
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLY, displayResList);
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_DISPLAY_APPLY, displayResList);
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_DISPLAY_APPLY, displayResList);
 
         }catch(Exception e) {
             log.error(e.getMessage());

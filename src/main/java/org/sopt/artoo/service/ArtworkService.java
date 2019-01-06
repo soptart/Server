@@ -11,6 +11,7 @@ import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class ArtworkService {
      */
     public DefaultRes<Artwork> findByArtIdx(final int a_idx) {
         Artwork artwork = artworkMapper.findByIdx(a_idx);
-        if (artwork == null) {
+        if (artwork ==  null) {
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
         }
         artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
@@ -94,13 +95,24 @@ public class ArtworkService {
      */
     public DefaultRes<ArtworkRes> findByArtworkIdx(final int a_idx) {
         Artwork artwork = artworkMapper.findByIdx(a_idx);
+        //log.info(artwork.toString());
+        if (artwork == null) {
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_ARTWORK);
+        }
         User user = userMapper.findByUidx(artwork.getU_idx());
-        if (artwork == null) { return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_ARTWORK); }
-        if (user == null) {return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_USER);}
+        if (user == null) {
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_USER);
+        }
         try{
             ArtworkRes artworkRes = new ArtworkRes(artwork, user);
             artworkRes.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
             artworkRes.setA_size(artworkRes.getA_depth() * artworkRes.getA_height() * artworkRes.getA_width());
+
+            List<Purchase> purchase = purchaseMapper.findTransactionsByArtIdx(artwork.getA_idx());
+            // 구매가능하고 구매 테이블에 작품이 있을 경우
+            if(!purchase.isEmpty() && artwork.getA_purchaseState()== 1){
+                artworkRes.setA_purchaseState(2);
+            }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artworkRes);
         }catch(Exception e){
             log.error(e.getMessage());
