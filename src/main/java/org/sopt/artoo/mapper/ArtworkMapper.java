@@ -2,6 +2,7 @@ package org.sopt.artoo.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.dto.ArtworkMini;
 import org.sopt.artoo.model.ArtworkReq;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface ArtworkMapper {
      */
     @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
     List<Artwork> findAll();
+
+    @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
+    List<ArtworkMini> findAllIndexAndUrl();
 
     /**
      * 미술작품 인덱스로 조회
@@ -112,11 +116,23 @@ public interface ArtworkMapper {
     List<Integer> findArtIdxByCategory(@Param("a_category") final String a_category);
 
     /**
-     * 미술 작품 keyword 검색
+     * 작품 고유 번호로 작품 판매 상태 변환
+     * @param a_state
+     * @param a_idx
+     */
+    @Update("UPDATE artwork SET a_purchaseState = #{a_state} WHERE a_idx = #{a_idx}")
+    void updatePurchaseStateByAIdx(@Param("a_state") final int a_state, @Param("a_idx") final int a_idx);
+
+    /**
+     *
+     * @param keyword
+     * @param likeKeyword
+     * @return
      */
     @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
             "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1")
     List<Integer> findArtIdxByKeyword(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword);
+
 
 
 

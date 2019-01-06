@@ -28,13 +28,15 @@ public class NoticeService {
     private UserMapper userMapper;
     private DisplayContentMapper displayContentMapper;
     private DisplayMapper displayMapper;
+    private ArtworkPicMapper artworkPicMapper;
 
-    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper, DisplayContentMapper displayContentMapper, DisplayMapper displayMapper) {
+    public NoticeService(PurchaseMapper purchaseMapper, ArtworkMapper artworkMapper, UserMapper userMapper, DisplayContentMapper displayContentMapper, DisplayMapper displayMapper, ArtworkPicMapper artworkPicMapper) {
         this.purchaseMapper = purchaseMapper;
         this.artworkMapper = artworkMapper;
         this.userMapper = userMapper;
         this.displayContentMapper = displayContentMapper;
         this.displayMapper = displayMapper;
+        this.artworkPicMapper = artworkPicMapper;
     }
 
     /**
@@ -46,27 +48,64 @@ public class NoticeService {
     public DefaultRes findBuysByUidx(final int u_idx){
         try{
             List<NoticeRes> noticeResList  = new ArrayList<NoticeRes>();
+            // 사용자가 구매자인 구매 목록 가져옴
             List<Purchase> purchaseList  = purchaseMapper.findByBuyerIdx(u_idx); //u_idx == 구매자
 
             for(Purchase purchase : purchaseList){
-                // 거래 정보 저장
+
                 NoticeRes noticeRes = new NoticeRes(purchase);
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
+                // 판매자 정보 저장
+                User user = userMapper.findByUidx(purchase.getP_seller_idx());
+                User adminUser = userMapper.findByUidx(0);
 
                 // 작품 정보 저장
                 Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
                 noticeRes.setA_name(artwork.getA_name());
-                noticeRes.setA_u_name(artwork.getA_name()); // 작가 == 판매자
+                noticeRes.setA_u_name(user.getU_name()); // 작가 == 판매자
 
-                // 판매자 정보 저장
-                User user = userMapper.findByUidx(purchase.getP_seller_idx());
-                noticeRes.setU_name(user.getU_name());
-                noticeRes.setU_idx(user.getU_idx());
-                noticeRes.setU_address(user.getU_address());
-                noticeRes.setU_phone(user.getU_phone());
+                String p_state = String.valueOf(purchase.getP_state());
 
-                noticeResList.add(noticeRes);
+                if(p_state.endsWith("0")){ // 결제 전
+                    if(p_state.startsWith("1")){
+                        // 직거래 결제전
+                        noticeRes.setP_isDelivery(0);
+                        noticeRes.setU_bank(user.getU_bank());
+                        noticeRes.setU_account(user.getU_account());
+                        int price = ((int)Math.ceil(artwork.getA_price()*0.9));
+                        noticeRes.setA_price(price);
+                    } else{
+                        // 택배 결제전
+                        noticeRes.setP_isDelivery(1);
+                        noticeRes.setU_bank(adminUser.getU_bank());
+                        noticeRes.setU_account(adminUser.getU_account());
+                        noticeRes.setA_price(artwork.getA_price());
+                        log.info(String.valueOf(artwork.getA_price()));
+                    }
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                    noticeRes.setP_isPay(0); // 결제전
+                    log.info(noticeRes.getA_idx() + ": 결제전");
+                    noticeResList.add(noticeRes);
+                }
+                if(p_state.endsWith("1")){ //결제 완료
+                    if(p_state.startsWith("1")){ // 직거래
+                        noticeRes.setP_isDelivery(0);
+                        noticeRes.setU_name(user.getU_name());
+                        noticeRes.setU_idx(user.getU_idx());
+                        noticeRes.setU_address(user.getU_address());
+                        noticeRes.setU_phone(user.getU_phone());
+                        log.info(noticeRes.getA_idx() + "직거래");
+                    }else{ // 택배
+                        noticeRes.setP_isDelivery(1);
+                        log.info(noticeRes.getA_idx() + "택배");
+                    }
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                    noticeRes.setP_isPay(1); // 결제완료
+                    noticeResList.add(noticeRes);
+                }
             }
+            if(noticeResList.isEmpty())
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_READ_BUYS, noticeResList);
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BUYS, noticeResList);
         }catch(Exception e){
             log.info(e.getMessage());
@@ -84,34 +123,44 @@ public class NoticeService {
     public DefaultRes findSellsByUidx(final int u_idx){
         try{
             List<NoticeRes> noticeResList  = new ArrayList<NoticeRes>();
+            // 사용자가 판매자인 구매 목록 가져옴
             List<Purchase> purchaseList  = purchaseMapper.findBySellerIdx(u_idx); //u_idx == 판매자
-            log.info("aa");
-            for(Purchase purchase : purchaseList){
-                NoticeRes noticeRes;
-                // 거래 정보 저장
-                try {
-                    noticeRes = new NoticeRes(purchase);
-                }catch(Exception e){
-                    log.info(e.getMessage());
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
-                }
+
+            User adminUser = userMapper.findByUidx(0);
+
+            for(Purchase purchase : purchaseList) {
+                NoticeRes noticeRes = new NoticeRes(purchase);
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
+                // 구매자 정보 저장
+                User user = userMapper.findByUidx(purchase.getP_buyer_idx());
 
                 // 작품 정보 저장
                 Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
                 noticeRes.setA_name(artwork.getA_name());
-                noticeRes.setA_u_name(userMapper.findByUidx(u_idx).getU_name());
+                noticeRes.setA_u_name(userMapper.findByUidx(u_idx).getU_name()); // 작가 == user
 
-                // 구매자 정보 저장
-                User user = userMapper.findByUidx(purchase.getP_buyer_idx());
-                noticeRes.setU_name(user.getU_name());
-                noticeRes.setU_phone(user.getU_phone());
-                noticeRes.setU_address(user.getU_address());
+                String p_state = String.valueOf(purchase.getP_state());
 
-                noticeResList.add(noticeRes);
+                if (p_state.startsWith("1") && p_state.endsWith("1")) { // 직거래
+                    noticeRes.setU_idx(user.getU_idx());
+                    noticeRes.setU_name(user.getU_name());
+                    noticeRes.setU_phone(user.getU_phone());
+                    noticeRes.setU_address(user.getU_address());
+                    noticeRes.setP_isDelivery(0); // 직거래
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                    noticeResList.add(noticeRes);
+                } else if (p_state.startsWith("2") && p_state.endsWith("1")) { //택배 -artoo 배송지 정보
+                    noticeRes.setU_name(adminUser.getU_name());
+                    noticeRes.setU_phone(adminUser.getU_phone());
+                    noticeRes.setU_address(adminUser.getU_address());
+                    noticeRes.setP_isDelivery(1); // 택배 -artoo 배송지 정보
+                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                    noticeResList.add(noticeRes);
+                }
             }
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BUYS, noticeResList);
+            if(noticeResList.isEmpty())
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_READ_SELLS, noticeResList);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_SELLS, noticeResList);
 
         }catch(Exception e){
             log.info(e.getMessage());
@@ -141,9 +190,28 @@ public class NoticeService {
         }
     }
 
-    /*public DefaultRes refundPurchase(final int u_idx, final int p_idx){
-        Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
-    }*/
+    /**
+     * 환불 요청 상태 변경
+     * @param p_idx
+     * @return
+     */
+    public DefaultRes requestRefund(final int p_idx){
+        try {
+            Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
+            if(purchase.getP_state() == 10 || purchase.getP_state() == 20){ //purchase table
+                purchaseMapper.deletePurchaseRow(p_idx);
+            }
+            else if (21 <= purchase.getP_state() && 23 >= purchase.getP_state()) {
+                purchaseMapper.updatePurchaseState(p_idx, 30); //purchase 상태 수정
+                artworkMapper.updatePurchaseStateByAIdx(30, purchase.getA_idx());
+            }
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.REFUND_REQUEST_SUCCESS);
+        }catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
 
     /**
      * 전시내역 조회
@@ -170,19 +238,15 @@ public class NoticeService {
                     displayContents_wait.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
                 }
             }
+            // 신청 중인 전시 반환 리스트 생성
+            List<DisplayRes> displayResList = new ArrayList<>();
+            if(!displayContents_apply.isEmpty()) {insertRes(displayContents_apply, displayResList, NoticeConstant.displayContents_apply);}
+//          if(!displayContents.isEmpty()){ insertRes(displayContents, displayResList, NoticeConstant.displayContents);}
+//          if(!displayContents_wait.isEmpty()) {insertRes(displayContents_wait, displayResList, NoticeConstant.displayContents_wait);}
 
-            try{
-                // 신청 중인 전시 반환 리스트 생성
-                List<DisplayRes> displayResList = new ArrayList<>();
-                if(!displayContents_apply.isEmpty()) {insertRes(displayContents_apply, displayResList, NoticeConstant.displayContents_apply);}
-                if(!displayContents.isEmpty()){ insertRes(displayContents, displayResList, NoticeConstant.displayContents);}
-                if(!displayContents_wait.isEmpty()) {insertRes(displayContents_wait, displayResList, NoticeConstant.displayContents_wait);}
-
+            if(!displayResList.isEmpty())
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLY, displayResList);
-            }catch(Exception e) {
-                log.error(e.getMessage());
-                return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, "으아아ㅏ");
-            }
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_DISPLAY_APPLY, displayResList);
 
         }catch(Exception e) {
             log.error(e.getMessage());

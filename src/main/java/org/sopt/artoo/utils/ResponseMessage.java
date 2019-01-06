@@ -33,6 +33,10 @@ public class ResponseMessage {
     public static final String READ_USER_LIKES = "회원 좋아요 선택 조회";
     public static final String READ_ALL_TRANSACTION = "회원 거래 내역 조회 성공";
     public static final String READ_FINISHED_TRANSACTION = "회원 거래 후기 조회 성공";
+    public static final String WRONG_PASSWORD = "회원 현재 비밀 번호 불일치";
+    public static final String WRONG_CHECK_PASSWORD = "회원 확인 비밀 번호 불일치";
+    public static final String SUCCESS_CHANGE_PW = "회원 비밀번호 수정 확인";
+
 
     public static final String READ_ALL_CONTENTS = "모든 컨텐츠 조회 성공";
     public static final String READ_CONTENT = "컨텐츠 조회 성공";
@@ -48,6 +52,7 @@ public class ResponseMessage {
     public static final String READ_ALL_ARTWORKLIKE = "작품에 대한 좋아요 수 조회 성공";
     public static final String NOT_FOUND_PURCHASE = "구매 항목 미기입";
     public static final String CREATE_PURCHASE = "구매 정보 저장 성공";
+    public static final String REFUND_REQUEST_SUCCESS = "환불 요청 성공";
     public static final String UNCOMPLETED_PURCHASE = "완료되지 않은 거래가 있어 작품을 삭제 대신 비활성화함";
 
     public static final String READ_ALL_COMMENTS = "모든 댓글 조회 성공";
@@ -86,6 +91,9 @@ public class ResponseMessage {
     public static final String FAIL_ALREADY_CREATE= "이미 전시를 등록하였습니다.";
     public static final String READ_DISPLAY_APPLICATION = "전시 신청서 조회 성공";
     public static final String DELETE_DISPLAY= "전시 취소 성공";
+    public static final String NOT_FOUND_DISPLAY_APPLY= "전시 신청 내역이 존재하지 않습니다.";
+    public static final String NOT_FOUND_READ_BUYS= "구매내역이 존재하지 않습니다.";
+    public static final String NOT_FOUND_READ_SELLS= "판매내역이 존재하지 않습니다.";
     public static final String UPDATE_DISPLAY = "전시회 수정 성공";
 
     /* notice */

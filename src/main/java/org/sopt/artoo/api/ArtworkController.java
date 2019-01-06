@@ -2,6 +2,7 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
+import org.sopt.artoo.dto.ArtworkMini;
 import org.sopt.artoo.dto.PurchaseProduct;
 import org.sopt.artoo.model.ArtworkFilterReq;
 import org.sopt.artoo.model.ArtworkReq;
@@ -62,6 +63,21 @@ public class ArtworkController {
     }
 
     /**
+     * 미술작품 전체 인덱스랑 url만 불러오기
+     *
+     */
+    @GetMapping("/artworksmini")
+    public ResponseEntity getAllartworksMini(){
+        try {
+            DefaultRes<List<ArtworkMini>> defaultRes = artworkService.findAllIndexAndUrl();
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * 미술작품 조회
      *
      * @param header jwt token
@@ -84,7 +100,27 @@ public class ArtworkController {
     }
 
     /**
-     * 미술작품 구매
+     * 미술작품 구매(GET)
+     *
+     */
+    @Auth
+    @GetMapping("/artworks/{a_idx}/purchase/{u_idx}")
+    public ResponseEntity getArtworkForSale(
+            @RequestHeader(value = "Authorization") final String header,
+            @PathVariable("a_idx") final int a_idx,
+            @PathVariable("u_idx") final int u_idx) {
+        try {
+            DefaultRes<PurchaseProduct> defaultRes = artworkService.getPurchaseArtworkInfo(a_idx, u_idx);
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 미술작품 구매(POST)
      *
      * @param header      jwt token
      * @param a_idx       미술작품 고유 번호
