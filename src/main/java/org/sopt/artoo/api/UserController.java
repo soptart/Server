@@ -41,8 +41,8 @@ public class UserController {
         try {
             MyPageRes defaultRes = userService.findUserWork(userIdx);
             if(defaultRes.getDataNum() == -1){
-                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
-                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
+                DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
+                return new ResponseEntity<>(errorRes, HttpStatus.OK);
             }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
 
@@ -167,94 +167,79 @@ public class UserController {
         }
     }
 
+
+    /******* 유저 정보 변경 *******/
+
+
     /**
-     * 회원 정보 조회
      *
-     * @param user_idx
-     * @return User.u_description
+     * @param header
+     * @param userIdx
+     * @return User 객체
      */
-    @GetMapping("/detail/{user_idx}")
-    public ResponseEntity getUserByIdx(
-            @PathVariable("user_idx") final int user_idx) {
-        try {
-            return new ResponseEntity<>(userService.findUser(user_idx), HttpStatus.OK);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+    @GetMapping("/{u_idx}/myInfo")
+    public ResponseEntity getUserInfo(
+            @RequestHeader (value = "Authorization", required = false) final String header,
+            @PathVariable("u_idx") final int userIdx) {
+        if (jwtService.checkAuth(header, userIdx)) {
+            try {
+                DefaultRes defaultRes = userService.findUser(userIdx);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
         }
     }
 
-            /******* 유저 정보 변경 *******/
-
-
-            /**
-             *
-             * @param header
-             * @param userIdx
-             * @return User 객체
-             */
-            @GetMapping("/{u_idx}/myInfo")
-            public ResponseEntity getUserInfo (
-            @RequestHeader(value = "Authorization", required = false) final String header,
-            @PathVariable("u_idx") final int userIdx){
-                if (jwtService.checkAuth(header, userIdx)) {
-                    try {
-                        DefaultRes defaultRes = userService.findUser(userIdx);
-                        return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                } else {
-                    return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
-                }
-            }
-
-            /**
-             * 비밀 번호를 제외한 회원 정보 수정
-             * @param header
-             * @param userIdx
-             * @return
-             */
-            @PutMapping("/{u_idx}/myInfo")
-            public ResponseEntity updateUser (
-            @RequestHeader(value = "Authorization", required = false) final String header,
+    /**
+     * 비밀 번호를 제외한 회원 정보 수정
+     * @param header
+     * @param userIdx
+     * @return
+     */
+    @PutMapping("/{u_idx}/myInfo")
+    public ResponseEntity updateUser(
+            @RequestHeader (value = "Authorization", required = false) final String header,
             @RequestBody UserSignUpReq userInfo,
-            @PathVariable("u_idx") final int userIdx){
-                if (jwtService.checkAuth(header, userIdx)) {
-                    try {
-                        DefaultRes defaultRes = userService.changeUserInfo(userIdx, userInfo);
-                        return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                } else {
-                    return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
-                }
+            @PathVariable("u_idx") final int userIdx) {
+        if (jwtService.checkAuth(header, userIdx)) {
+            try {
+                DefaultRes defaultRes = userService.changeUserInfo(userIdx, userInfo);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            /**
-             * 회원 비밀번호 수정
-             * @param header
-             * @param userPwInfo
-             * @param userIdx
-             */
-            @PutMapping("/{u_idx}/myInfo/pw")
-            public ResponseEntity updateUserPw (
-            @RequestHeader(value = "Authorization", required = false) final String header,
-            @RequestBody final UserPwInfo userPwInfo,
-            @PathVariable("u_idx") final int userIdx){
-                if (jwtService.checkAuth(header, userIdx)) {
-                    try {
-                        DefaultRes defaultRes = userService.userPwChange(userIdx, userPwInfo);
-                        return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                } else {
-                    return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
-                }
-            }
+        } else {
+            return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    /**
+     * 회원 비밀번호 수정
+     * @param header
+     * @param userPwInfo
+     * @param userIdx
+     */
+    @PutMapping("/{u_idx}/myInfo/pw")
+    public ResponseEntity updateUserPw(
+            @RequestHeader (value = "Authorization", required = false) final String header,
+            @RequestBody final UserPwInfo userPwInfo,
+            @PathVariable("u_idx") final int userIdx) {
+        if (jwtService.checkAuth(header, userIdx)) {
+            try {
+                DefaultRes defaultRes = userService.userPwChange(userIdx, userPwInfo);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+        }
+    }
+}
+
