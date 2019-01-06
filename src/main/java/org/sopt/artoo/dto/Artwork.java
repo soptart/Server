@@ -40,7 +40,7 @@ public class Artwork {
     // 작품 표현 기법
     private String a_expression;
     // 직거래-판매 비판매
-    private int a_purchaseState; // 0-비구매 1-구매
+    private int a_purchaseState; // 0-비구매 1-구매 2-판매완료
 
     //수정삭제권한
     private boolean auth;
