@@ -33,6 +33,11 @@ public class ResponseMessage {
     public static final String READ_USER_LIKES = "회원 좋아요 선택 조회";
     public static final String READ_ALL_TRANSACTION = "회원 거래 내역 조회 성공";
     public static final String READ_FINISHED_TRANSACTION = "회원 거래 후기 조회 성공";
+    public static final String WRONG_PASSWORD = "회원 현재 비밀 번호 불일치";
+    public static final String WRONG_CHECK_PASSWORD = "회원 확인 비밀 번호 불일치";
+    public static final String SUCCESS_CHANGE_PW = "회원 비밀번호 수정 확인";
+    public static final String NOT_ENOUGH_PASSWORD_LENGTH = "비밀 번호 길이가 너무 짧음";
+
 
     public static final String READ_ALL_CONTENTS = "모든 컨텐츠 조회 성공";
     public static final String READ_CONTENT = "컨텐츠 조회 성공";
@@ -90,6 +95,10 @@ public class ResponseMessage {
     public static final String NOT_FOUND_DISPLAY_APPLY= "전시 신청 내역이 존재하지 않습니다.";
     public static final String NOT_FOUND_READ_BUYS= "구매내역이 존재하지 않습니다.";
     public static final String NOT_FOUND_READ_SELLS= "판매내역이 존재하지 않습니다.";
+    public static final String INSERT_DISPLAYS = "전시회 추가 성공";
+    public static final String UPDATE_DISPLAYS = "전시회 수정 성공";
+    public static final String DELETE_DISPLAYS = "전시회 삭제 성공";
+
 
     /* notice */
     public static final String READ_BUYS = "알림 구매 내역 조회 성공";

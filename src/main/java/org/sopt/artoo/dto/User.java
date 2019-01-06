@@ -7,8 +7,6 @@ public class User {
     //서버에서 필요한 데이터
     private int u_idx;
     // 유저 인덱스
-    private String u_pw;
-    // 유저 비밀번호
     private String u_email;
     // 유저 ID(이메일)
     private String u_school;
