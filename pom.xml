@@ -16,7 +16,10 @@
     <description>Artoo Server Spring Boot</description>
 
     <properties>
-        <java.version>1.8</java.version>    </properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -75,7 +78,11 @@
             <artifactId>spring-cloud-aws-autoconfigure</artifactId>
             <version>1.2.1.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+        </dependency>
     </dependencies>
 
     <build>
