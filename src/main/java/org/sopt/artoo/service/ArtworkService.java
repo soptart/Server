@@ -190,7 +190,7 @@ public class ArtworkService {
                 artworkReq.setA_active(true);
                 artworkPicMapper.update(artworkReq.getA_idx(), s3FileUploadService.upload(artworkReq.getPic_url()));
                 artworkMapper.updateByArtIdxReq(artworkReq, artworkReq.getA_idx());
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT, artworkReq);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
