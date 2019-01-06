@@ -3,12 +3,9 @@ package org.sopt.artoo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.*;
 import org.sopt.artoo.mapper.*;
-import org.sopt.artoo.model.ArtworkFilterReq;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.ArtworkPicMapper;
-import org.sopt.artoo.model.ArtworkReq;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -87,6 +84,29 @@ public class ArtworkService {
         }
         artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artwork);
+    }
+
+    /**
+     * 작품 인덱스로 조회
+     *
+     * @param a_idx 작품 인덱스
+     * @return DefaultRes <ArtworkRes>
+     */
+    public DefaultRes<ArtworkRes> findByArtworkIdx(final int a_idx) {
+        Artwork artwork = artworkMapper.findByIdx(a_idx);
+        User user = userMapper.findByUidx(artwork.getU_idx());
+        if (artwork == null) { return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_ARTWORK); }
+        if (user == null) {return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_USER);}
+        try{
+            ArtworkRes artworkRes = new ArtworkRes(artwork, user);
+            artworkRes.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+            artworkRes.setA_size(artworkRes.getA_depth() * artworkRes.getA_height() * artworkRes.getA_width());
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artworkRes);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     /**

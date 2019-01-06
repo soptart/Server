@@ -35,6 +35,13 @@ public class Artwork {
     private String a_year;
     // 작품 사진
     private String pic_url;
+    // 작품 재료
+    private String a_material;
+    // 작품 표현 기법
+    private String a_expression;
+    // 직거래-판매 비판매
+    private int a_purchaseState; // 0-비구매 1-구매
+
     //수정삭제권한
     private boolean auth;
     // 좋아요 여부
