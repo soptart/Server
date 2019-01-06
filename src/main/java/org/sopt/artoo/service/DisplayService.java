@@ -13,6 +13,7 @@ import org.sopt.artoo.model.DisplayAddReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -109,7 +110,7 @@ public class DisplayService {
         else {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_DISPLAY, displayAddReq);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.INSERT_DISPLAYS);
     }
 
     /**
@@ -137,6 +138,25 @@ public class DisplayService {
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_CONTENT);
         }
 
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_DISPLAY, displayAddReq);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_DISPLAYS);
+    }
+
+
+    /**
+     * 전시장 삭제
+     * @param d_idx
+     * @return DefaultRes
+     */
+    public DefaultRes deleteDisplay(final int d_idx){
+
+        try {
+            displayContentMapper.deleteByDIsplayIdx(d_idx);
+            displayMapper.deleteByDisplayIdx(d_idx);
+        } catch (Exception e) {
+            e.printStackTrace();
+        return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_DISPLAYS);
     }
 }

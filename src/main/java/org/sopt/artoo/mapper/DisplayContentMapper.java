@@ -46,4 +46,7 @@ public interface DisplayContentMapper {
 
     @Select("SELECT * FROM display_content WHERE a_idx=#{a_idx}")
     DisplayContent findByArtworkIdx(@Param("a_idx") final int a_idx);
+
+    @Delete("DELETE FROM display_content WHERE d_idx=#{d_idx}")
+    void deleteByDIsplayIdx(@Param("d_idx") final int d_idx);
 }
