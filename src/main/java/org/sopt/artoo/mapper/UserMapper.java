@@ -3,6 +3,7 @@ package org.sopt.artoo.mapper;
 import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.model.UserDescriptionReq;
+import org.sopt.artoo.model.UserPwInfo;
 import org.sopt.artoo.model.UserSignUpReq;
 
 @Mapper
@@ -47,4 +48,28 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE u_email = #{u_email} AND u_pw = #{u_pw}")
     User findByIdAndPassword(@Param("u_email") final String u_email, @Param("u_pw") final String u_password);
 
+    /**
+     * 유저 객체 수정
+     * @param u_idx
+     * @param userInfo
+     */
+    @Update("UPDATE user SET u_name = #{userInfo.u_name}, u_phone = #{userInfo.u_phone}, u_address = #{userInfo.u_address}," +
+            "u_school = #{userInfo.u_school}, u_bank = #{userInfo.u_bank}, u_account = #{userInfo.u_account} WHERE u_idx = #{u_idx}")
+    void updateUserInfo(@Param("u_idx") final int u_idx, @Param("userInfo") final User userInfo);
+
+    /**
+     * 유저 비밀번호 호출
+     * @param u_idx
+     * @return u_pw
+     */
+    @Select("SELECT u_pw FROM user WHERE u_idx = #{u_idx}")
+    String checkUserPw(@Param("u_idx") final int u_idx);
+
+    /**
+     * 유저 비밀번호 업데이트
+     * @param u_idx
+     * @param userPwInfo
+     */
+    @Update("Update user SET u_pw = #{userInfo.u_pw_new} WHERE u_idx = #{u_idx}")
+    void updateUserPw(@Param("u_idx") final int u_idx, @Param("userInfo") final UserPwInfo userPwInfo);
 }

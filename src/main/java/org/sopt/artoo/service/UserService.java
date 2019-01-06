@@ -3,10 +3,8 @@ package org.sopt.artoo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.*;
 import org.sopt.artoo.mapper.*;
-import org.sopt.artoo.model.DateRes;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.UserDescriptionReq;
-import org.sopt.artoo.model.UserSignUpReq;
+import org.sopt.artoo.model.*;
+import org.sopt.artoo.utils.PasswordIncoder;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -76,14 +74,18 @@ public class UserService {
         if (userSignUpReq.checkQualification()) { //로그인 항목 필수 항목 검사
             final User user = userMapper.findByEmail(userSignUpReq.getU_email());
             if (user == null) { //이메일 중복 검사
-                try {
-                    userMapper.save(userSignUpReq);
-                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
-                } catch (Exception e) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    log.error(e.getMessage());
-                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                if(userSignUpReq.getU_pw().length() >= 7) { // 비밀번호 길이 검사
+                   // userSignUpReq.setU_pw(PasswordIncoder.incodePw(userSignUpReq.getU_pw())); 비밀번호 암호화
+                    try {
+                        userMapper.save(userSignUpReq);
+                        return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
+                    } catch (Exception e) {
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        log.error(e.getMessage());
+                        return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                    }
                 }
+                DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
             } else return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ALREADY_USER);
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_USER);
@@ -311,5 +313,85 @@ public class UserService {
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
     }
+
+    /**
+     * 비밀번호를 제외한 유저 객체 수정
+     * @param userIdx
+     * @return null
+     */
+    @Transactional
+    public DefaultRes changeUserInfo(final int userIdx, final UserSignUpReq userInfo) {
+        if (userMapper.findByUidx(userIdx) != null) {
+            try {
+                User myUser = userMapper.findByUidx(userIdx);
+                if(userInfo.getU_name() != null) {
+                    myUser.setU_name(userInfo.getU_name());
+                }
+                if(userInfo.getU_email() != null){
+                    if(userMapper.findByEmail(userInfo.getU_email())!= null){
+                        return DefaultRes.res(StatusCode.OK, ResponseMessage.ALREADY_USER);
+                    }
+                    myUser.setU_email(userInfo.getU_email());
+                }
+                if(userInfo.getU_phone() != null){
+                    myUser.setU_phone(userInfo.getU_phone());
+                }
+                if(userInfo.getU_school() != null){
+                    myUser.setU_school(userInfo.getU_school());
+                }
+                if(userInfo.getU_school() != null) {
+                    myUser.setU_school(userInfo.getU_school());
+                }
+                if(userInfo.getU_bank() != null && userInfo.getU_account() != null) {
+                    myUser.setU_bank(userInfo.getU_bank());
+                    myUser.setU_account(userInfo.getU_account());
+                }
+                userMapper.updateUserInfo(userIdx, myUser);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+        }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+    }
+
+    /**
+     * 유저 비밀번호 수정
+     * @param userIdx
+     * @param userPwInfo
+     * @return
+     */
+    @Transactional
+    public DefaultRes userPwChange(final int userIdx, final UserPwInfo userPwInfo) {
+        if (userMapper.findByUidx(userIdx) != null) {
+            try {
+                if(!userMapper.checkUserPw(userIdx).equals(userPwInfo.getU_pw_current())) {
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_PASSWORD);
+                }
+                /*
+                if(!userMapper.checkUserPw(userIdx).equals(PasswordIncoder.incodePw(userPwInfo.getU_pw_current()))){
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_PASSWORD);
+                }
+                */ //암호화되어있는 코드 확인용
+                else if(!userPwInfo.getU_pw_new().equals(userPwInfo.getU_pw_check())){
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_CHECK_PASSWORD);
+                }
+                else if(userPwInfo.getU_pw_new().length() < 7){
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
+                }
+                userMapper.updateUserPw(userIdx, userPwInfo);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+        }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+    }
+
+
 
 }
