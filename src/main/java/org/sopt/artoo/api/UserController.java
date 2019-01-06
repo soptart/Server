@@ -176,12 +176,14 @@ public class UserController {
      */
     @GetMapping("/detail/{user_idx}")
     public ResponseEntity getUserByIdx(
-            @PathVariable("user_idx") final int user_idx){
+            @PathVariable("user_idx") final int user_idx) {
         try {
-            return new ResponseEntity<>( userService.findUser(user_idx), HttpStatus.OK);
-        } catch (Exception e){
+            return new ResponseEntity<>(userService.findUser(user_idx), HttpStatus.OK);
+        } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
     /******* 유저 정보 변경 *******/
