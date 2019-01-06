@@ -74,7 +74,7 @@ public class DisplayController {
                                       final DisplayAddReq displayAddReq, final MultipartFile repImg_url,
                                       final MultipartFile titleImg_url, final MultipartFile mainImg_url){
         try {
-//            if(jwtService.decode(header).getUser_idx() == ) { //관리자 u_idx갖고오는 함수
+//            if(jwtService.decode(header).getUser_idx() == 0) { //관리자 u_idx갖고오는 함수,  마지막에 주석 삭제
                 if (repImg_url != null) {
                     displayAddReq.setM_d_repImg_url(repImg_url);
                 }
@@ -104,19 +104,18 @@ public class DisplayController {
                                         final MultipartFile titleImg_url, final MultipartFile mainImg_url){
         try {
             //관리자가
-            //if(jwtService.decode(header).getUser_idx() == ) { //관리자 u_idx갖고오는 함수
-            //                if (repImg_url != null) {
-            if (repImg_url != null) {
-                displayAddReq.setM_d_repImg_url(repImg_url);
-            }
-            if (mainImg_url != null) {
-                displayAddReq.setM_d_mainImg_url(mainImg_url);
-            }
-            if (titleImg_url != null) {
-                displayAddReq.setM_d_titleImg_url(titleImg_url);
-            }
-            return new ResponseEntity<>(displayService.updateDisplay(displayAddReq), HttpStatus.OK);
-            //            }
+//            if(jwtService.decode(header).getUser_idx() == 0) { //관리자 u_idx갖고오는 함수, 마지막에 주석 삭제
+                if (repImg_url != null) {
+                    displayAddReq.setM_d_repImg_url(repImg_url);
+                }
+                if (mainImg_url != null) {
+                    displayAddReq.setM_d_mainImg_url(mainImg_url);
+                }
+                if (titleImg_url != null) {
+                    displayAddReq.setM_d_titleImg_url(titleImg_url);
+                }
+                return new ResponseEntity<>(displayService.updateDisplay(displayAddReq), HttpStatus.OK);
+//            }
 //            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
