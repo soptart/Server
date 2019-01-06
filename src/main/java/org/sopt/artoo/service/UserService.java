@@ -212,8 +212,9 @@ public class UserService {
             String u_name = userMapper.findByUidx(userIdx).getU_name();
             try{
                 List<Purchase> listPurchase = purchaseMapper.findTransactionByUserIdx(userIdx); //유저 고유 번호에서 거래 목록 불러오기
+                ArrayList<UserPurchase> listTransaction = new ArrayList<>();
                 if(!listPurchase.isEmpty()) {
-                    ArrayList<UserPurchase> listTransaction = new ArrayList<>();
+
                     for (Purchase purchase : listPurchase) {
                         if (purchase.getP_buyer_idx() == userIdx) {
                             purchase.setP_isBuyer(true);
@@ -240,7 +241,7 @@ public class UserService {
                             listTransaction, listTransaction.size());
                 }
                 return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes,
-                        null, 0);
+                        listTransaction, 0);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());

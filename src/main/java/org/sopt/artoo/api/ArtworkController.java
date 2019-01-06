@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.ArtworkMini;
 import org.sopt.artoo.dto.PurchaseProduct;
-import org.sopt.artoo.model.ArtworkFilterReq;
-import org.sopt.artoo.model.ArtworkReq;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.PurchaseReq;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.service.ArtworkService;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -90,7 +87,7 @@ public class ArtworkController {
             @PathVariable("a_idx") final int a_idx) {
         try {
             final int userIdx = jwtService.decode(header).getUser_idx();
-            DefaultRes<Artwork> defaultRes = artworkService.findByArtIdx(a_idx);
+            DefaultRes<ArtworkRes> defaultRes = artworkService.findByArtworkIdx(a_idx);
             defaultRes.getData().setAuth(userIdx == defaultRes.getData().getU_idx());
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
@@ -211,15 +208,14 @@ public class ArtworkController {
      */
     @PostMapping("/artworks/filter")
     public ResponseEntity filterArtwork(
-            @RequestParam(value="a_size", defaultValue = "") final String a_size,
-            @RequestParam(value="a_form", defaultValue = "") final String a_form,
-            @RequestParam(value="a_category", defaultValue = "") final String a_category,
-            @RequestParam(value="a_keyword", defaultValue = "") final String a_keyword) {
+            @RequestParam(value="a_size", defaultValue = "" ,required=false) final String a_size,
+            @RequestParam(value="a_form", defaultValue = "", required=false) final String a_form,
+            @RequestParam(value="a_category", defaultValue = "",required=false) final String a_category,
+            @RequestParam(value="a_keyword", defaultValue = "",required=false) final String a_keyword) {
         try {
                 ArtworkFilterReq artworkFilterReq = new ArtworkFilterReq(a_size, a_form, a_category, a_keyword);
                 DefaultRes defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
