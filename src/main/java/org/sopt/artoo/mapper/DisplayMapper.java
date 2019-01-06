@@ -43,4 +43,5 @@ public interface DisplayMapper {
             "d_mainImg_url=#{displayAddReq.d_mainImg_url}, d_shortDetail=#{displayAddReq.d_shortDetail}, " +
             "d_subTitle=#{displayAddReq.d_subTitle} WHERE d_idx = #{displayAddReq.d_idx}")
     void updateDisplay(@Param("displayAddReq") final DisplayAddReq displayAddReq);
+
 }

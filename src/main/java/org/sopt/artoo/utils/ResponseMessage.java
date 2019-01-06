@@ -94,7 +94,10 @@ public class ResponseMessage {
     public static final String NOT_FOUND_DISPLAY_APPLY= "전시 신청 내역이 존재하지 않습니다.";
     public static final String NOT_FOUND_READ_BUYS= "구매내역이 존재하지 않습니다.";
     public static final String NOT_FOUND_READ_SELLS= "판매내역이 존재하지 않습니다.";
-    public static final String UPDATE_DISPLAY = "전시회 수정 성공";
+    public static final String INSERT_DISPLAYS = "전시회 추가 성공";
+    public static final String UPDATE_DISPLAYS = "전시회 수정 성공";
+    public static final String DELETE_DISPLAYS = "전시회 삭제 성공";
+
 
     /* notice */
     public static final String READ_BUYS = "알림 구매 내역 조회 성공";
