@@ -206,7 +206,7 @@ public class ArtworkController {
      * 미술 작품 필터
      * @param
      */
-    @PostMapping("/artworks/filter")
+    @GetMapping("/artworks/filter")
     public ResponseEntity filterArtwork(
             @RequestParam(value="a_size", defaultValue = "" ,required=false) final String a_size,
             @RequestParam(value="a_form", defaultValue = "", required=false) final String a_form,
