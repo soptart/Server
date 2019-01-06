@@ -321,6 +321,18 @@ public class UserService {
                 if(userInfo.getU_name() != null) {
                     myUser.setU_name(userInfo.getU_name());
                 }
+                if(userInfo.getU_email() != null){
+                    if(userMapper.findByEmail(userInfo.getU_email())!= null){
+                        return DefaultRes.res(StatusCode.OK, ResponseMessage.ALREADY_USER);
+                    }
+                    myUser.setU_email(userInfo.getU_email());
+                }
+                if(userInfo.getU_phone() != null){
+                    myUser.setU_phone(userInfo.getU_phone());
+                }
+                if(userInfo.getU_school() != null){
+                    myUser.setU_school(userInfo.getU_school());
+                }
                 if(userInfo.getU_school() != null) {
                     myUser.setU_school(userInfo.getU_school());
                 }
