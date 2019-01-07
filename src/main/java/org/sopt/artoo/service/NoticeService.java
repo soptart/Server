@@ -7,16 +7,12 @@ import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.sopt.artoo.utils.constants.NoticeConstant;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
@@ -67,20 +63,23 @@ public class NoticeService {
                 String p_state = String.valueOf(purchase.getP_state());
 
                 if(p_state.endsWith("0")){ // 결제 전
+                    noticeRes.setU_idx(adminUser.getU_idx());
+                    noticeRes.setU_name(adminUser.getU_name());
+                    noticeRes.setU_phone(adminUser.getU_phone());
+                    noticeRes.setU_address(adminUser.getU_address());
+                    noticeRes.setA_price(purchase.getP_price());
+
                     if(p_state.startsWith("1")){
                         // 직거래 결제전
                         noticeRes.setP_isDelivery(0);
-                        noticeRes.setU_bank(user.getU_bank());
-                        noticeRes.setU_account(user.getU_account());
-                        int price = ((int)Math.ceil(artwork.getA_price()*0.9));
-                        noticeRes.setA_price(price);
+                        // 수수료 10% - 삭제 예정
+//                        int price = ((int)Math.ceil(artwork.getA_price()*0.9));
+//                        noticeRes.setA_price(price);
                     } else{
                         // 택배 결제전
                         noticeRes.setP_isDelivery(1);
-                        noticeRes.setU_bank(adminUser.getU_bank());
-                        noticeRes.setU_account(adminUser.getU_account());
-                        noticeRes.setA_price(artwork.getA_price());
-                        log.info(String.valueOf(artwork.getA_price()));
+                        // 전체 가격
+//                        noticeRes.setA_price(artwork.getA_price());
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeRes.setP_isPay(0); // 결제전
@@ -88,12 +87,12 @@ public class NoticeService {
                     noticeResList.add(noticeRes);
                 }
                 if(p_state.endsWith("1")){ //결제 완료
+                    noticeRes.setU_idx(adminUser.getU_idx());
+                    noticeRes.setU_name(adminUser.getU_name());
+                    noticeRes.setU_phone(adminUser.getU_phone());
+                    noticeRes.setU_address(adminUser.getU_address());
                     if(p_state.startsWith("1")){ // 직거래
                         noticeRes.setP_isDelivery(0);
-                        noticeRes.setU_name(user.getU_name());
-                        noticeRes.setU_idx(user.getU_idx());
-                        noticeRes.setU_address(user.getU_address());
-                        noticeRes.setU_phone(user.getU_phone());
                         log.info(noticeRes.getA_idx() + "직거래");
                     }else{ // 택배
                         noticeRes.setP_isDelivery(1);
@@ -138,23 +137,19 @@ public class NoticeService {
                 Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
                 noticeRes.setA_name(artwork.getA_name());
                 noticeRes.setA_u_name(userMapper.findByUidx(u_idx).getU_name()); // 작가 == user
+                noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+
+                noticeRes.setU_idx(artwork.getU_idx());
+                noticeRes.setU_name(adminUser.getU_name());
+                noticeRes.setU_phone(adminUser.getU_phone());
+                noticeRes.setU_address(adminUser.getU_address());
 
                 String p_state = String.valueOf(purchase.getP_state());
-
                 if (p_state.startsWith("1") && p_state.endsWith("1")) { // 직거래
-                    noticeRes.setU_idx(user.getU_idx());
-                    noticeRes.setU_name(user.getU_name());
-                    noticeRes.setU_phone(user.getU_phone());
-                    noticeRes.setU_address(user.getU_address());
                     noticeRes.setP_isDelivery(0); // 직거래
-                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeResList.add(noticeRes);
-                } else if (p_state.startsWith("2") && p_state.endsWith("1")) { //택배 -artoo 배송지 정보
-                    noticeRes.setU_name(adminUser.getU_name());
-                    noticeRes.setU_phone(adminUser.getU_phone());
-                    noticeRes.setU_address(adminUser.getU_address());
-                    noticeRes.setP_isDelivery(1); // 택배 -artoo 배송지 정보
-                    noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                } else if (p_state.startsWith("2") && p_state.endsWith("1")) { //택배
+                    noticeRes.setP_isDelivery(1); // 택배
                     noticeResList.add(noticeRes);
                 }
             }
@@ -203,7 +198,9 @@ public class NoticeService {
             }
             else if (21 <= purchase.getP_state() && 23 >= purchase.getP_state()) {
                 purchaseMapper.updatePurchaseState(p_idx, 30); //purchase 상태 수정
-                artworkMapper.updatePurchaseStateByAIdx(30, purchase.getA_idx());
+                Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
+                // artwork a_purchaseState (11|12|13 -> 1|2|3)
+                artworkMapper.updatePurchaseStateByAIdx(artwork.getA_purchaseState() % 10, purchase.getA_idx());
             }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.REFUND_REQUEST_SUCCESS);
         }catch (Exception e) {
@@ -261,11 +258,8 @@ public class NoticeService {
                     User user = userMapper.findByUidx(displayContent.getU_idx());
                     Artwork artwork = artworkMapper.findByIdx(displayContent.getA_idx());
                     Display display = displayMapper.findByDisplayidx(displayContent.getD_idx());
-//                    log.info(artwork.getA_name());
-//                    log.info(String.valueOf(artwork.getA_idx()));
-//                    DisplayRes displayRes = new DisplayRes(display, artwork.getA_idx(), artwork.getA_name(), user.getU_idx(), user.getU_name(), state, DateRes.getDate1(date));
                     DisplayRes displayRes = new DisplayRes();
-//                    log.info(displayContent.getDc_date().toString());
+
                     Date date = displayContent.getDc_date();
                     displayRes.setDc_date(DateRes.getDate1(date));
                     displayRes.setDisplay(display);
