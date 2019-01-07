@@ -93,7 +93,7 @@ public class NoticeService {
                 }
             }
             if(noticeResList.isEmpty())
-                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_READ_BUYS, noticeResList);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_READ_BUYS, new ArrayList<>());
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BUYS, noticeResList);
         }catch(Exception e){
             log.info(e.getMessage());
@@ -228,7 +228,7 @@ public class NoticeService {
 
             if(!displayResList.isEmpty())
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLY, displayResList);
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_DISPLAY_APPLY, displayResList);
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_DISPLAY_APPLY, new ArrayList<>());
 
         }catch(Exception e) {
             log.error(e.getMessage());

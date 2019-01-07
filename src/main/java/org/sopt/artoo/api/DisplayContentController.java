@@ -1,15 +1,12 @@
 package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.artoo.mapper.DisplayContentMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.DisplayReq;
 import org.sopt.artoo.service.DisplayContentService;
-import org.sopt.artoo.service.DisplayService;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
-import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +33,7 @@ public class DisplayContentController {
      * @param display_idx 전시회 고유 인덱스
      * @return ResponseEntity - List<DisplayContentRes>
      */
+
     @GetMapping("/discontents/displays/{display_idx}")
     public ResponseEntity getByDisplayIdx(@RequestHeader(value = "Authorization", required = false) final String header,
                                           @PathVariable(value = "display_idx") final int display_idx) {
@@ -81,10 +79,8 @@ public class DisplayContentController {
                                              @RequestBody final DisplayReq displayReq,
                                              @PathVariable(value="user_idx") final int user_idx) {
         try {
-            if(user_idx == displayReq.getU_idx()){
-                log.info(String.valueOf(user_idx));
+            if(jwtService.checkAuth(header, user_idx) && user_idx == displayReq.getU_idx() )
                 return new ResponseEntity<>(displayContentService.save(displayReq), HttpStatus.OK);
-            }
             return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -113,3 +109,4 @@ public class DisplayContentController {
         }
     }
 }
+
