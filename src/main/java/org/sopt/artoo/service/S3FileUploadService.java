@@ -38,9 +38,6 @@ public class S3FileUploadService {
         log.info("origName: " + origName);
         String url;
         try {
-            // 버킷 url 설정
-            bucket +="/"+folder;
-            log.info(bucket);
             //확장자
             final String ext = origName.substring(origName.lastIndexOf('.'));
             //파일이름 암호화
@@ -50,7 +47,7 @@ public class S3FileUploadService {
             //파일 변환
             uploadFile.transferTo(file);
             //S3 파일 업로드
-            uploadOnS3(saveFileName, file);
+            uploadOnS3(saveFileName, file, folder);
             //주소 할당
             url = defaultUrl + folder + "/"+ saveFileName;
             //파일 삭제
@@ -70,14 +67,14 @@ public class S3FileUploadService {
     }
 
     //S3에 파일을 업로드한다.
-    private void uploadOnS3(final String fileName, final File file) {
+    private void uploadOnS3(final String fileName, final File file, String folder) {
         //AWS S3 전송 객체 생성
         final TransferManager transferManager = new TransferManager(this.amazonS3Client);
+        // 버킷 url 설정
+        String bucketUrl = bucket + "/"+folder;
+        log.info(bucketUrl);
         //요청 객체 생성
-//        log.info(bucket);
-//        log.info(fileName);
-//        log.info(file.toString());
-        final PutObjectRequest request = new PutObjectRequest(bucket, fileName, file);
+        final PutObjectRequest request = new PutObjectRequest(bucketUrl, fileName, file);
         //업로드 시도
         final Upload upload = transferManager.upload(request);
 

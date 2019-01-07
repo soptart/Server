@@ -198,7 +198,9 @@ public class NoticeService {
             }
             else if (21 <= purchase.getP_state() && 23 >= purchase.getP_state()) {
                 purchaseMapper.updatePurchaseState(p_idx, 30); //purchase 상태 수정
-                artworkMapper.updatePurchaseStateByAIdx(30, purchase.getA_idx());
+                Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
+                // artwork a_purchaseState (11|12|13 -> 1|2|3)
+                artworkMapper.updatePurchaseStateByAIdx(artwork.getA_purchaseState() % 10, purchase.getA_idx());
             }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.REFUND_REQUEST_SUCCESS);
         }catch (Exception e) {
