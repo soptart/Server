@@ -267,7 +267,7 @@ public class ArtworkController {
             if(jwtService.decode(header).getUser_idx() == artworkService.findByArtIdx(a_idx).getData().getU_idx()){
                 return new ResponseEntity<>(artworkService.deleteByArtIdx(a_idx), HttpStatus.OK);
             }else{
-                return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+                return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
             log.error(e.getMessage());

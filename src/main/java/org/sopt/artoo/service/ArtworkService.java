@@ -81,7 +81,7 @@ public class ArtworkService {
     public DefaultRes<Artwork> findByArtIdx(final int a_idx) {
         Artwork artwork = artworkMapper.findByIdx(a_idx);
         if (artwork ==  null) {
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_CONTENT);
         }
         artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artwork);
@@ -97,11 +97,11 @@ public class ArtworkService {
         Artwork artwork = artworkMapper.findByIdx(a_idx);
         //log.info(artwork.toString());
         if (artwork == null) {
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_ARTWORK);
+            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_ARTWORK);
         }
         User user = userMapper.findByUidx(artwork.getU_idx());
         if (user == null) {
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_USER);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
         }
         try{
             ArtworkRes artworkRes = new ArtworkRes(artwork, user);
@@ -138,7 +138,7 @@ public class ArtworkService {
     public DefaultRes<Integer> getLikecountByArtIdx(final int a_idx) {
         Artwork artwork = artworkMapper.findByIdx(a_idx);
         if(artwork == null){
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_CONTENT);
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artwork.getA_like_count());
     }
@@ -148,7 +148,7 @@ public class ArtworkService {
         Artwork artwork = findByArtIdx(a_idx).getData();
         try {
             if (artwork == null) {
-                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+                return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_CONTENT);
             }
             ArtworkLike artworkLike = artworkLikeMapper.findByUserIdxAndArtworkIdx(u_idx, a_idx);
             if (artworkLike == null) {
