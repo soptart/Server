@@ -283,13 +283,18 @@ public class ArtworkService {
      */
     public DefaultRes<PurchaseProduct> getPurchaseArtworkInfo(final int a_idx){
         try {
-            Artwork artwork = artworkMapper.findByIdx(a_idx);
-            User user = userMapper.findByUidx(artwork.getU_idx());
+            if(artworkMapper.findByIdx(a_idx) == null){
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
+            }
+            Artwork artwork = artworkMapper.findByIdx(a_idx); //작품
+            User user = userMapper.findByUidx(artwork.getU_idx());  //작가 인덱스
             PurchaseProduct purchaseProduct = new PurchaseProduct();
             purchaseProduct.setArtistSchool(user.getU_school());
             purchaseProduct.setArtistName(user.getU_name());
             purchaseProduct.setArtworkName(artwork.getA_name());
             purchaseProduct.setArtworkPrice(artwork.getA_price()); // VAT를 제외한 가격
+            purchaseProduct.setPurchaseState(artwork.getA_purchaseState());
+
             final int productSize = artwork.getA_size();
             if(artwork.getA_price()*(1.1) >= 150000){ // 배송비는 VAT를 붙인 후 계산
                 purchaseProduct.setDeliveryCharge(0);
@@ -326,44 +331,45 @@ public class ArtworkService {
                 //---------------------작품 데이터 저장--------------------
                 //작품 정보
                 final Artwork artwork = artworkMapper.findByIdx(a_idx);
-                final int artistIdx = artwork.getU_idx();
-                final int productSize = artwork.getA_size();
-                int purchasePrice = (int)(artwork.getA_price() * 1.1);
-                if(purchasePrice > 150000){
-                    purchasePrice += 0;
-                }
-                else if(productSize < 2412) {
-                    purchasePrice += 3000;
-                }
-                else if(productSize < 6609){
-                    purchasePrice += 4000;
-                }
-                else {
-                    purchasePrice += 5000;
-                }
+                if((purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 3))
+                    ||(!purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 2))) {
 
-                if(purchaseReq.isP_isPost()) { //상태
-                    purchaseReq.setP_state(20);
+                    final int artistIdx = artwork.getU_idx();
+                    final int productSize = artwork.getA_size();
+                    int purchasePrice = (int) (artwork.getA_price() * 1.1);
+                    if (purchasePrice > 150000) {
+                        purchasePrice += 0;
+                    } else if (productSize < 2412) {
+                        purchasePrice += 3000;
+                    } else if (productSize < 6609) {
+                        purchasePrice += 4000;
+                    } else {
+                        purchasePrice += 5000;
+                    }
+
+                    if (purchaseReq.isP_isPost()) { //상태
+                        purchaseReq.setP_state(20);
+                    } else {
+                        purchaseReq.setP_state(10);
+                    }
+                    Calendar calendar = Calendar.getInstance(); // 시간
+                    java.util.Date date = calendar.getTime();
+                    purchaseReq.setP_currentTime(date);
+
+                    purchaseReq.setA_idx(a_idx); // a_idx
+                    purchaseReq.setP_sellerIdx(artistIdx);
+                    purchaseReq.setP_buyerIdx(buyerIdx);
+                    purchaseReq.setP_price(purchasePrice); // VAT와 배송비까지 포함한 최종가격
+
+                    // 구매 테이블에 추가
+                    purchaseMapper.savePurchaseData(purchaseReq);
+                    // 아트워크 구매 상태 변경 1|2|3. -> 11|12|13
+                    int a_purchaseState = artwork.getA_purchaseState() + 10;
+                    artworkMapper.updatePurchaseStateByAIdx(artwork.getA_idx(), a_purchaseState);
+
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseReq);
                 }
-                else{
-                    purchaseReq.setP_state(10);
-                }
-                Calendar calendar = Calendar.getInstance(); // 시간
-                java.util.Date date = calendar.getTime();
-                purchaseReq.setP_currentTime(date);
-
-                purchaseReq.setA_idx(a_idx); // a_idx
-                purchaseReq.setP_sellerIdx(artistIdx);
-                purchaseReq.setP_buyerIdx(buyerIdx);
-                purchaseReq.setP_price(purchasePrice); // VAT와 배송비까지 포함한 최종가격
-
-                // 구매 테이블에 추가
-                purchaseMapper.savePurchaseData(purchaseReq);
-                // 아트워크 구매 상태 변경 1|2|3. -> 11|12|13
-                int a_purchaseState = artwork.getA_purchaseState() + 10;
-                artworkMapper.updatePurchaseStateByAIdx(artwork.getA_idx(), a_purchaseState);
-
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseReq);
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.UNAUTHORIZED_WAY);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

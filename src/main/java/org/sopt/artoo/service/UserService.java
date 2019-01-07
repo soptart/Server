@@ -107,7 +107,7 @@ public class UserService {
             if (!myArtworks.isEmpty()) {
                 return MyPageRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, u_name, userDes, myArtworks, myArtworks.size());
             }
-            return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
+            return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
         }
         return  MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
@@ -187,7 +187,7 @@ public class UserService {
                 if(!myArtworks.isEmpty()) {
                     return MyPageRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_LIKES, u_name, userDes, myArtworks, myArtworks.size());
                 }
-                return MyPageRes.res(StatusCode.CREATED, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
+                return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
@@ -279,7 +279,7 @@ public class UserService {
                     return MyPageRes.res(StatusCode.CREATED, ResponseMessage.READ_FINISHED_TRANSACTION, u_name, userDes,
                             listFinishedTrans, listFinishedTrans.size());
                 }
-                return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes,
+                return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes,
                         listFinishedTrans, listFinishedTrans.size());
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -382,10 +382,10 @@ public class UserService {
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_CHECK_PASSWORD);
                 }
                 else if(userPwInfo.getU_pw_new().length() < 7){
-                    return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
+                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
                 }
                 userMapper.updateUserPw(userIdx, userPwInfo);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.UPDATE_USER);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());

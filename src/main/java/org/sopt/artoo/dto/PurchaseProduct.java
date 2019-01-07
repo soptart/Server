@@ -16,4 +16,6 @@ public class PurchaseProduct {
     //작품 가격
     private int deliveryCharge;
     //작품 배송비
+    private int purchaseState;
+    //작품 상태 0 - 판매 불가 1 - 둘다 가능 2 - 직거래만 3 - 택배만 그 이상 -> 결제중
 }

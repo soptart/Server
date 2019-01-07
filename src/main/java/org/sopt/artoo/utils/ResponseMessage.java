@@ -56,6 +56,7 @@ public class ResponseMessage {
     public static final String CREATE_PURCHASE = "구매 정보 저장 성공";
     public static final String REFUND_REQUEST_SUCCESS = "환불 요청 성공";
     public static final String UNCOMPLETED_PURCHASE = "완료되지 않은 거래가 있어 작품을 삭제 대신 비활성화함";
+    public static final String UNAUTHORIZED_WAY = "해당 전달 방식은 지원되지 않음";
 
     public static final String READ_ALL_COMMENTS = "모든 댓글 조회 성공";
     public static final String READ_COMMENT = "댓글 조회 성공";
