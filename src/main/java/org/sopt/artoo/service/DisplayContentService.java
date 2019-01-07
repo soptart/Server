@@ -15,6 +15,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 @Slf4j
 @Service
@@ -38,12 +39,13 @@ public class DisplayContentService {
 
     /**
      * 전시관람
+     *
      * @param d_idx 전시 고유 인덱스
      * @return DefaultRes - List<DisplayContentRes>
      */
     public DefaultRes<List<DisplayContentRes>> findByDisplayIdx(final int d_idx){
 //         존재하지 않는 전시
-        if(displayMapper.findByDisplayidx(d_idx) == null){ return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_DISPLAY); }
+        if(displayMapper.findByDisplayidx(d_idx) == null){ return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_DISPLAY, new ArrayList<>()); }
 
         // 전시 타이틀
         String d_title = displayMapper.findByDisplayidx(d_idx).getD_title();
@@ -51,7 +53,7 @@ public class DisplayContentService {
         List<DisplayContentRes> dcList = displayContentMapper.findArtworksByDisplayIdx(d_idx);
 
         //전시회에 신청한 작품이 없을 경우
-        if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_DISPLAYCONTENT); }
+        if(dcList.isEmpty()){ return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_DISPLAYCONTENT, new ArrayList<>()); }
 
         for(DisplayContentRes displayContent : dcList) {
             displayContent.setU_name(userMapper.findByUidx(displayContent.getU_idx()).getU_name());
@@ -76,8 +78,8 @@ public class DisplayContentService {
             DisplayApplyRes displayApplyRes = new DisplayApplyRes();
             List<Artwork> artworks = artworkMapper.findArtworkByUserIdx(u_idx);
 
-            // 유저 작품이 없을 경우-> null
-            if(artworks.isEmpty()){ displayApplyRes.setArtworks(null); }
+            // 유저 작품이 없을 경우-> []
+            if(artworks.isEmpty()){ displayApplyRes.setArtworks(new ArrayList<>()); }
             else{
                 for(Artwork artwork : artworks){
                     artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
@@ -88,10 +90,12 @@ public class DisplayContentService {
             List<Display> Alldisplays = displayMapper.findAllDisplay();
             List<Display> nowDisplay = new ArrayList<Display>();
 
-            // 현재 신청 중인 전시만 저장
-            for(Display display : Alldisplays){
-                if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
-                    nowDisplay.add(display);
+            if(!Alldisplays.isEmpty()) {
+                // 현재 신청 중인 전시만 저장
+                for (Display display : Alldisplays) {
+                    if (DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())) {
+                        nowDisplay.add(display);
+                    }
                 }
             }
             displayApplyRes.setDisplays(nowDisplay);
@@ -119,11 +123,11 @@ public class DisplayContentService {
                     User u = userMapper.findByUidx(displayReq.getU_idx());
 
                     if(artworkMapper.findByIdxAndUidx(displayReq.getA_idx(), displayReq.getU_idx())==null)
-                        return DefaultRes.res(StatusCode.SERVICE_UNAVAILABLE, ResponseMessage.NOT_FOUND_ARTWORK);
+                        return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_ARTWORK, new ArrayList<>());
                     Artwork a = artworkMapper.findByIdx(displayReq.getA_idx());
 
                     if(displayMapper.findByDisplayidx(displayReq.getD_idx())==null)
-                        return DefaultRes.res(StatusCode.SERVICE_UNAVAILABLE, ResponseMessage.NOT_FOUND_DISPLAY);
+                        return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_DISPLAY,  new ArrayList<>());
                     Display d = displayMapper.findByDisplayidx(displayReq.getD_idx());
 
                     displayContentMapper.save(displayReq);
@@ -142,7 +146,7 @@ public class DisplayContentService {
                     }catch(Exception e){
                         log.info(e.getMessage());
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                        return DefaultRes.res(StatusCode.SERVICE_UNAVAILABLE, e.getMessage());
+                        return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
                     }
                 }catch(Exception e){
                     log.info(e.getMessage());
@@ -151,12 +155,12 @@ public class DisplayContentService {
                 }
             }else {
                 //이미 전시에 등록한 경우
-                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_ALREADY_CREATE);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.FAIL_ALREADY_CREATE,  new ArrayList<>());
             }
         }
         // 요청 바디 부족
         else
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_DISPLAY);
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.FAIL_CREATE_DISPLAY ,  new ArrayList<>());
     }
 
 
@@ -171,14 +175,14 @@ public class DisplayContentService {
         if( displayContentMapper.findByDisplayContentIdx(displayContent_idx) != null){
             try{
                 displayContentMapper.deleteByDcIdx(displayContent_idx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_DISPLAY);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_DISPLAY, displayContent_idx);
             }catch(Exception e){
                 log.info(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }else{
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_READ_DISPLAY);
+            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_DISPLAYCONTENT);
         }
     }
 }

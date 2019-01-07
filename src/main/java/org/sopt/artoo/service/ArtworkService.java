@@ -386,7 +386,7 @@ public class ArtworkService {
 
 
     /**
-     * size, form, category를 이용하여 작품 필터
+     * size, form, category, keyword 를 이용하여 작품 필터
      * @param artworkFilterReq
      * @return Artwork
      */
