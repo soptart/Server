@@ -226,10 +226,10 @@ public class UserService {
                         userPurchase.setA_idx(purchase.getA_idx());
                         userPurchase.setA_name(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_name()); //조회 할때 비활성한 상품도 조회해야한다!
                         userPurchase.setBuyer(purchase.isP_isBuyer());
-                        if (purchase.isP_isBuyer()) { //구매자일 경우
-                            userPurchase.setU_name(userMapper.findByUidx(purchase.getP_buyer_idx()).getU_name());
-                        } else {
+                        if (purchase.isP_isBuyer()) { //구매자일 경우 -> 판매자 이름 업데이트
                             userPurchase.setU_name(userMapper.findByUidx(purchase.getP_seller_idx()).getU_name());
+                        } else { //판매자인 경우 -> 구매자 이름 업데이트
+                            userPurchase.setU_name(userMapper.findByUidx(purchase.getP_buyer_idx()).getU_name());
                         }
                         userPurchase.setA_price(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_price());
                         userPurchase.setP_state(purchase.getP_state());
@@ -264,7 +264,7 @@ public class UserService {
             String u_name = userMapper.findByUidx(userIdx).getU_name();
             try {
                 for (Purchase p : listTransaction) {
-                    if (p.getP_state() == 13 && p.isP_isBuyer() == false) { //13이 후기 작성 완료라고 가정! 추후 수정 필요 && 판매자 여야함
+                    if (p.getP_comment() != null && (p.getP_seller_idx() == userIdx)) {
                         UserReview userReview = new UserReview();
                         userReview.setP_idx(p.getP_idx());
                         userReview.setA_name(artworkMapper.findAllArtworkByIdx(p.getA_idx()).getA_name());

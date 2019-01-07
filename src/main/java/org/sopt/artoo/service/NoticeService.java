@@ -52,49 +52,38 @@ public class NoticeService {
                 NoticeRes noticeRes = new NoticeRes(purchase);
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
                 // 판매자 정보 저장
-                User user = userMapper.findByUidx(purchase.getP_seller_idx());
                 User adminUser = userMapper.findByUidx(0);
 
                 // 작품 정보 저장
                 Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
                 noticeRes.setA_name(artwork.getA_name());
-                noticeRes.setA_u_name(user.getU_name()); // 작가 == 판매자
+                noticeRes.setA_u_name(userMapper.findByUidx(artwork.getU_idx()).getU_name());
+
+                noticeRes.setU_name(adminUser.getU_name());
+                noticeRes.setU_phone(adminUser.getU_phone());
+                noticeRes.setU_address(adminUser.getU_address());
 
                 String p_state = String.valueOf(purchase.getP_state());
 
                 if(p_state.endsWith("0")){ // 결제 전
-                    noticeRes.setU_idx(adminUser.getU_idx());
-                    noticeRes.setU_name(adminUser.getU_name());
-                    noticeRes.setU_phone(adminUser.getU_phone());
-                    noticeRes.setU_address(adminUser.getU_address());
-                    noticeRes.setA_price(purchase.getP_price());
+                    noticeRes.setU_bank(adminUser.getU_bank());
+                    noticeRes.setU_account(adminUser.getU_account());
 
-                    if(p_state.startsWith("1")){
-                        // 직거래 결제전
-                        noticeRes.setP_isDelivery(0);
-                        // 수수료 10% - 삭제 예정
-//                        int price = ((int)Math.ceil(artwork.getA_price()*0.9));
-//                        noticeRes.setA_price(price);
-                    } else{
-                        // 택배 결제전
-                        noticeRes.setP_isDelivery(1);
-                        // 전체 가격
-//                        noticeRes.setA_price(artwork.getA_price());
-                    }
+                    noticeRes.setA_price(purchase.getP_price());
+                    // 직거래 결제전
+                    if(p_state.startsWith("1")){ noticeRes.setP_isDelivery(0); }
+                    // 택배 결제전
+                    else if(p_state.startsWith("2")){ noticeRes.setP_isDelivery(1); }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeRes.setP_isPay(0); // 결제전
                     log.info(noticeRes.getA_idx() + ": 결제전");
                     noticeResList.add(noticeRes);
                 }
                 if(p_state.endsWith("1")){ //결제 완료
-                    noticeRes.setU_idx(adminUser.getU_idx());
-                    noticeRes.setU_name(adminUser.getU_name());
-                    noticeRes.setU_phone(adminUser.getU_phone());
-                    noticeRes.setU_address(adminUser.getU_address());
                     if(p_state.startsWith("1")){ // 직거래
                         noticeRes.setP_isDelivery(0);
                         log.info(noticeRes.getA_idx() + "직거래");
-                    }else{ // 택배
+                    }else if(p_state.startsWith("2")){ // 택배
                         noticeRes.setP_isDelivery(1);
                         log.info(noticeRes.getA_idx() + "택배");
                     }
@@ -130,8 +119,6 @@ public class NoticeService {
             for(Purchase purchase : purchaseList) {
                 NoticeRes noticeRes = new NoticeRes(purchase);
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
-                // 구매자 정보 저장
-                User user = userMapper.findByUidx(purchase.getP_buyer_idx());
 
                 // 작품 정보 저장
                 Artwork artwork = artworkMapper.findByIdx(purchase.getA_idx());
@@ -139,19 +126,17 @@ public class NoticeService {
                 noticeRes.setA_u_name(userMapper.findByUidx(u_idx).getU_name()); // 작가 == user
                 noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
 
-                noticeRes.setU_idx(artwork.getU_idx());
                 noticeRes.setU_name(adminUser.getU_name());
                 noticeRes.setU_phone(adminUser.getU_phone());
                 noticeRes.setU_address(adminUser.getU_address());
 
-                String p_state = String.valueOf(purchase.getP_state());
-                if (p_state.startsWith("1") && p_state.endsWith("1")) { // 직거래
-                    noticeRes.setP_isDelivery(0); // 직거래
-                    noticeResList.add(noticeRes);
-                } else if (p_state.startsWith("2") && p_state.endsWith("1")) { //택배
-                    noticeRes.setP_isDelivery(1); // 택배
-                    noticeResList.add(noticeRes);
-                }
+                int p_state = purchase.getP_state();
+                // 직거래
+                if (p_state == 11) { noticeRes.setP_isDelivery(0);  }
+                // 택배
+                else if (p_state == 21) { noticeRes.setP_isDelivery(1);}
+                noticeResList.add(noticeRes);
+
             }
             if(noticeResList.isEmpty())
                 return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_READ_SELLS, noticeResList);
@@ -167,14 +152,14 @@ public class NoticeService {
      * 구매 후기 작성
      * @param u_idx
      * @param p_idx
-     * @param p_comment
+     * @param purchaseComment
      * @return
      */
-    public DefaultRes trySavePurchaseComment(final int u_idx, final int p_idx, final String p_comment){
+    public DefaultRes trySavePurchaseComment(final int u_idx, final int p_idx, final PurchaseComment purchaseComment){
         try {
             Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
             if (purchase.getP_buyer_idx()==u_idx){
-                purchaseMapper.updatePurchaseComment(p_idx, p_comment);
+                purchaseMapper.updatePurchaseComment(p_idx, purchaseComment.getP_comment());
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
             }else{
                 return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
