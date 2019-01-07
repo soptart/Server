@@ -68,7 +68,7 @@ public class UserController {
                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
             }
-            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            return new ResponseEntity<>(defaultRes, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

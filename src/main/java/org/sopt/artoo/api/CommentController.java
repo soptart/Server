@@ -41,18 +41,10 @@ public class CommentController {
             //토큰으로 유저인덱스 가져오기
             final int userIdx = jwtService.decode(header).getUser_idx();
             // userIdx로 유저가 쓴 코멘트들을 가져와서 그 코멘트 중에 이 artwork에 artwork가 가지고 있는 c_idx를 가진 코멘트가 있는지 확인
-            if(userIdx == -1){
+            if (userIdx == -1) {
                 return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.INDEX_NOT_FOUNDED), HttpStatus.OK);
             }
             DefaultRes<List<Comment>> commentList = commentService.findAllCommentByArtIdx(a_idx, userIdx);
-            /*if (commentList.getData().stream().filter(comment -> comment.getU_idx() == userIdx).collect(Collectors.toList()).size() != 0) {
-                for (Comment comment : commentList.getData()) {
-                    comment.setAuth(userIdx == comment.getU_idx());
-                }
-                return new ResponseEntity<>(commentList, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.INDEX_NOT_FOUNDED), HttpStatus.OK);
-            }*/
             return new ResponseEntity<>(commentList, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -100,17 +92,13 @@ public class CommentController {
     }
 
     @Auth
-    @DeleteMapping("/comments")
+    @DeleteMapping("/comments/{c_idx}")
     public ResponseEntity deleteComment(
             @RequestHeader(value = "Authorization") final String header,
-            @RequestBody final CommentReq commentReq) {
+            @PathVariable("c_idx") final int c_idx) {
         try {
             final int userIdx = jwtService.decode(header).getUser_idx();
-            if (userIdx == commentReq.getU_idx()) {
-                return new ResponseEntity<>(commentService.deleteComment(commentReq.getC_idx()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED), HttpStatus.NOT_FOUND);
-            }
+            return new ResponseEntity<>(commentService.deleteComment(c_idx), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
