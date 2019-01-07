@@ -24,6 +24,8 @@ public class UserSignUpReq {
     // 유저 계좌 번호
     private String u_dept;
     //유저 전공
+    private String u_description;
+    // 유저 정보 변경
 
     public boolean checkQualification() {
         return (
