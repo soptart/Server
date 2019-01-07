@@ -98,7 +98,7 @@ public class CommentController {
             @PathVariable("c_idx") final int c_idx) {
         try {
             final int userIdx = jwtService.decode(header).getUser_idx();
-            return new ResponseEntity<>(commentService.deleteComment(c_idx), HttpStatus.OK);
+            return new ResponseEntity<>(commentService.deleteComment(c_idx, userIdx), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
