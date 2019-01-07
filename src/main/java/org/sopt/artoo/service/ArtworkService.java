@@ -107,14 +107,12 @@ public class ArtworkService {
             ArtworkRes artworkRes = new ArtworkRes(artwork, user);
             artworkRes.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
             artworkRes.setA_size(artworkRes.getA_depth() * artworkRes.getA_height() * artworkRes.getA_width());
-
-            List<Purchase> purchase = purchaseMapper.findTransactionsByArtIdx(artwork.getA_idx());
-            // 구매가능하고 구매 테이블에 작품이 있을 경우 - 구매중
-            if(!purchase.isEmpty() && artwork.getA_purchaseState()== 1){
-                int a_purchaseState = 2;
-                artworkMapper.updatePurchaseStateByAIdx(a_idx, a_purchaseState);
-                artworkRes.setA_purchaseState(a_purchaseState);
-            }
+            // 판매불가 (p_state: 0)
+            if(artwork.getA_purchaseState() == 0) {artworkRes.setA_purchaseState(0);}
+            // 구매가능 (p_state: 1,2,3)
+            if(artwork.getA_purchaseState() < 10){ artworkRes.setA_purchaseState(1); }
+            // 판매완료 (p_state: 11,12,13)
+            if(artwork.getA_purchaseState() > 10){artworkRes.setA_purchaseState(2);}
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artworkRes);
         }catch(Exception e){
             log.error(e.getMessage());
