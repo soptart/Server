@@ -298,7 +298,7 @@ public class ArtworkService {
     }
 
     /**
-     * 구매 Service - 구매 데이터 전달 + 가격 정보 올리기 + (1/7) artwork a_purchaseState update to 2
+     * 구매 Service - 구매 데이터 전달 + 가격 정보 올리기 + (1/7) artwork a_purchaseState update
      *
      * @param buyerIdx 구매자 고유번호
      * @param a_idx 작품 고유번호
@@ -334,10 +334,10 @@ public class ArtworkService {
                 //---------------------구매 데이터 저장--------------------
 
                 if(purchaseReq.isP_isPost()) { //상태
-                    purchaseReq.setP_state(21);
+                    purchaseReq.setP_state(20);
                 }
                 else{
-                    purchaseReq.setP_state(11);
+                    purchaseReq.setP_state(10);
                 }
                 Calendar calendar = Calendar.getInstance(); // 시간
                 java.util.Date date = calendar.getTime();
@@ -347,7 +347,12 @@ public class ArtworkService {
                 purchaseReq.setP_sellerIdx(artist.getU_idx());
                 purchaseReq.setP_buyerIdx(buyerIdx);
 
+                // 구매 테이블에 추가
                 purchaseMapper.savePurchaseData(purchaseReq);
+                // 아트워크 구매 상태 변경 1|2|3. -> 11|12|13
+                int a_purchaseState = purchaseArtwork.getA_purchaseState() + 10;
+                artworkMapper.updatePurchaseStateByAIdx(purchaseArtwork.getA_idx(), a_purchaseState);
+
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseProduct);
             } catch (Exception e) {
                 log.error(e.getMessage());
