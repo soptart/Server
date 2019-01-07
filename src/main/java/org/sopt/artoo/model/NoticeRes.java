@@ -34,8 +34,6 @@ public class NoticeRes {
     // 작품 사진
     private String a_pic_url;
 
-    // (판매자 혹은 구매자) u_idx
-    private int u_idx;
     // (판매자 혹은 구매자) 이름
     private String u_name;
     // (판매자 혹은 구매자) 핸드폰 번호
