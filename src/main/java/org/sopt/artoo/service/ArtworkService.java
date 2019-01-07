@@ -109,9 +109,11 @@ public class ArtworkService {
             artworkRes.setA_size(artworkRes.getA_depth() * artworkRes.getA_height() * artworkRes.getA_width());
 
             List<Purchase> purchase = purchaseMapper.findTransactionsByArtIdx(artwork.getA_idx());
-            // 구매가능하고 구매 테이블에 작품이 있을 경우
+            // 구매가능하고 구매 테이블에 작품이 있을 경우 - 구매중
             if(!purchase.isEmpty() && artwork.getA_purchaseState()== 1){
-                artworkRes.setA_purchaseState(2);
+                int a_purchaseState = 2;
+                artworkMapper.updatePurchaseStateByAIdx(a_idx, a_purchaseState);
+                artworkRes.setA_purchaseState(a_purchaseState);
             }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artworkRes);
         }catch(Exception e){
@@ -298,7 +300,7 @@ public class ArtworkService {
     }
 
     /**
-     * 구매 Service - 구매 데이터 전달 + 가격 정보 올리기
+     * 구매 Service - 구매 데이터 전달 + 가격 정보 올리기 + (1/7) artwork a_purchaseState update to 2
      *
      * @param buyerIdx 구매자 고유번호
      * @param a_idx 작품 고유번호
