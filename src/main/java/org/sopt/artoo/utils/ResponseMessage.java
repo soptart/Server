@@ -37,6 +37,7 @@ public class ResponseMessage {
     public static final String WRONG_CHECK_PASSWORD = "회원 확인 비밀 번호 불일치";
     public static final String SUCCESS_CHANGE_PW = "회원 비밀번호 수정 확인";
     public static final String NOT_ENOUGH_PASSWORD_LENGTH = "비밀 번호 길이가 너무 짧음";
+    public static final String YOU_ARE_NOT_ADMIN = "당신은 가짜 관리자야";
 
 
     public static final String READ_ALL_CONTENTS = "모든 컨텐츠 조회 성공";
