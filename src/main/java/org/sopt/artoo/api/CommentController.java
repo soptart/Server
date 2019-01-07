@@ -50,7 +50,7 @@ public class CommentController {
                 return new ResponseEntity<>(commentList, HttpStatus.OK);
             } else {
                 List<Comment> emptyList = new ArrayList<>();
-                return new ResponseEntity<>(DefaultRes.res(StatusCode.OK, ResponseMessage.INDEX_NOT_FOUNDED, emptyList), HttpStatus.OK);
+                return new ResponseEntity<>(DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INDEX_NOT_FOUNDED, emptyList), HttpStatus.OK);
             }
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -101,10 +101,9 @@ public class ArtworkController {
      *
      */
     @Auth
-    @GetMapping("/artworks/{a_idx}/purchase/{u_idx}")
+    @GetMapping("/artworks/{a_idx}/purchases")
     public ResponseEntity getArtworkForSale(
-            @PathVariable("a_idx") final int a_idx,
-            @PathVariable("u_idx") final int u_idx) {
+            @PathVariable("a_idx") final int a_idx) {
         try {
             DefaultRes<PurchaseProduct> defaultRes = artworkService.getPurchaseArtworkInfo(a_idx);
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
@@ -125,7 +124,7 @@ public class ArtworkController {
      * @return ResponseEntity
      */
     @Auth
-    @PostMapping("/artworks/{a_idx}/purchase/{u_idx}")
+    @PostMapping("/artworks/{a_idx}/purchases/{u_idx}")
     public ResponseEntity buyArtwork(
             @RequestHeader(value = "Authorization", required = false) final String header,
             @PathVariable("a_idx") final int a_idx,
