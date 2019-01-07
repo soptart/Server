@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +49,8 @@ public class CommentController {
                 }
                 return new ResponseEntity<>(commentList, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.INDEX_NOT_FOUNDED), HttpStatus.OK);
+                List<Comment> emptyList = new ArrayList<>();
+                return new ResponseEntity<>(DefaultRes.res(StatusCode.OK, ResponseMessage.INDEX_NOT_FOUNDED, emptyList), HttpStatus.OK);
             }
         } catch (Exception e) {
             log.error(e.getMessage());

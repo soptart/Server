@@ -26,6 +26,7 @@ public class CommentService {
 
     public DefaultRes<List<Comment>> findAllCommentByArtIdx(final int a_idx) {
         List<Comment> comments = commentMapper.findAllCommentByArtIdx(a_idx);
+
         try {
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_COMMENTS, comments);
         } catch (Exception e) {

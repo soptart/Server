@@ -103,15 +103,11 @@ public class ArtworkController {
     @Auth
     @GetMapping("/artworks/{a_idx}/purchase/{u_idx}")
     public ResponseEntity getArtworkForSale(
-            @RequestHeader(value = "Authorization") final String header,
             @PathVariable("a_idx") final int a_idx,
             @PathVariable("u_idx") final int u_idx) {
         try {
-            if(jwtService.checkAuth(header, u_idx)) {
-                DefaultRes<PurchaseProduct> defaultRes = artworkService.getPurchaseArtworkInfo(a_idx);
-                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-            }
-            return new ResponseEntity<>(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+            DefaultRes<PurchaseProduct> defaultRes = artworkService.getPurchaseArtworkInfo(a_idx);
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
@@ -137,7 +133,7 @@ public class ArtworkController {
             @RequestBody PurchaseReq purchaseReq) {
         if (jwtService.decode(header).getUser_idx() == u_idx) {
             try {
-                DefaultRes<PurchaseProduct> defaultRes = artworkService.purchaseArtwork(u_idx, a_idx, purchaseReq);
+                DefaultRes<PurchaseReq> defaultRes = artworkService.purchaseArtwork(u_idx, a_idx, purchaseReq);
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());

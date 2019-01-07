@@ -279,7 +279,6 @@ public class ArtworkService {
     /**
      * 구매할 작품에 대한 정보 GET
      * @param a_idx
-     * @param u_dx
      * @return PurchaseProduct (상품 정보)
      */
     public DefaultRes<PurchaseProduct> getPurchaseArtworkInfo(final int a_idx){
@@ -321,32 +320,27 @@ public class ArtworkService {
      * @return boolean
      */
      @Transactional
-     public DefaultRes<PurchaseProduct> purchaseArtwork(final int buyerIdx, final int a_idx, final PurchaseReq purchaseReq) {
+     public DefaultRes<PurchaseReq> purchaseArtwork(final int buyerIdx, final int a_idx, final PurchaseReq purchaseReq) {
         if(purchaseReq.checkPurchaseReq()) {
             try {
-                //---------------------작품 데이터 전송--------------------
+                //---------------------작품 데이터 저장--------------------
                 //작품 정보
-                PurchaseProduct purchaseProduct = new PurchaseProduct();
-                final Artwork purchaseArtwork = artworkMapper.findByIdx(a_idx);
-                final User artist = userMapper.findByUidx(purchaseArtwork.getU_idx());
-                purchaseProduct.setArtworkName(purchaseArtwork.getA_name()); //작품 이름
-                purchaseProduct.setArtworkPrice(purchaseArtwork.getA_price()); // 작품 가격
-                purchaseProduct.setArtistName(artist.getU_name()); //작가 이름
-                purchaseProduct.setArtistSchool(artist.getU_school()); // 작가 학교
-                final int productSize = purchaseArtwork.getA_size();
-                if(purchaseArtwork.getA_price() >= 150000){
-                    purchaseProduct.setDeliveryCharge(0);
+                final Artwork artwork = artworkMapper.findByIdx(a_idx);
+                final int artistIdx = artwork.getU_idx();
+                final int productSize = artwork.getA_size();
+                int purchasePrice = (int)(artwork.getA_price() * 1.1);
+                if(purchasePrice > 150000){
+                    purchasePrice += 0;
                 }
                 else if(productSize < 2412) {
-                    purchaseProduct.setDeliveryCharge(3000);
+                    purchasePrice += 3000;
                 }
                 else if(productSize < 6609){
-                    purchaseProduct.setDeliveryCharge(4000);
+                    purchasePrice += 4000;
                 }
                 else {
-                    purchaseProduct.setDeliveryCharge(5000);
+                    purchasePrice += 5000;
                 }
-                //---------------------구매 데이터 저장--------------------
 
                 if(purchaseReq.isP_isPost()) { //상태
                     purchaseReq.setP_state(20);
@@ -358,17 +352,18 @@ public class ArtworkService {
                 java.util.Date date = calendar.getTime();
                 purchaseReq.setP_currentTime(date);
 
-                purchaseReq.setA_idx(a_idx);
-                purchaseReq.setP_sellerIdx(artist.getU_idx());
+                purchaseReq.setA_idx(a_idx); // a_idx
+                purchaseReq.setP_sellerIdx(artistIdx);
                 purchaseReq.setP_buyerIdx(buyerIdx);
+                purchaseReq.setP_price(purchasePrice); // VAT와 배송비까지 포함한 최종가격
 
                 // 구매 테이블에 추가
                 purchaseMapper.savePurchaseData(purchaseReq);
                 // 아트워크 구매 상태 변경 1|2|3. -> 11|12|13
-                int a_purchaseState = purchaseArtwork.getA_purchaseState() + 10;
-                artworkMapper.updatePurchaseStateByAIdx(purchaseArtwork.getA_idx(), a_purchaseState);
+                int a_purchaseState = artwork.getA_purchaseState() + 10;
+                artworkMapper.updatePurchaseStateByAIdx(artwork.getA_idx(), a_purchaseState);
 
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseProduct);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseReq);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
