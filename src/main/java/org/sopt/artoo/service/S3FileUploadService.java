@@ -33,11 +33,14 @@ public class S3FileUploadService {
         this.amazonS3Client = amazonS3Client;
     }
 
-    public String upload(MultipartFile uploadFile) throws IOException {
+    public String upload(MultipartFile uploadFile, String folder) throws IOException {
         String origName = uploadFile.getOriginalFilename();
         log.info("origName: " + origName);
         String url;
         try {
+            // 버킷 url 설정
+            bucket +="/"+folder;
+            log.info(bucket);
             //확장자
             final String ext = origName.substring(origName.lastIndexOf('.'));
             //파일이름 암호화
@@ -71,6 +74,9 @@ public class S3FileUploadService {
         //AWS S3 전송 객체 생성
         final TransferManager transferManager = new TransferManager(this.amazonS3Client);
         //요청 객체 생성
+//        log.info(bucket);
+//        log.info(fileName);
+//        log.info(file.toString());
         final PutObjectRequest request = new PutObjectRequest(bucket, fileName, file);
         //업로드 시도
         final Upload upload = transferManager.upload(request);

@@ -190,7 +190,7 @@ public class ArtworkService {
                 artworkMapper.save(artworkReq);
 
                 final int artIdx = artworkReq.getA_idx();
-                artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
+                artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url(),"artwork"));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
 
             } catch (IOException e) {
@@ -220,7 +220,7 @@ public class ArtworkService {
                 Date date = new Date();
                 artworkReq.setA_date(date);
                 artworkReq.setA_active(true);
-                artworkPicMapper.update(artworkReq.getA_idx(), s3FileUploadService.upload(artworkReq.getPic_url()));
+                artworkPicMapper.update(artworkReq.getA_idx(), s3FileUploadService.upload(artworkReq.getPic_url(),"artwork"));
                 artworkMapper.updateByArtIdxReq(artworkReq, artworkReq.getA_idx());
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT);
             } catch (Exception e) {

@@ -90,13 +90,13 @@ public class DisplayService {
 
             try {
                 if(displayAddReq.getM_d_mainImg_url() != null){
-                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url()));
+                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(),"display"));
                 }
 
                 if(displayAddReq.getM_d_titleImg_url() != null ){
-                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url()));
+                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url(),"display"));
                 }
-                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url()));
+                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(),"display"));
             } catch (IOException e) {
                 e.printStackTrace();
                 return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
@@ -123,14 +123,14 @@ public class DisplayService {
         try {
             if(displayAddReq.getM_d_mainImg_url() != null) {
 //                s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url());
-                displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url()));
+                displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(),"display"));
             }
             if(displayAddReq.getM_d_repImg_url() != null) {
 //                s3FileUploadService.upload(displayAddReq.getM_d_repImg_url());
-                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url()));
+                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(),"display"));
             }
             if(displayAddReq.getM_d_mainImg_url() != null) {
-                displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url()));
+                displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url(),"display"));
             }
             displayMapper.updateDisplay(displayAddReq);
         } catch (IOException e) {
