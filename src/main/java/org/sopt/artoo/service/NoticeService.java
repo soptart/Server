@@ -157,13 +157,16 @@ public class NoticeService {
      */
     public DefaultRes trySavePurchaseComment(final int u_idx, final int p_idx, final PurchaseComment purchaseComment){
         try {
-            Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
-            if (purchase.getP_buyer_idx()==u_idx){
-                purchaseMapper.updatePurchaseComment(p_idx, purchaseComment.getP_comment());
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
-            }else{
-                return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+            if(purchaseComment.getP_comment() != null) {
+                Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
+                if (purchase.getP_buyer_idx() == u_idx) {
+                    purchaseMapper.updatePurchaseComment(p_idx, purchaseComment.getP_comment());
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
+                } else {
+                    return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+                }
             }
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_CREATE_COMMENT);
         } catch (Exception e) {
             log.error(e.getMessage());
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
