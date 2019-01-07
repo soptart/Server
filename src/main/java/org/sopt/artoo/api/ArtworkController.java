@@ -107,8 +107,11 @@ public class ArtworkController {
             @PathVariable("a_idx") final int a_idx,
             @PathVariable("u_idx") final int u_idx) {
         try {
-            DefaultRes<PurchaseProduct> defaultRes = artworkService.getPurchaseArtworkInfo(a_idx, u_idx);
-            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            if(jwtService.checkAuth(header, u_idx)) {
+                DefaultRes<PurchaseProduct> defaultRes = artworkService.getPurchaseArtworkInfo(a_idx);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());

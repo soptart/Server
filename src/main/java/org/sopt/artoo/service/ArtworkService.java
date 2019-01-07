@@ -278,9 +278,11 @@ public class ArtworkService {
 
     /**
      * 구매할 작품에 대한 정보 GET
-     *
+     * @param a_idx
+     * @param u_dx
+     * @return PurchaseProduct (상품 정보)
      */
-    public DefaultRes<PurchaseProduct> getPurchaseArtworkInfo(final int a_idx, final int u_dx){
+    public DefaultRes<PurchaseProduct> getPurchaseArtworkInfo(final int a_idx){
         try {
             Artwork artwork = artworkMapper.findByIdx(a_idx);
             User user = userMapper.findByUidx(artwork.getU_idx());
@@ -288,7 +290,20 @@ public class ArtworkService {
             purchaseProduct.setArtistSchool(user.getU_school());
             purchaseProduct.setArtistName(user.getU_name());
             purchaseProduct.setArtworkName(artwork.getA_name());
-            purchaseProduct.setArtworkPrice(artwork.getA_price());
+            purchaseProduct.setArtworkPrice(artwork.getA_price()); // VAT를 제외한 가격
+            final int productSize = artwork.getA_size();
+            if(artwork.getA_price()*(1.1) >= 150000){ // 배송비는 VAT를 붙인 후 계산
+                purchaseProduct.setDeliveryCharge(0);
+            }
+            else if(productSize < 2412) {
+                purchaseProduct.setDeliveryCharge(3000);
+            }
+            else if(productSize < 6609){
+                purchaseProduct.setDeliveryCharge(4000);
+            }
+            else {
+                purchaseProduct.setDeliveryCharge(5000);
+            }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, purchaseProduct);
         } catch (Exception e) {
             e.printStackTrace();
