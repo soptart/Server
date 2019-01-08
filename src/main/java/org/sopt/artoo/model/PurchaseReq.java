@@ -6,7 +6,6 @@ import lombok.*;
 import java.util.Date;
 
 @Data
-@Builder
 public class PurchaseReq {
 
     //입력 받야아할 부분
@@ -36,15 +35,22 @@ public class PurchaseReq {
     // 구매 고유번호
     private int p_price;
 
+//    public boolean checkPurchaseReq() {
+//        String p_paymentS = String.valueOf(p_payment);
+//        if(p_isPost == true){
+//            return ( p_recipient != null && p_address != null && p_phone != null && (p_paymentS!=null && !p_paymentS.isEmpty()));
+//        }
+//        else {
+//            return (p_paymentS!=null && !p_paymentS.isEmpty());
+//        }
+//    }
+
     public boolean checkPurchaseReq() {
-        if(p_isPost != false){
-            return ( p_recipient != null && p_address != null && p_phone != null && p_payment != 0);
+        if(p_isPost == true){
+            return ( p_recipient != null && p_address != null && p_phone != null );
         }
         else {
-            return (p_payment != 0);
+            return (true);
         }
     }
-
-
-
 }
