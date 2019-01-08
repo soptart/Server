@@ -1,6 +1,8 @@
 package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
+import org.sopt.artoo.dto.Purchase;
+import org.sopt.artoo.mapper.PurchaseMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.PurchaseComment;
 import org.sopt.artoo.service.DisplayService;
@@ -10,7 +12,13 @@ import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
@@ -20,12 +28,14 @@ public class NoticeController {
     private NoticeService noticeService;
     private JwtService jwtService;
     private DisplayService displayService;
+    private PurchaseMapper purchaseMapper;
     private static final DefaultRes UNAUTHORIZED_RES = new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
 
-    public NoticeController(NoticeService noticeService, JwtService jwtService, DisplayService displayService) {
+    public NoticeController(NoticeService noticeService, JwtService jwtService, DisplayService displayService, PurchaseMapper purchaseMapper) {
         this.noticeService = noticeService;
         this.jwtService = jwtService;
         this.displayService = displayService;
+        this.purchaseMapper = purchaseMapper;
     }
 
     /**
@@ -125,6 +135,20 @@ public class NoticeController {
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Scheduled(cron = "0 0 24 * * *")
+    public void cancelUnpaid(){ //매 24시마다 화깅ㄴ
+        List<Purchase> unpaidPurchase = purchaseMapper.findUnpaidPurchase(); // 미입금 상태 purchase
+        Calendar nowDate = Calendar.getInstance();
+        for(Purchase p : unpaidPurchase){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(p.getP_date());
+            cal.add(Calendar.DATE, 2);
+            if(cal.compareTo(nowDate) == -1) { // 구매 날짜 + 2보다 현재 날짜가 크면
+                purchaseMapper.deletePurchaseRow(p.getP_idx());
+            }
         }
     }
 
