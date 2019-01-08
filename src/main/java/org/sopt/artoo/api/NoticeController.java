@@ -2,6 +2,7 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Purchase;
+import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.PurchaseMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.PurchaseComment;
@@ -29,13 +30,16 @@ public class NoticeController {
     private JwtService jwtService;
     private DisplayService displayService;
     private PurchaseMapper purchaseMapper;
+    private ArtworkMapper artworkMapper;
     private static final DefaultRes UNAUTHORIZED_RES = new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
 
-    public NoticeController(NoticeService noticeService, JwtService jwtService, DisplayService displayService, PurchaseMapper purchaseMapper) {
+    public NoticeController(NoticeService noticeService, JwtService jwtService, DisplayService displayService, PurchaseMapper purchaseMapper,
+                            ArtworkMapper artworkMapper) {
         this.noticeService = noticeService;
         this.jwtService = jwtService;
         this.displayService = displayService;
         this.purchaseMapper = purchaseMapper;
+        this.artworkMapper = artworkMapper;
     }
 
     /**
@@ -139,7 +143,7 @@ public class NoticeController {
     }
 
     @Scheduled(cron = "0 0 24 * * *")
-    public void cancelUnpaid(){ //매 24시마다 화깅ㄴ
+    public void cancelUnpaid(){ //매 24시마다 확인
         List<Purchase> unpaidPurchase = purchaseMapper.findUnpaidPurchase(); // 미입금 상태 purchase
         Calendar nowDate = Calendar.getInstance();
         for(Purchase p : unpaidPurchase){
@@ -147,7 +151,9 @@ public class NoticeController {
             cal.setTime(p.getP_date());
             cal.add(Calendar.DATE, 2);
             if(cal.compareTo(nowDate) == -1) { // 구매 날짜 + 2보다 현재 날짜가 크면
-                purchaseMapper.deletePurchaseRow(p.getP_idx());
+                final int nowState = artworkMapper.findByIdx(p.getA_idx()).getA_purchaseState();
+                artworkMapper.updatePurchaseStateByAIdx(nowState % 10, p.getA_idx()); // 작품 상태 업데이트
+                purchaseMapper.deletePurchaseRow(p.getP_idx()); //구매 내역 삭제
             }
         }
     }
