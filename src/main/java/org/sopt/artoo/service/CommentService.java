@@ -98,11 +98,15 @@ public class CommentService {
         }
     }
 
-    public DefaultRes deleteComment(final int c_idx) {
+    public DefaultRes deleteComment(final int c_idx, final int userIdx) {
         try {
             if(commentMapper.findCommentByCommentIdx(c_idx)!=null){
-                commentMapper.deleteCommentByCommentIdx(c_idx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_COMMENT);
+                if(commentMapper.findCommentByCommentIdx(c_idx).getU_idx() == userIdx){
+                    commentMapper.deleteCommentByCommentIdx(c_idx);
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_COMMENT);
+                }else{
+                    return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+                }
             }else{
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_COMMENT);
             }

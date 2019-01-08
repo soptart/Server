@@ -346,6 +346,9 @@ public class UserService {
                     myUser.setU_bank(userInfo.getU_bank());
                     myUser.setU_account(userInfo.getU_account());
                 }
+                if(userInfo.getU_description()!=null){
+                    myUser.setU_description(userInfo.getU_description());
+                }
                 userMapper.updateUserInfo(userIdx, myUser);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
             } catch (Exception e) {
