@@ -98,6 +98,8 @@ public class ResponseMessage {
     public static final String INSERT_DISPLAYS = "전시회 추가 성공";
     public static final String UPDATE_DISPLAYS = "전시회 수정 성공";
     public static final String DELETE_DISPLAYS = "전시회 삭제 성공";
+    public static final String NOT_FOUND_REQUIRE_PARAMS = "필수 정보를 입력해 주세요";
+
 
 
     /* notice */

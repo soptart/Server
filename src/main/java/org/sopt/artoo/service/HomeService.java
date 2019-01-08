@@ -6,6 +6,7 @@ import org.sopt.artoo.dto.*;
 import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.ArtworkPicMapper;
 import org.sopt.artoo.mapper.HomeMapper;
+import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
@@ -43,10 +44,18 @@ public class HomeService {
         final List<Integer> todayUserIdxList = homeMapper.findTodayUserIdx(); //오늘의 작가 u_idx 리스트
         List<Home> todayArtistList = new ArrayList<>();
         try {
+            if(todayUserIdxList.size() < 5){         //좋아요 눌린 작가 수가 5명 이하일 때
+                List<Integer> artistIdxList = artworkMapper.findAllUserIdx();
+                artistIdxList.removeAll(todayUserIdxList); // 있는 userIdx 삭제
+                for(int i = 0; todayUserIdxList.size() < 5; i++){
+                    todayUserIdxList.add(artistIdxList.get(i));
+                }
+            }
+
             for (int i = 0; i < todayUserIdxList.size(); i++) {
 
-                List<HomeData> artPicData = homeMapper.findArtistContentsByUserIdx(todayUserIdxList.get(i)); //u_name, u_year 리스트, pic_url은 null
-                for (HomeData artData : artPicData) {
+                List<HomeData> artDataList = homeMapper.findArtistContentsByUserIdx(todayUserIdxList.get(i)); //u_name, u_year 리스트, pic_url은 null
+                for (HomeData artData : artDataList) {
                     artData.setPic_url(artworkPicMapper.findByArtIdx(artData.getA_idx()).getPic_url());// artData의 pic_url 설정
                 }
                 Home todayArtist = new Home();
@@ -54,10 +63,12 @@ public class HomeService {
                 todayArtist.setU_name(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_name());
                 todayArtist.setU_school(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_school());
                 todayArtist.setU_description(homeMapper.findArtistNameDescriptByUserIdx(todayUserIdxList.get(i)).getU_description());
-                todayArtist.setList(artPicData);
+                todayArtist.setList(artDataList);
 
                 todayArtistList.add(todayArtist);
             }
+
+
         }catch (Exception e){
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.NOT_FOUND_PICTURES);
         }
