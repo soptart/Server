@@ -142,7 +142,7 @@ public class NoticeController {
         }
     }
 
-    @Scheduled(cron = "0 0 24 * * *")
+    @Scheduled(cron = "0 59 23 * * *")
     public void cancelUnpaid(){ //매 24시마다 확인
         List<Purchase> unpaidPurchase = purchaseMapper.findUnpaidPurchase(); // 미입금 상태 purchase
         Calendar nowDate = Calendar.getInstance();
