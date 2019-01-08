@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,8 @@ public class CommentService {
                 comment.setAuth(u_idx == comment.getU_idx());
                 comment.setU_name(userMapper.findByUidx(comment.getU_idx()).getU_name());
             }
+        }else{
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INDEX_NOT_FOUNDED, new ArrayList<Comment>());
         }
         try {
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_COMMENTS, commentList);
