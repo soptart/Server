@@ -2,6 +2,7 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.PurchaseComment;
 import org.sopt.artoo.service.DisplayService;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.service.NoticeService;
@@ -79,15 +80,15 @@ public class NoticeController {
      *
      * @param header
      * @param p_idx
-     * @param comment
+     * @param purchaseComment
      * @return
      */
     @PostMapping("/notices/buys/{p_idx}")
     public ResponseEntity savePurchaseComment(@RequestHeader(value = "Authorization") final String header,
-                                              @PathVariable(value = "p_idx") final int p_idx, @RequestBody String comment) {
+                                              @PathVariable(value = "p_idx") final int p_idx, @RequestBody PurchaseComment purchaseComment) {
         try {
             final int u_idx = jwtService.decode(header).getUser_idx();
-            return new ResponseEntity<>(noticeService.trySavePurchaseComment(u_idx, p_idx, comment), HttpStatus.OK);
+            return new ResponseEntity<>(noticeService.trySavePurchaseComment(u_idx, p_idx, purchaseComment), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

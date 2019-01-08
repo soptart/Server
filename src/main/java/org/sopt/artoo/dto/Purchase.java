@@ -26,4 +26,6 @@ public class Purchase {
     private String p_address;
     // 구매자 / 판매자 구분
     private boolean p_isBuyer;
+    // 1.7 월추가 p_price(a_price, VAT, (택배))
+    private int p_price;
 }

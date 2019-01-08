@@ -34,6 +34,7 @@ public class PurchaseReq {
     // 판매 고유번호
     private int p_buyerIdx;
     // 구매 고유번호
+    private int p_price;
 
     public boolean checkPurchaseReq() {
         if(p_isPost != false){

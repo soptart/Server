@@ -54,7 +54,7 @@ public interface UserMapper {
      * @param userInfo
      */
     @Update("UPDATE user SET u_name = #{userInfo.u_name}, u_phone = #{userInfo.u_phone}, u_address = #{userInfo.u_address}," +
-            "u_school = #{userInfo.u_school}, u_bank = #{userInfo.u_bank}, u_account = #{userInfo.u_account} WHERE u_idx = #{u_idx}")
+            "u_school = #{userInfo.u_school}, u_bank = #{userInfo.u_bank}, u_account = #{userInfo.u_account}, u_description = #{userInfo.u_description} WHERE u_idx = #{u_idx}")
     void updateUserInfo(@Param("u_idx") final int u_idx, @Param("userInfo") final User userInfo);
 
     /**

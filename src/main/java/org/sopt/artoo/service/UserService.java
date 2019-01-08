@@ -107,7 +107,7 @@ public class UserService {
             if (!myArtworks.isEmpty()) {
                 return MyPageRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, u_name, userDes, myArtworks, myArtworks.size());
             }
-            return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
+            return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
         }
         return  MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
@@ -187,7 +187,7 @@ public class UserService {
                 if(!myArtworks.isEmpty()) {
                     return MyPageRes.res(StatusCode.CREATED, ResponseMessage.READ_USER_LIKES, u_name, userDes, myArtworks, myArtworks.size());
                 }
-                return MyPageRes.res(StatusCode.CREATED, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
+                return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes, myArtworks, myArtworks.size());
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
@@ -212,8 +212,9 @@ public class UserService {
             String u_name = userMapper.findByUidx(userIdx).getU_name();
             try{
                 List<Purchase> listPurchase = purchaseMapper.findTransactionByUserIdx(userIdx); //유저 고유 번호에서 거래 목록 불러오기
+                ArrayList<UserPurchase> listTransaction = new ArrayList<>();
                 if(!listPurchase.isEmpty()) {
-                    ArrayList<UserPurchase> listTransaction = new ArrayList<>();
+
                     for (Purchase purchase : listPurchase) {
                         if (purchase.getP_buyer_idx() == userIdx) {
                             purchase.setP_isBuyer(true);
@@ -225,10 +226,10 @@ public class UserService {
                         userPurchase.setA_idx(purchase.getA_idx());
                         userPurchase.setA_name(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_name()); //조회 할때 비활성한 상품도 조회해야한다!
                         userPurchase.setBuyer(purchase.isP_isBuyer());
-                        if (purchase.isP_isBuyer()) { //구매자일 경우
-                            userPurchase.setU_name(userMapper.findByUidx(purchase.getP_buyer_idx()).getU_name());
-                        } else {
+                        if (purchase.isP_isBuyer()) { //구매자일 경우 -> 판매자 이름 업데이트
                             userPurchase.setU_name(userMapper.findByUidx(purchase.getP_seller_idx()).getU_name());
+                        } else { //판매자인 경우 -> 구매자 이름 업데이트
+                            userPurchase.setU_name(userMapper.findByUidx(purchase.getP_buyer_idx()).getU_name());
                         }
                         userPurchase.setA_price(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_price());
                         userPurchase.setP_state(purchase.getP_state());
@@ -240,7 +241,7 @@ public class UserService {
                             listTransaction, listTransaction.size());
                 }
                 return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes,
-                        null, 0);
+                        listTransaction, 0);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
@@ -263,7 +264,7 @@ public class UserService {
             String u_name = userMapper.findByUidx(userIdx).getU_name();
             try {
                 for (Purchase p : listTransaction) {
-                    if (p.getP_state() == 13 && p.isP_isBuyer() == false) { //13이 후기 작성 완료라고 가정! 추후 수정 필요 && 판매자 여야함
+                    if (p.getP_comment() != null && (p.getP_seller_idx() == userIdx)) {
                         UserReview userReview = new UserReview();
                         userReview.setP_idx(p.getP_idx());
                         userReview.setA_name(artworkMapper.findAllArtworkByIdx(p.getA_idx()).getA_name());
@@ -278,7 +279,7 @@ public class UserService {
                     return MyPageRes.res(StatusCode.CREATED, ResponseMessage.READ_FINISHED_TRANSACTION, u_name, userDes,
                             listFinishedTrans, listFinishedTrans.size());
                 }
-                return MyPageRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes,
+                return MyPageRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, u_name, userDes,
                         listFinishedTrans, listFinishedTrans.size());
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -345,6 +346,9 @@ public class UserService {
                     myUser.setU_bank(userInfo.getU_bank());
                     myUser.setU_account(userInfo.getU_account());
                 }
+                if(userInfo.getU_description()!=null){
+                    myUser.setU_description(userInfo.getU_description());
+                }
                 userMapper.updateUserInfo(userIdx, myUser);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
             } catch (Exception e) {
@@ -378,10 +382,10 @@ public class UserService {
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_CHECK_PASSWORD);
                 }
                 else if(userPwInfo.getU_pw_new().length() < 7){
-                    return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
+                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
                 }
                 userMapper.updateUserPw(userIdx, userPwInfo);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.UPDATE_USER);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());

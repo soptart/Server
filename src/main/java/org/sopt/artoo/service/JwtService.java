@@ -122,7 +122,6 @@ public class JwtService {
      * @return boolean
      */
     public boolean checkAuth(final String header, final int userIdx) {
-        log.info(header);
         return decode(header).getUser_idx() == userIdx;
     }
 }

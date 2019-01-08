@@ -1,5 +1,6 @@
 package org.sopt.artoo.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.User;
 import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.DefaultRes;
@@ -9,6 +10,7 @@ import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AuthService {
     private final UserMapper userMapper;
 
