@@ -48,8 +48,6 @@ public class DisplayService {
         List<Display> displayList = displayMapper.findAllDisplay();
         List<Display> nowDisplayList = new ArrayList<>();
 
-        if(nowDisplayList.isEmpty())
-            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.FAIL_READ_DISPLAY, new ArrayList<>());
         //v2
         for(Display display : displayList){
             if(DateRes.isContain(display.getD_sDateNow(), display.getD_eDateNow())) {nowDisplayList.add(display);}
@@ -61,7 +59,8 @@ public class DisplayService {
             }
             nowDisplay.setD_artworkUser(userList);
         }
-
+        if(nowDisplayList.isEmpty())
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.FAIL_READ_DISPLAY, new ArrayList<>());
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, nowDisplayList);
     }
 
