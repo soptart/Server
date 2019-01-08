@@ -59,9 +59,8 @@ public class DisplayService {
             }
             nowDisplay.setD_artworkUser(userList);
         }
-
-        if(nowDisplayList == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_READ_DISPLAY);
+        if(nowDisplayList.isEmpty())
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.FAIL_READ_DISPLAY, new ArrayList<>());
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, nowDisplayList);
     }
 
@@ -87,17 +86,18 @@ public class DisplayService {
      */
     public DefaultRes addDisplay(final DisplayAddReq displayAddReq){
         if(displayAddReq.checkProperties()){
+
             try {
                 if(displayAddReq.getM_d_mainImg_url() != null){
-                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url()));
+                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(),"display"));
                 }
 
                 if(displayAddReq.getM_d_titleImg_url() != null ){
-                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url()));
+                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url(),"display"));
                 }
-                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url()));
+                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(), "display"));
                 displayMapper.addDisplay(displayAddReq);
-                
+
             } catch (IOException e) {
                 e.printStackTrace();
                 return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
@@ -120,13 +120,13 @@ public class DisplayService {
             try {
 
                 if (displayAddReq.getM_d_mainImg_url() != null) {
-                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url()));
+                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(), "display"));
                 }
                 if (displayAddReq.getM_d_repImg_url() != null) {
-                    displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url()));
+                    displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(), "display"));
                 }
                 if (displayAddReq.getM_d_mainImg_url() != null) {
-                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url()));
+                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url(), "display"));
                 }
 
                 displayMapper.updateDisplay(displayAddReq);

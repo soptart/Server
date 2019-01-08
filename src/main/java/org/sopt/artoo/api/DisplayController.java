@@ -31,7 +31,6 @@ public class DisplayController {
 
     private static final DefaultRes UNAUTHORIZED_RES = new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
 
-
     /**
      * 전시 메인 - 모든 전시 조회
      *
@@ -91,7 +90,6 @@ public class DisplayController {
 //            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
-
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

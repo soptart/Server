@@ -3,6 +3,7 @@ package org.sopt.artoo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.Comment;
 import org.sopt.artoo.mapper.CommentMapper;
+import org.sopt.artoo.mapper.UserMapper;
 import org.sopt.artoo.model.CommentReq;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.utils.ResponseMessage;
@@ -13,21 +14,30 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class CommentService {
 
     private final CommentMapper commentMapper;
+    private final UserMapper userMapper;
 
-    public CommentService(CommentMapper commentMapper) {
+    public CommentService(CommentMapper commentMapper, UserMapper userMapper) {
         this.commentMapper = commentMapper;
+        this.userMapper = userMapper;
     }
 
-    public DefaultRes<List<Comment>> findAllCommentByArtIdx(final int a_idx) {
-        List<Comment> comments = commentMapper.findAllCommentByArtIdx(a_idx);
+    public DefaultRes<List<Comment>> findAllCommentByArtIdx(final int a_idx, final int u_idx) {
+        List<Comment> commentList = commentMapper.findAllCommentByArtIdx(a_idx);
+        if (commentList.stream().filter(comment -> comment.getU_idx() == u_idx).collect(Collectors.toList()).size() != 0) {
+            for (Comment comment : commentList) {
+                comment.setAuth(u_idx == comment.getU_idx());
+                comment.setU_name(userMapper.findByUidx(comment.getU_idx()).getU_name());
+            }
+        }
         try {
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_COMMENTS, comments);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_COMMENTS, commentList);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(e.getMessage());
@@ -98,11 +108,15 @@ public class CommentService {
         }
     }
 
-    public DefaultRes deleteComment(final int c_idx) {
+    public DefaultRes deleteComment(final int c_idx, final int userIdx) {
         try {
             if(commentMapper.findCommentByCommentIdx(c_idx)!=null){
-                commentMapper.deleteCommentByCommentIdx(c_idx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_COMMENT);
+                if(commentMapper.findCommentByCommentIdx(c_idx).getU_idx() == userIdx){
+                    commentMapper.deleteCommentByCommentIdx(c_idx);
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_COMMENT);
+                }else{
+                    return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+                }
             }else{
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_COMMENT);
             }

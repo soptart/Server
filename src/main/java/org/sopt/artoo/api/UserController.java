@@ -68,7 +68,7 @@ public class UserController {
                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
             }
-            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            return new ResponseEntity<>(defaultRes, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -89,12 +89,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx) {
         if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
-                MyPageRes defaultRes = userService.findUserPurchase(userIdx);
-                if(defaultRes.getDataNum() == -1){
-                    DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
-                    return new ResponseEntity<>(errorRes, HttpStatus.OK);
-                }
-                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+                return new ResponseEntity<>(userService.findUserPurchase(userIdx), HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -242,5 +237,4 @@ public class UserController {
         }
     }
 }
-
 

@@ -3,17 +3,15 @@ package org.sopt.artoo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.*;
 import org.sopt.artoo.mapper.*;
-import org.sopt.artoo.model.ArtworkFilterReq;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.mapper.ArtworkMapper;
 import org.sopt.artoo.mapper.ArtworkPicMapper;
-import org.sopt.artoo.model.ArtworkReq;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -82,11 +80,45 @@ public class ArtworkService {
      */
     public DefaultRes<Artwork> findByArtIdx(final int a_idx) {
         Artwork artwork = artworkMapper.findByIdx(a_idx);
-        if (artwork == null) {
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+        if (artwork ==  null) {
+            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_CONTENT);
         }
         artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artwork);
+    }
+
+    /**
+     * 작품 인덱스로 조회
+     *
+     * @param a_idx 작품 인덱스
+     * @return DefaultRes <ArtworkRes>
+     */
+    public DefaultRes<ArtworkRes> findByArtworkIdx(final int a_idx) {
+        Artwork artwork = artworkMapper.findByIdx(a_idx);
+        //log.info(artwork.toString());
+        if (artwork == null) {
+            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_ARTWORK);
+        }
+        User user = userMapper.findByUidx(artwork.getU_idx());
+        if (user == null) {
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        }
+        try{
+            ArtworkRes artworkRes = new ArtworkRes(artwork, user);
+            artworkRes.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+            artworkRes.setA_size(artworkRes.getA_depth() * artworkRes.getA_height() * artworkRes.getA_width());
+            // 판매불가 (p_state: 0)
+            if(artwork.getA_purchaseState() == 0) {artworkRes.setA_purchaseState(0);}
+            // 구매가능 (p_state: 1,2,3)
+            if(artwork.getA_purchaseState() < 10){ artworkRes.setA_purchaseState(1); }
+            // 판매완료 (p_state: 11,12,13)
+            if(artwork.getA_purchaseState() > 10){artworkRes.setA_purchaseState(2);}
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artworkRes);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     /**
@@ -106,7 +138,7 @@ public class ArtworkService {
     public DefaultRes<Integer> getLikecountByArtIdx(final int a_idx) {
         Artwork artwork = artworkMapper.findByIdx(a_idx);
         if(artwork == null){
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_CONTENT);
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artwork.getA_like_count());
     }
@@ -116,7 +148,7 @@ public class ArtworkService {
         Artwork artwork = findByArtIdx(a_idx).getData();
         try {
             if (artwork == null) {
-                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
+                return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.NOT_FOUND_CONTENT);
             }
             ArtworkLike artworkLike = artworkLikeMapper.findByUserIdxAndArtworkIdx(u_idx, a_idx);
             if (artworkLike == null) {
@@ -158,7 +190,7 @@ public class ArtworkService {
                 artworkMapper.save(artworkReq);
 
                 final int artIdx = artworkReq.getA_idx();
-                artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
+                artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url(),"artwork"));
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATE_CONTENT);
 
             } catch (IOException e) {
@@ -188,7 +220,7 @@ public class ArtworkService {
                 Date date = new Date();
                 artworkReq.setA_date(date);
                 artworkReq.setA_active(true);
-                artworkPicMapper.update(artworkReq.getA_idx(), s3FileUploadService.upload(artworkReq.getPic_url()));
+                artworkPicMapper.update(artworkReq.getA_idx(), s3FileUploadService.upload(artworkReq.getPic_url(),"artwork"));
                 artworkMapper.updateByArtIdxReq(artworkReq, artworkReq.getA_idx());
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT);
             } catch (Exception e) {
@@ -246,17 +278,36 @@ public class ArtworkService {
 
     /**
      * 구매할 작품에 대한 정보 GET
-     *
+     * @param a_idx
+     * @return PurchaseProduct (상품 정보)
      */
-    public DefaultRes<PurchaseProduct> getPurchaseArtworkInfo(final int a_idx, final int u_dx){
+    public DefaultRes<PurchaseProduct> getPurchaseArtworkInfo(final int a_idx){
         try {
-            Artwork artwork = artworkMapper.findByIdx(a_idx);
-            User user = userMapper.findByUidx(artwork.getU_idx());
+            if(artworkMapper.findByIdx(a_idx) == null){
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
+            }
+            Artwork artwork = artworkMapper.findByIdx(a_idx); //작품
+            User user = userMapper.findByUidx(artwork.getU_idx());  //작가 인덱스
             PurchaseProduct purchaseProduct = new PurchaseProduct();
             purchaseProduct.setArtistSchool(user.getU_school());
             purchaseProduct.setArtistName(user.getU_name());
             purchaseProduct.setArtworkName(artwork.getA_name());
-            purchaseProduct.setArtworkPrice(artwork.getA_price());
+            purchaseProduct.setArtworkPrice(artwork.getA_price()); // VAT를 제외한 가격
+            purchaseProduct.setPurchaseState(artwork.getA_purchaseState());
+
+            final int productSize = artwork.getA_size();
+            if(artwork.getA_price()*(1.1) >= 150000){ // 배송비는 VAT를 붙인 후 계산
+                purchaseProduct.setDeliveryCharge(0);
+            }
+            else if(productSize < 2412) {
+                purchaseProduct.setDeliveryCharge(3000);
+            }
+            else if(productSize < 6609){
+                purchaseProduct.setDeliveryCharge(4000);
+            }
+            else {
+                purchaseProduct.setDeliveryCharge(5000);
+            }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, purchaseProduct);
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,7 +317,7 @@ public class ArtworkService {
     }
 
     /**
-     * 구매 Service - 구매 데이터 전달 + 가격 정보 올리기
+     * 구매 Service - 구매 데이터 전달 + 가격 정보 올리기 + (1/7) artwork a_purchaseState update
      *
      * @param buyerIdx 구매자 고유번호
      * @param a_idx 작품 고유번호
@@ -274,49 +325,51 @@ public class ArtworkService {
      * @return boolean
      */
      @Transactional
-     public DefaultRes<PurchaseProduct> purchaseArtwork(final int buyerIdx, final int a_idx, final PurchaseReq purchaseReq) {
+     public DefaultRes<PurchaseReq> purchaseArtwork(final int buyerIdx, final int a_idx, final PurchaseReq purchaseReq) {
         if(purchaseReq.checkPurchaseReq()) {
             try {
-                //---------------------작품 데이터 전송--------------------
+                //---------------------작품 데이터 저장--------------------
                 //작품 정보
-                PurchaseProduct purchaseProduct = new PurchaseProduct();
-                final Artwork purchaseArtwork = artworkMapper.findByIdx(a_idx);
-                final User artist = userMapper.findByUidx(purchaseArtwork.getU_idx());
-                purchaseProduct.setArtworkName(purchaseArtwork.getA_name()); //작품 이름
-                purchaseProduct.setArtworkPrice(purchaseArtwork.getA_price()); // 작품 가격
-                purchaseProduct.setArtistName(artist.getU_name()); //작가 이름
-                purchaseProduct.setArtistSchool(artist.getU_school()); // 작가 학교
-                final int productSize = purchaseArtwork.getA_size();
-                if(purchaseArtwork.getA_price() >= 150000){
-                    purchaseProduct.setDeliveryCharge(0);
-                }
-                else if(productSize < 2412) {
-                    purchaseProduct.setDeliveryCharge(3000);
-                }
-                else if(productSize < 6609){
-                    purchaseProduct.setDeliveryCharge(4000);
-                }
-                else {
-                    purchaseProduct.setDeliveryCharge(5000);
-                }
-                //---------------------구매 데이터 저장--------------------
+                final Artwork artwork = artworkMapper.findByIdx(a_idx);
+                if((purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 3))
+                    ||(!purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 2))) {
 
-                if(purchaseReq.isP_isPost()) { //상태
-                    purchaseReq.setP_state(21);
-                }
-                else{
-                    purchaseReq.setP_state(11);
-                }
-                Calendar calendar = Calendar.getInstance(); // 시간
-                java.util.Date date = calendar.getTime();
-                purchaseReq.setP_currentTime(date);
+                    final int artistIdx = artwork.getU_idx();
+                    final int productSize = artwork.getA_size();
+                    int purchasePrice = (int) (artwork.getA_price() * 1.1);
+                    if (purchasePrice > 150000) {
+                        purchasePrice += 0;
+                    } else if (productSize < 2412) {
+                        purchasePrice += 3000;
+                    } else if (productSize < 6609) {
+                        purchasePrice += 4000;
+                    } else {
+                        purchasePrice += 5000;
+                    }
 
-                purchaseReq.setA_idx(a_idx);
-                purchaseReq.setP_sellerIdx(artist.getU_idx());
-                purchaseReq.setP_buyerIdx(buyerIdx);
+                    if (purchaseReq.isP_isPost()) { //상태
+                        purchaseReq.setP_state(20);
+                    } else {
+                        purchaseReq.setP_state(10);
+                    }
+                    Calendar calendar = Calendar.getInstance(); // 시간
+                    java.util.Date date = calendar.getTime();
+                    purchaseReq.setP_currentTime(date);
 
-                purchaseMapper.savePurchaseData(purchaseReq);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseProduct);
+                    purchaseReq.setA_idx(a_idx); // a_idx
+                    purchaseReq.setP_sellerIdx(artistIdx);
+                    purchaseReq.setP_buyerIdx(buyerIdx);
+                    purchaseReq.setP_price(purchasePrice); // VAT와 배송비까지 포함한 최종가격
+
+                    // 구매 테이블에 추가
+                    purchaseMapper.savePurchaseData(purchaseReq);
+                    // 아트워크 구매 상태 변경 1|2|3. -> 11|12|13
+                    int a_purchaseState = artwork.getA_purchaseState() + 10;
+                    artworkMapper.updatePurchaseStateByAIdx(artwork.getA_idx(), a_purchaseState);
+
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseReq);
+                }
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.UNAUTHORIZED_WAY);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -333,7 +386,7 @@ public class ArtworkService {
 
 
     /**
-     * size, form, category를 이용하여 작품 필터
+     * size, form, category, keyword 를 이용하여 작품 필터
      * @param artworkFilterReq
      * @return Artwork
      */
