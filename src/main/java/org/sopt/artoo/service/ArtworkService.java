@@ -331,16 +331,7 @@ public class ArtworkService {
                 //---------------------작품 데이터 저장--------------------
                 //작품 정보
                 final Artwork artwork = artworkMapper.findByIdx(a_idx);
-
-                // 구매 중인(p_state < 30)  a_idx 가 하나라도 있으면 구매 불가
-                List<Purchase> purchases_30 = purchaseMapper.findTransactionsByArtIdxState30(a_idx);// a_idx 중 30인 purchase
-                if(!purchases_30.isEmpty()){
-                    return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.FAIL_CREATE_PURCHASE_ING);
-                }
-
-                if((purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 3))
-                    ||(!purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 2))) {
-
+                if(purchaseReq.isP_isPost() && artwork.getA_purchaseState() == 1) {
                     final int artistIdx = artwork.getU_idx();
                     final int productSize = artwork.getA_size();
                     int purchasePrice = (int) (artwork.getA_price() * 1.1);
