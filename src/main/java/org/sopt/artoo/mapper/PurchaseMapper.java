@@ -67,6 +67,14 @@ public interface PurchaseMapper {
     List<Purchase> findTransactionsByArtIdx(@Param("a_idx") final int a_idx);
 
     /**
+     * 환불아닌 (구매 중인)미술작품 인덱스로 거래내역 조회
+     * @param a_idx
+     * @return 거래 내역 리스트
+     */
+    @Select("SELECT * FROM purchase WHERE a_idx = #{a_idx} AND p_state < 30")
+    List<Purchase> findTransactionsByArtIdxState30(@Param("a_idx") final int a_idx);
+
+    /**
      *
      * @param p_idx 거래 고유 번호
      * @return Purchase 거래 내역
@@ -92,5 +100,8 @@ public interface PurchaseMapper {
 
     @Delete("DELETE FROM purchase WHERE p_idx = #{p_idx}")
     void deletePurchaseRow(@Param("p_idx") final int p_idx);
+
+    @Select("SELECT purchase WHERE p_state = 10 AND p_state = 20")
+    List<Purchase> findUnpaidPurchase();
 
 }
