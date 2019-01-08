@@ -86,7 +86,6 @@ public class DisplayService {
      */
     public DefaultRes addDisplay(final DisplayAddReq displayAddReq){
         if(displayAddReq.checkProperties()){
-
             try {
                 if(displayAddReq.getM_d_mainImg_url() != null){
                     displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(),"display"));
