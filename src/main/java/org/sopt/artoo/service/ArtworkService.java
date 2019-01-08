@@ -376,7 +376,7 @@ public class ArtworkService {
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_PURCHASE);
+        return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_PURCHASE);
      }
 
     public boolean checkLike(final int userIdx, final int artworkIdx) {
