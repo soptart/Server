@@ -47,7 +47,7 @@ public class NoticeService {
             // 사용자가 구매자인 구매 목록 가져옴
             List<Purchase> purchaseList  = purchaseMapper.findByBuyerIdx(u_idx); //u_idx == 구매자
 
-            for(Purchase purchase : purchaseList){
+            for(Purchase purchase : purchaseList) {
 
                 NoticeRes noticeRes = new NoticeRes(purchase);
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
@@ -65,32 +65,40 @@ public class NoticeService {
 
                 String p_state = String.valueOf(purchase.getP_state());
 
-                if(p_state.endsWith("0")){ // 결제 전
+                if (p_state.endsWith("0")) { // 결제 전
                     noticeRes.setU_bank(adminUser.getU_bank());
                     noticeRes.setU_account(adminUser.getU_account());
 
                     noticeRes.setA_price(purchase.getP_price());
                     // 직거래 결제전
-                    if(p_state.startsWith("1")){ noticeRes.setP_isDelivery(0); }
+                    if (p_state.startsWith("1")) { noticeRes.setP_isDelivery(0); }
                     // 택배 결제전
-                    else if(p_state.startsWith("2")){ noticeRes.setP_isDelivery(1); }
+                    else if (p_state.startsWith("2")) { noticeRes.setP_isDelivery(1); }
+
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeRes.setP_isPay(0); // 결제전
                     log.info(noticeRes.getA_idx() + ": 결제전");
                     noticeResList.add(noticeRes);
                 }
                 if(p_state.endsWith("1")){ //결제 완료
-                    if(p_state.startsWith("1")){ // 직거래
+                    if(purchase.getP_state()>=11 && purchase.getP_state()< 20){ // 직거래
                         noticeRes.setP_isDelivery(0);
                         log.info(noticeRes.getA_idx() + "직거래");
-                    }else if(p_state.startsWith("2")){ // 택배
+                    }else if(purchase.getP_state()>=21 && purchase.getP_state()< 30){ // 택배
                         noticeRes.setP_isDelivery(1);
                         log.info(noticeRes.getA_idx() + "택배");
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                    Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
+                    if(purchase1.equals("") || purchase1.getP_comment() == null ){
+
+                        noticeRes.setC_isComment(false);
+                    }else{noticeRes.setC_isComment(true);}
+
                     noticeRes.setP_isPay(1); // 결제완료
                     noticeResList.add(noticeRes);
                 }
+
             }
             if(noticeResList.isEmpty())
                 return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_READ_BUYS, new ArrayList<>());
@@ -132,9 +140,9 @@ public class NoticeService {
 
                 int p_state = purchase.getP_state();
                 // 직거래
-                if (p_state == 11) { noticeRes.setP_isDelivery(0);  }
+                if (p_state >= 11 && p_state < 20) { noticeRes.setP_isDelivery(0);  }
                 // 택배
-                else if (p_state == 21) { noticeRes.setP_isDelivery(1);}
+                else if (p_state >= 21 && p_state <30) { noticeRes.setP_isDelivery(1);}
                 noticeResList.add(noticeRes);
 
             }
