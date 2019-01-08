@@ -331,7 +331,12 @@ public class ArtworkService {
                 //---------------------작품 데이터 저장--------------------
                 //작품 정보
                 final Artwork artwork = artworkMapper.findByIdx(a_idx);
-                if(purchaseReq.isP_isPost() && artwork.getA_purchaseState() == 1) {
+                if(artwork.getA_purchaseState() == 1) {
+                    if(!purchaseReq.isP_isPost()){
+                        purchaseReq.setP_address("");
+                        purchaseReq.setP_phone("");
+                        purchaseReq.setP_recipient("");
+                    }
                     final int artistIdx = artwork.getU_idx();
                     final int productSize = artwork.getA_size();
                     int purchasePrice = (int) (artwork.getA_price() * 1.1);
@@ -370,6 +375,7 @@ public class ArtworkService {
                 return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.UNAUTHORIZED_WAY);
             } catch (Exception e) {
                 log.error(e.getMessage());
+                e.printStackTrace();
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
