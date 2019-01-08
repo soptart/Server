@@ -86,7 +86,6 @@ public class DisplayService {
      */
     public DefaultRes addDisplay(final DisplayAddReq displayAddReq){
         if(displayAddReq.checkProperties()){
-
             try {
                 if(displayAddReq.getM_d_mainImg_url() != null){
                     displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(),"display"));
@@ -95,21 +94,18 @@ public class DisplayService {
                 if(displayAddReq.getM_d_titleImg_url() != null ){
                     displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url(),"display"));
                 }
-                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(),"display"));
+                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(), "display"));
+                displayMapper.addDisplay(displayAddReq);
+
             } catch (IOException e) {
                 e.printStackTrace();
                 return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
             }
-
-            displayMapper.addDisplay(displayAddReq);
-
-//            artworkPicMapper.save(artIdx, s3FileUploadService.upload(artworkReq.getPic_url()));
-
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.INSERT_DISPLAYS);
         }
         else {
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_CONTENT);
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_REQUIRE_PARAMS);
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.INSERT_DISPLAYS);
     }
 
     /**
@@ -118,26 +114,31 @@ public class DisplayService {
      * @return DefaultRes
      */
     public DefaultRes updateDisplay(final DisplayAddReq displayAddReq){
+        if(displayAddReq.checkProperties()) {
 
-        try {
-            if(displayAddReq.getM_d_mainImg_url() != null) {
-//                s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url());
-                displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(),"display"));
+            try {
+
+                if (displayAddReq.getM_d_mainImg_url() != null) {
+                    displayAddReq.setD_mainImg_url(s3FileUploadService.upload(displayAddReq.getM_d_mainImg_url(), "display"));
+                }
+                if (displayAddReq.getM_d_repImg_url() != null) {
+                    displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(), "display"));
+                }
+                if (displayAddReq.getM_d_mainImg_url() != null) {
+                    displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url(), "display"));
+                }
+
+                displayMapper.updateDisplay(displayAddReq);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_CONTENT);
             }
-            if(displayAddReq.getM_d_repImg_url() != null) {
-//                s3FileUploadService.upload(displayAddReq.getM_d_repImg_url());
-                displayAddReq.setD_repImg_url(s3FileUploadService.upload(displayAddReq.getM_d_repImg_url(),"display"));
-            }
-            if(displayAddReq.getM_d_mainImg_url() != null) {
-                displayAddReq.setD_titleImg_url(s3FileUploadService.upload(displayAddReq.getM_d_titleImg_url(),"display"));
-            }
-            displayMapper.updateDisplay(displayAddReq);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_UPDATE_CONTENT);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_DISPLAYS);
+
+        }else{
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_REQUIRE_PARAMS);
         }
-
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_DISPLAYS);
     }
 
 

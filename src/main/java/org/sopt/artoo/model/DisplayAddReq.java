@@ -38,7 +38,7 @@ public class DisplayAddReq {
 //    }
 
     public boolean checkProperties() {
-        return ( m_d_repImg_url!=null && d_title != null && d_subTitle != null);
+        return ( m_d_repImg_url != null && !d_title.equals(""));
     }
 
 }

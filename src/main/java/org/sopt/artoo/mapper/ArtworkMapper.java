@@ -21,6 +21,7 @@ public interface ArtworkMapper {
     @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
     List<ArtworkMini> findAllIndexAndUrl();
 
+
     /**
      * 미술작품 인덱스로 조회
      *
@@ -134,6 +135,9 @@ public interface ArtworkMapper {
     List<Integer> findArtIdxByKeyword(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword);
 
 
-
-
+    /**
+     * artowrk 모든 작가(u_idx) 조회
+     */
+    @Select("SELECT DISTINCT u_idx FROM artwork WHERE artwork.a_active = 1")
+    List<Integer> findAllUserIdx();
 }
