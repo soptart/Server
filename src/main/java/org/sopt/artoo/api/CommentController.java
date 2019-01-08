@@ -98,17 +98,13 @@ public class CommentController {
     }
 
     @Auth
-    @DeleteMapping("/comments")
+    @DeleteMapping("/comments/{c_idx}")
     public ResponseEntity deleteComment(
             @RequestHeader(value = "Authorization") final String header,
-            @RequestBody final CommentReq commentReq) {
+            @PathVariable("c_idx") final int c_idx) {
         try {
             final int userIdx = jwtService.decode(header).getUser_idx();
-            if (userIdx == commentReq.getU_idx()) {
-                return new ResponseEntity<>(commentService.deleteComment(commentReq.getC_idx()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED), HttpStatus.NOT_FOUND);
-            }
+            return new ResponseEntity<>(commentService.deleteComment(c_idx, userIdx), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

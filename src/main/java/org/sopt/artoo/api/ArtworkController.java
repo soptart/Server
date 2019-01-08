@@ -191,7 +191,7 @@ public class ArtworkController {
             log.info("artworkIdx"+String.valueOf(artworkReq.getA_idx()));
             if (artworkService.checkAuth(useridx, artworkReq.getA_idx()))
                 return new ResponseEntity<>(artworkService.update(artworkReq), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
