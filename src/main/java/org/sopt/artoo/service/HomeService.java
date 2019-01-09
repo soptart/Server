@@ -14,8 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 @Slf4j
@@ -41,7 +44,14 @@ public class HomeService {
      * @return DefaultRes
      */
     public DefaultRes getAllTodayContents(){
-        final List<Integer> todayUserIdxList = homeMapper.findTodayUserIdx(); //오늘의 작가 u_idx 리스트(좋아요 순)
+//        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat ( "yyyy-MM", Locale.KOREA );
+        SimpleDateFormat mSimpleYearFormat = new SimpleDateFormat ( "yyyy", Locale.KOREA ); // 해당 연도
+        SimpleDateFormat mSimpleMonthFormat = new SimpleDateFormat ( "MM", Locale.KOREA );  // 해당 월
+        Date currentTime = new Date();  //그 날의 날짜 데이터
+
+        String month = mSimpleMonthFormat.format(currentTime);
+        String year = mSimpleYearFormat.format(currentTime);
+        final List<Integer> todayUserIdxList = homeMapper.findTodayUserIdx(month, year); //오늘의 작가 u_idx 리스트(좋아요 순)
         List<Home> todayArtistList = new ArrayList<>();
         try {
             if(todayUserIdxList.size() < 5){         //좋아요 눌린 작가 수가 5명 이하일 때

@@ -80,18 +80,17 @@ public class NoticeService {
                     log.info(noticeRes.getA_idx() + ": 결제전");
                     noticeResList.add(noticeRes);
                 }
-                if(p_state.endsWith("1")){ //결제 완료
-                    if(purchase.getP_state()>=11 && purchase.getP_state()< 20){ // 직거래
+                if(p_state.endsWith("1")) { //결제 완료
+                    if (purchase.getP_state() >= 11 && purchase.getP_state() < 20) { // 직거래
                         noticeRes.setP_isDelivery(0);
                         log.info(noticeRes.getA_idx() + "직거래");
-                    }else if(purchase.getP_state()>=21 && purchase.getP_state()< 30){ // 택배
+                    } else if (purchase.getP_state() >= 21 && purchase.getP_state() < 30) { // 택배
                         noticeRes.setP_isDelivery(1);
                         log.info(noticeRes.getA_idx() + "택배");
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
                     if(purchase1.equals("") || purchase1.getP_comment() == null ){
-
                         noticeRes.setC_isComment(false);
                     }else{noticeRes.setC_isComment(true);}
 
