@@ -7,6 +7,7 @@ import org.sopt.artoo.dto.Home;
 import org.sopt.artoo.dto.HomeData;
 import org.sopt.artoo.dto.Tag;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -16,9 +17,9 @@ public interface HomeMapper {
      * 좋아요가 많은 5명의 작가 순서대로
      */
     @Select("SELECT  a.u_idx FROM (SELECT artworkLike.a_idx, artwork.u_idx, COUNT(artworkLike.a_idx) AS C " +
-            "FROM artworkLike, artwork WHERE artwork.a_idx = artworkLike.a_idx AND artwork.a_active = 1 GROUP BY artworkLike.a_idx) a " +
-            "GROUP BY a.u_idx ORDER BY sum(C) DESC LIMIT 5")
-    List<Integer> findTodayUserIdx();
+            "FROM artworkLike, artwork WHERE artwork.a_idx = artworkLike.a_idx AND artwork.a_active = 1 AND MONTH(al_date)=#{month} && YEAR(al_date)=#{year}" +
+            "GROUP BY artworkLike.a_idx) a GROUP BY a.u_idx ORDER BY sum(C) DESC LIMIT 5")
+    List<Integer> findTodayUserIdx(@Param("month") final String month, @Param("year") final String year);
 
 
     /**
