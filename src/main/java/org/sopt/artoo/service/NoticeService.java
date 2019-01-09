@@ -181,7 +181,7 @@ public class NoticeService {
     public DefaultRes requestRefund(final int p_idx){
         try {
             Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
-            if(purchase.getP_state() == 10 || purchase.getP_state() == 20){ //purchase table
+            if(purchase.getP_state() == 10 || purchase.getP_state() == 20){ //거래 내역 삭제
                 purchaseMapper.deletePurchaseRow(p_idx);
             }
             else if (21 <= purchase.getP_state() && 23 >= purchase.getP_state()) {
@@ -197,6 +197,8 @@ public class NoticeService {
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
     }
+
+
 
     /**
      * 전시내역 조회

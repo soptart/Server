@@ -129,12 +129,13 @@ public class ArtworkController {
             @RequestHeader(value = "Authorization", required = false) final String header,
             @PathVariable("a_idx") final int a_idx,
             @PathVariable("u_idx") final int u_idx,
-            @RequestBody PurchaseReq purchaseReq) {
+            @RequestBody final PurchaseReq purchaseReq) {
         if (jwtService.decode(header).getUser_idx() == u_idx) {
             try {
                 DefaultRes<PurchaseReq> defaultRes = artworkService.purchaseArtwork(u_idx, a_idx, purchaseReq);
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error(e.getMessage());
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
