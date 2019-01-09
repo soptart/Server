@@ -439,12 +439,16 @@ public class ArtworkService {
                 List<Integer> artworkIdxByFormList = artworkMapper.findArtIdxByForm(form);
                 if(artworkIdxList.size() != 0) {
                     artworkIdxList.retainAll(artworkIdxByFormList); //artworkIdxList에서 artworkIdxByFormList와  공통 요소만 저장 공통 요소만 저장
+                }else{
+                    artworkIdxList.addAll(artworkIdxByFormList);
                 }
             }
             if(!category.equals("")){
                 List<Integer> artworkIdxByCategoryList = artworkMapper.findArtIdxByCategory(category);
                 if(artworkIdxList.size() != 0){
                     artworkIdxList.retainAll(artworkIdxByCategoryList);//artworkIdxList에서 artworkIdxByCategoryList와 공통 요소만 저장
+                }else{
+                    artworkIdxList.addAll(artworkIdxByCategoryList);
                 }
             }
             if(!keyword.equals("")){
@@ -452,6 +456,8 @@ public class ArtworkService {
                 List<Integer> artworkIdxByKeywordList = artworkMapper.findArtIdxByKeyword(keyword, likeKeyword);
                 if(artworkIdxList.size() != 0){
                     artworkIdxList.retainAll(artworkIdxByKeywordList);//artworkIdxList에서 artworkIdxByKeywordList 공통 요소만 저장
+                }else{
+                    artworkIdxList.addAll(artworkIdxByKeywordList);
                 }
             }
             if(size.equals("") && form.equals("") && category.equals("") && keyword.equals("")){
