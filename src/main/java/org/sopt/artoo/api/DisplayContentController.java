@@ -79,9 +79,9 @@ public class DisplayContentController {
                                              @RequestBody final DisplayReq displayReq,
                                              @PathVariable(value="user_idx") final int user_idx) {
         try {
-            if(jwtService.checkAuth(header, user_idx) && user_idx == displayReq.getU_idx() )
+//            if(jwtService.checkAuth(header, user_idx) && user_idx == displayReq.getU_idx() )
                 return new ResponseEntity<>(displayContentService.save(displayReq), HttpStatus.OK);
-            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+//            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -338,8 +338,9 @@ public class ArtworkService {
                     return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.FAIL_CREATE_PURCHASE_ING);
                 }
 
-                if((purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 3))
-                    ||(!purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 2))) {
+//                if((purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 3))
+//                    ||(!purchaseReq.isP_isPost() && (artwork.getA_purchaseState() == 1 || artwork.getA_purchaseState() == 2))) {
+                    if(artwork.getA_purchaseState() == 1) {
 
                     final int artistIdx = artwork.getU_idx();
                     final int productSize = artwork.getA_size();
