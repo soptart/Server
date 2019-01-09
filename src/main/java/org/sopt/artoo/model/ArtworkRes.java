@@ -49,7 +49,6 @@ public class ArtworkRes {
     private int a_price;
     // 작품 좋아요 수
     private int a_like_count;
-
     // 작품 설명
     private String a_detail;
 
