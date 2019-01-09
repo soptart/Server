@@ -7,10 +7,13 @@ import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.sopt.artoo.utils.constants.NoticeConstant;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +21,7 @@ import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
 @Service
+@Component
 public class NoticeService {
     private PurchaseMapper purchaseMapper;
     private ArtworkMapper artworkMapper;
@@ -177,6 +181,26 @@ public class NoticeService {
         } catch (Exception e) {
             log.error(e.getMessage());
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
+
+    /**
+     * 미입금 거래내역 삭제
+     */
+    @Scheduled(cron = "59 59 23 * * *")
+    public void cancelUnpaid(){ //매 24시마다 확인
+        List<Purchase> unpaidPurchase = purchaseMapper.findUnpaidPurchase(); // 미입금 상태 purchase
+        Calendar nowDate = Calendar.getInstance();
+        log.info("미입금내역무통장삭제");
+        for(Purchase p : unpaidPurchase){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(p.getP_date());
+            cal.add(Calendar.DATE, 2);
+            if(cal.compareTo(nowDate) == -1) { // 구매 날짜 + 2보다 현재 날짜가 크면
+                final int nowState = artworkMapper.findByIdx(p.getA_idx()).getA_purchaseState();
+                artworkMapper.updatePurchaseStateByAIdx(nowState % 10, p.getA_idx()); // 작품 상태 업데이트
+                purchaseMapper.deletePurchaseRow(p.getP_idx()); //구매 내역 삭제
+            }
         }
     }
 
