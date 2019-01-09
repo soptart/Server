@@ -418,8 +418,9 @@ public class ArtworkService {
             String keyword = artworkFilterReq.getA_keyword();
 
             log.info(size + " " +form + " " +  category + " " + keyword);
-            artworkIdxList = artworkMapper.findArtIdxBySize(0, 100000);
-            switch (size) {
+//            artworkIdxList = artworkMapper.findArtIdxBySize(0, 100000);
+            if(!size.equals("")) {
+                switch (size) {
                     case "S":
                         artworkIdxList = artworkMapper.findArtIdxBySize(0, 2411); //사이즈가 S인 a_idx List
                         break;
@@ -432,6 +433,7 @@ public class ArtworkService {
                     case "XL":
                         artworkIdxList = artworkMapper.findArtIdxBySize(10629, 21134); //사이즈가 XL인 a_idx List
                         break;
+                }
             }
             if(!form.equals("")){
                 List<Integer> artworkIdxByFormList = artworkMapper.findArtIdxByForm(form);
@@ -452,6 +454,10 @@ public class ArtworkService {
                     artworkIdxList.retainAll(artworkIdxByKeywordList);//artworkIdxList에서 artworkIdxByKeywordList 공통 요소만 저장
                 }
             }
+            if(size.equals("") && form.equals("") && category.equals("") && keyword.equals("")){
+                artworkIdxList = artworkMapper.findAllArtIdx();
+            }
+
             for(int a_idx : artworkIdxList){
                 artworkPicList.add(artworkPicMapper.findByArtIdx(a_idx));
             }
