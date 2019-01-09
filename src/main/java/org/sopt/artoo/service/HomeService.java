@@ -41,7 +41,7 @@ public class HomeService {
      * @return DefaultRes
      */
     public DefaultRes getAllTodayContents(){
-        final List<Integer> todayUserIdxList = homeMapper.findTodayUserIdx(); //오늘의 작가 u_idx 리스트
+        final List<Integer> todayUserIdxList = homeMapper.findTodayUserIdx(); //오늘의 작가 u_idx 리스트(좋아요 순)
         List<Home> todayArtistList = new ArrayList<>();
         try {
             if(todayUserIdxList.size() < 5){         //좋아요 눌린 작가 수가 5명 이하일 때

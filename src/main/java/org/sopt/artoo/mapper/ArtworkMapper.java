@@ -133,7 +133,7 @@ public interface ArtworkMapper {
      * @return
      */
     @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
-            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 ORDER BY artwork.a_date DESC")
+            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 ORDER BY a.a_date DESC")
     List<Integer> findArtIdxByKeyword(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword);
 
 
