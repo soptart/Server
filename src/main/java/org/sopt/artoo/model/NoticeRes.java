@@ -22,6 +22,8 @@ public class NoticeRes {
     private int p_isDelivery; // 직거래(0) 택배(1)
     // 구매 날짜 (12.03(목))
     private String p_date;
+    // 후기 작성 가능 여부
+    private boolean c_isComment; //0- 후기 없음(후기 작성 가능) 1- 후기 있음(후기 수정만간능?)
 
     // 작품 인덱스 (FK)
     private int a_idx;
