@@ -50,7 +50,7 @@ public interface ArtworkMapper {
      * @param u_idx
      * @return 미술작품객체 리스트
      */
-    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx} AND a_active = 1")
+    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx} AND a_active = 1 ORDER BY a_date DESC")
     List<Artwork> findArtworkByUserIdx(@Param("u_idx") final int u_idx);
 
 
