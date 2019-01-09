@@ -27,7 +27,7 @@ public interface HomeMapper {
      * @return 작품명, 제작년도, artwork index 정보
      */
     @Select("SELECT a_name, a_year, a_idx  FROM artwork, user WHERE artwork.u_idx = #{u_idx} AND user.u_idx = #{u_idx} " +
-            "ORDER BY artwork.a_like_count DESC LIMIT 10")
+            "ORDER BY artwork.a_like_count DESC LIMIT 10 AND artwork.a_active=1")
     List<HomeData> findArtistContentsByUserIdx(@Param("u_idx") final int u_idx);
 
 
