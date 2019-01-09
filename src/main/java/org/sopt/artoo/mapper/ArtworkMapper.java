@@ -90,6 +90,8 @@ public interface ArtworkMapper {
     @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1")
     List<Artwork> findTagsArtworkIdx();
 
+    @Select("SELECT a_idx FROM artwork WHERE a_active =1 ORDER BY a_date DESC")
+    List<Integer> findAllArtIdx();
 
     /**
      * 미술작품 크기 필터
