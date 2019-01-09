@@ -12,13 +12,13 @@ public interface CommentMapper {
     @Select("SELECT * FROM comment")
     List<Comment> findAllComments();
 
-    @Select("SELECT * FROM comment WHERE c_idx = #{c_idx}")
+    @Select("SELECT * FROM comment WHERE c_idx = #{c_idx} ORDER BY comment.c_date DESC")
     Comment findCommentByCommentIdx(@Param("c_idx") final int c_idx);
 
-    @Select("SELECT * FROM comment WHERE a_idx = #{a_idx}")
+    @Select("SELECT * FROM comment WHERE a_idx = #{a_idx} ORDER BY comment.c_date DESC")
     List<Comment> findAllCommentByArtIdx(@Param("a_idx") final int a_idx);
 
-    @Select("SELECT * FROM comment WHERE u_idx = #{u_idx}")
+    @Select("SELECT * FROM comment WHERE u_idx = #{u_idx} ORDER BY comment.c_date DESC")
     List<Comment> findAllCommentByUserIdx(@Param("u_idx") final int u_idx);
 
     @Insert("INSERT INTO comment(c_idx, c_content, c_date, u_idx, a_idx) VALUES(#{commentReq.c_idx}, #{commentReq.c_content}, #{commentReq.c_date}, #{commentReq.u_idx}, #{commentReq.a_idx})")

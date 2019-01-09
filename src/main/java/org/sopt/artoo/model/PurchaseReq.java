@@ -35,6 +35,8 @@ public class PurchaseReq {
     // 구매 고유번호
     private int p_price;
 
+
+
 //    public boolean checkPurchaseReq() {
 //        String p_paymentS = String.valueOf(p_payment);
 //        if(p_isPost == true){
