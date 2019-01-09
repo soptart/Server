@@ -416,7 +416,7 @@ public class ArtworkService {
                     case "XL":
                         artworkIdxList = artworkMapper.findArtIdxBySize(10629, 21134); //사이즈가 XL인 a_idx List
                         break;
-                }
+            }
             if(!form.equals("")){
                 List<Integer> artworkIdxByFormList = artworkMapper.findArtIdxByForm(form);
                 if(artworkIdxList.size() != 0) {
