@@ -40,12 +40,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx){
         try {
             MyPageRes defaultRes = userService.findUserWork(userIdx);
-            if(defaultRes.getDataNum() == -1){
-                 DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
-                 return new ResponseEntity<>(errorRes, HttpStatus.OK);
-            }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-
         } catch (Exception e){
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,11 +59,7 @@ public class UserController {
             @PathVariable("u_idx") final int userIdx) {
         try {
             MyPageRes defaultRes = userService.findUserLikes(userIdx);
-            if(defaultRes.getDataNum() == -1){
-                DefaultRes errorRes = DefaultRes.res(defaultRes.getStatus(),defaultRes.getMessage());
-                return new ResponseEntity<>(errorRes, HttpStatus.OK);
-            }
-            return new ResponseEntity<>(defaultRes, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
