@@ -48,8 +48,9 @@ public class ArtworkReq {
     // 작품 사이즈(이거는 요구하지 않음)
     private int a_size;
     // 작품 활성화/비활성화
-    private boolean a_active;
+    private boolean a_active = true;
 
+    private int a_purchaseState;
     public boolean checkProperties() {
         return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null && a_year!=null);
     }
