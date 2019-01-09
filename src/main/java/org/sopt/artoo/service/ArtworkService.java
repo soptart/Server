@@ -185,7 +185,10 @@ public class ArtworkService {
                 if(artworkReq.getPic_url()==null){
                     return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ARTWORK_NOPICUTRE);
                 }
-                Date date = new Date();
+//                Date date = new Date();
+                Calendar calendar = Calendar.getInstance();
+                java.util.Date date = calendar.getTime();
+
                 artworkReq.setA_date(date);
                 artworkMapper.save(artworkReq);
 

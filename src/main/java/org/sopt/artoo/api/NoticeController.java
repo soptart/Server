@@ -95,7 +95,7 @@ public class NoticeController {
      * @param header
      * @param p_idx
      * @param purchaseComment
-     * @return
+     * @return localhost
      */
     @PostMapping("/notices/buys/{p_idx}")
     public ResponseEntity savePurchaseComment(@RequestHeader(value = "Authorization") final String header,
