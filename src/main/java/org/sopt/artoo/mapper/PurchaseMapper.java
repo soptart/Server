@@ -101,7 +101,7 @@ public interface PurchaseMapper {
     @Delete("DELETE FROM purchase WHERE p_idx = #{p_idx}")
     void deletePurchaseRow(@Param("p_idx") final int p_idx);
 
-    @Select("SELECT purchase WHERE p_state = 10 AND p_state = 20")
+    @Select("SELECT * FROM purchase WHERE p_state = 10 OR p_state = 20")
     List<Purchase> findUnpaidPurchase();
 
 }

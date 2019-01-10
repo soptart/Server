@@ -7,10 +7,13 @@ import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.sopt.artoo.utils.constants.NoticeConstant;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +21,7 @@ import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
 @Service
+@Component
 public class NoticeService {
     private PurchaseMapper purchaseMapper;
     private ArtworkMapper artworkMapper;
@@ -47,7 +51,7 @@ public class NoticeService {
             // 사용자가 구매자인 구매 목록 가져옴
             List<Purchase> purchaseList  = purchaseMapper.findByBuyerIdx(u_idx); //u_idx == 구매자
 
-            for(Purchase purchase : purchaseList){
+            for(Purchase purchase : purchaseList) {
 
                 NoticeRes noticeRes = new NoticeRes(purchase);
                 noticeRes.setP_date(DateRes.getDate1(purchase.getP_date()));
@@ -65,32 +69,39 @@ public class NoticeService {
 
                 String p_state = String.valueOf(purchase.getP_state());
 
-                if(p_state.endsWith("0")){ // 결제 전
+                if (p_state.endsWith("0")) { // 결제 전
                     noticeRes.setU_bank(adminUser.getU_bank());
                     noticeRes.setU_account(adminUser.getU_account());
 
                     noticeRes.setA_price(purchase.getP_price());
                     // 직거래 결제전
-                    if(p_state.startsWith("1")){ noticeRes.setP_isDelivery(0); }
+                    if (p_state.startsWith("1")) { noticeRes.setP_isDelivery(0); }
                     // 택배 결제전
-                    else if(p_state.startsWith("2")){ noticeRes.setP_isDelivery(1); }
+                    else if (p_state.startsWith("2")) { noticeRes.setP_isDelivery(1); }
+
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     noticeRes.setP_isPay(0); // 결제전
                     log.info(noticeRes.getA_idx() + ": 결제전");
                     noticeResList.add(noticeRes);
                 }
-                if(p_state.endsWith("1")){ //결제 완료
-                    if(p_state.startsWith("1")){ // 직거래
+                if(p_state.endsWith("1")) { //결제 완료
+                    if (purchase.getP_state() >= 11 && purchase.getP_state() < 20) { // 직거래
                         noticeRes.setP_isDelivery(0);
                         log.info(noticeRes.getA_idx() + "직거래");
-                    }else if(p_state.startsWith("2")){ // 택배
+                    } else if (purchase.getP_state() >= 21 && purchase.getP_state() < 30) { // 택배
                         noticeRes.setP_isDelivery(1);
                         log.info(noticeRes.getA_idx() + "택배");
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+                    Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
+                    if(purchase1.equals("") || purchase1.getP_comment() == null ){
+                        noticeRes.setC_isComment(false);
+                    }else{noticeRes.setC_isComment(true);}
+
                     noticeRes.setP_isPay(1); // 결제완료
                     noticeResList.add(noticeRes);
                 }
+
             }
             if(noticeResList.isEmpty())
                 return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_READ_BUYS, new ArrayList<>());
@@ -132,9 +143,9 @@ public class NoticeService {
 
                 int p_state = purchase.getP_state();
                 // 직거래
-                if (p_state == 11) { noticeRes.setP_isDelivery(0);  }
+                if (p_state >= 11 && p_state < 20) { noticeRes.setP_isDelivery(0);  }
                 // 택배
-                else if (p_state == 21) { noticeRes.setP_isDelivery(1);}
+                else if (p_state >= 21 && p_state <30) { noticeRes.setP_isDelivery(1);}
                 noticeResList.add(noticeRes);
 
             }
@@ -157,19 +168,41 @@ public class NoticeService {
      */
     public DefaultRes trySavePurchaseComment(final int u_idx, final int p_idx, final PurchaseComment purchaseComment){
         try {
-            if(purchaseComment.getP_comment() != null) {
+            if(purchaseComment.getP_comment() != null ) {
                 Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
-                if (purchase.getP_buyer_idx() == u_idx) {
-                    purchaseMapper.updatePurchaseComment(p_idx, purchaseComment.getP_comment());
-                    return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
-                } else {
-                    return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
-                }
+                if(purchase.getP_state() != 10 && purchase.getP_state() !=20) {
+                    if (purchase.getP_buyer_idx() == u_idx) {
+                        purchaseMapper.updatePurchaseComment(p_idx, purchaseComment.getP_comment());
+                        return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
+                    } else {
+                        return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+                    }
+                }return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_CREATE_REVIEW);
             }
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_CREATE_COMMENT);
         } catch (Exception e) {
             log.error(e.getMessage());
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
+
+    /**
+     * 미입금 거래내역 삭제
+     */
+    @Scheduled(cron = "59 59 23 * * *")
+    public void cancelUnpaid(){ //매 24시마다 확인
+        List<Purchase> unpaidPurchase = purchaseMapper.findUnpaidPurchase(); // 미입금 상태 purchase
+        Calendar nowDate = Calendar.getInstance();
+        log.info("미입금내역무통장삭제");
+        for(Purchase p : unpaidPurchase){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(p.getP_date());
+            cal.add(Calendar.DATE, 2);
+            if(cal.compareTo(nowDate) == -1) { // 구매 날짜 + 2보다 현재 날짜가 크면
+                final int nowState = artworkMapper.findByIdx(p.getA_idx()).getA_purchaseState();
+                artworkMapper.updatePurchaseStateByAIdx(nowState % 10, p.getA_idx()); // 작품 상태 업데이트
+                purchaseMapper.deletePurchaseRow(p.getP_idx()); //구매 내역 삭제
+            }
         }
     }
 

@@ -95,7 +95,7 @@ public class NoticeController {
      * @param header
      * @param p_idx
      * @param purchaseComment
-     * @return
+     * @return localhost
      */
     @PostMapping("/notices/buys/{p_idx}")
     public ResponseEntity savePurchaseComment(@RequestHeader(value = "Authorization") final String header,
@@ -141,23 +141,6 @@ public class NoticeController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @Scheduled(cron = "0 59 23 * * *")
-    public void cancelUnpaid(){ //매 24시마다 확인
-        List<Purchase> unpaidPurchase = purchaseMapper.findUnpaidPurchase(); // 미입금 상태 purchase
-        Calendar nowDate = Calendar.getInstance();
-        for(Purchase p : unpaidPurchase){
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(p.getP_date());
-            cal.add(Calendar.DATE, 2);
-            if(cal.compareTo(nowDate) == -1) { // 구매 날짜 + 2보다 현재 날짜가 크면
-                final int nowState = artworkMapper.findByIdx(p.getA_idx()).getA_purchaseState();
-                artworkMapper.updatePurchaseStateByAIdx(nowState % 10, p.getA_idx()); // 작품 상태 업데이트
-                purchaseMapper.deletePurchaseRow(p.getP_idx()); //구매 내역 삭제
-            }
-        }
-    }
-
 
     /**
      * 전시내역 조회

@@ -28,9 +28,6 @@ public class UserSignUpReq {
     // 유저 정보 변경
 
     public boolean checkQualification() {
-        return (
-                u_email != null && u_pw != null && u_phone != null
-                && u_name != null
-        );
+        return (u_email != null && u_pw != null && u_phone != null && u_name != null);
     }
 }

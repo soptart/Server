@@ -13,7 +13,7 @@ public interface ArtworkLikeMapper {
      * @param u_idx
      * @return List<ArtworkLike> 좋아요 리스트
      */
-    @Select("SELECT * FROM artworkLike WHERE artworkLike.u_idx = #{u_idx}")
+    @Select("SELECT * FROM artworkLike WHERE artworkLike.u_idx = #{u_idx} ORDER BY al_date DESC")
     List<ArtworkLike> findArtworkLikeByUserIdx(@Param("u_idx") final int u_idx);
     /**
      *  미술작품별 좋아요 컬럼 반환

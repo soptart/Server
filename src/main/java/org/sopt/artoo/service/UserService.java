@@ -86,7 +86,7 @@ public class UserService {
                         return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                     }
                 }
-                DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
             } else return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.ALREADY_USER);
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_USER);
