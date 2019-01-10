@@ -38,6 +38,7 @@ public class ResponseMessage {
     public static final String SUCCESS_CHANGE_PW = "회원 비밀번호 수정 확인";
     public static final String NOT_ENOUGH_PASSWORD_LENGTH = "비밀 번호 길이가 너무 짧음";
     public static final String YOU_ARE_NOT_ADMIN = "당신은 가짜 관리자야";
+    public static final String FAIL_CREATE_REVIEW="결제전이므로 후기를 작성할 수 없습니다.";
 
 
     public static final String READ_ALL_CONTENTS = "모든 컨텐츠 조회 성공.";
@@ -57,7 +58,7 @@ public class ResponseMessage {
     public static final String FAIL_CREATE_PURCHASE_ING = "구매중이므로 구매할 수 없습니다.";
     public static final String REFUND_REQUEST_SUCCESS = "환불 요청 성공";
     public static final String UNCOMPLETED_PURCHASE = "완료되지 않은 거래가 있어 작품을 삭제 대신 비활성화함";
-    public static final String UNAUTHORIZED_WAY = "해당 전달 방식은 지원되지 않음";
+    public static final String UNAUTHORIZED_WAY = "비구매상품입니다.";
 
     public static final String READ_ALL_COMMENTS = "모든 댓글 조회 성공";
     public static final String READ_COMMENT = "댓글 조회 성공";

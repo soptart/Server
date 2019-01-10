@@ -2,6 +2,7 @@ package org.sopt.artoo.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.sopt.artoo.dto.User;
+import org.sopt.artoo.model.LoginReq;
 import org.sopt.artoo.model.UserDescriptionReq;
 import org.sopt.artoo.model.UserPwInfo;
 import org.sopt.artoo.model.UserSignUpReq;
@@ -42,11 +43,10 @@ public interface UserMapper {
 
     /**
      * 이메일와 비밀번호로 조회
-     * @param u_email 유저 인덱스
      * @return String 유저 이름
      */
-    @Select("SELECT * FROM user WHERE u_email = #{u_email} AND u_pw = #{u_pw}")
-    User findByIdAndPassword(@Param("u_email") final String u_email, @Param("u_pw") final String u_password);
+    @Select("SELECT * FROM user WHERE u_email = #{loginReq.u_email} AND u_pw = #{loginReq.u_pw}")
+    User findByIdAndPassword(@Param("loginReq") final LoginReq loginReq);
 
     /**
      * 유저 객체 수정

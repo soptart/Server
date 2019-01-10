@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -234,7 +235,8 @@ public class UserService {
                         userPurchase.setA_price(artworkMapper.findAllArtworkByIdx(purchase.getA_idx()).getA_price());
                         userPurchase.setP_state(purchase.getP_state());
                         userPurchase.setA_pic_url(artworkPicMapper.findByArtIdx(purchase.getA_idx()).getPic_url());
-                        userPurchase.setP_date(purchase.getP_date().toString());
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+                        userPurchase.setP_date(sdf.format(purchase.getP_date()));
                         listTransaction.add(userPurchase);
                     }
                     return MyPageRes.res(StatusCode.OK, ResponseMessage.READ_ALL_TRANSACTION, u_name, userDes,
@@ -270,7 +272,8 @@ public class UserService {
                         userReview.setA_name(artworkMapper.findAllArtworkByIdx(p.getA_idx()).getA_name());
                         userReview.setU_name(userMapper.findByUidx(p.getP_buyer_idx()).getU_name());
                         userReview.setP_comment(p.getP_comment());
-                        userReview.setP_date(p.getP_date().toString());
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+                        userReview.setP_date(sdf.format(p.getP_date()));
                         userReview.setA_pic_url(artworkPicMapper.findByArtIdx(p.getA_idx()).getPic_url());
                         listFinishedTrans.add(userReview);
                     }
