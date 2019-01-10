@@ -60,7 +60,7 @@ public class ArtworkService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkList);
     }
 
-    /**
+    /**s
      * 모든 작품 조회(인덱스랑 url만)
      *
      */
