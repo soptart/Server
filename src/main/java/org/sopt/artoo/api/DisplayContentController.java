@@ -7,6 +7,7 @@ import org.sopt.artoo.service.DisplayContentService;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
+import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,7 +74,7 @@ public class DisplayContentController {
      * @param displayReq 전시 컨텐츠
      * @return ResponseEntity
      */
-//    @Auth
+    @Auth
     @PostMapping("/discontents/{user_idx}")
     public ResponseEntity saveDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                              @RequestBody final DisplayReq displayReq,
@@ -94,7 +95,7 @@ public class DisplayContentController {
      * @param header      jwt token
      * @param displaycontent_idx 전시 컨텐츠 고유 인덱스
      */
-//    @Auth
+    @Auth
     @DeleteMapping("/discontents/{displaycontent_idx}/users/{user_idx}")
     public ResponseEntity deleteDisplayContent(@RequestHeader(value = "Authorization", required = false) final String header,
                                                @PathVariable(value = "displaycontent_idx") final int displaycontent_idx,
