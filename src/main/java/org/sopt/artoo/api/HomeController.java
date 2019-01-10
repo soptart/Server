@@ -57,14 +57,31 @@ public class HomeController {
         }
     }
 
+//    /**
+//     * 홈 - 테마 - 테마 디테일
+//     * @return defaultRes
+//     */
+//    @GetMapping("/themes/details/{t_idx}")
+//    public ResponseEntity getAllDetailTagPic(@PathVariable("t_idx") final int t_idx){
+//        try{
+//            DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllTagPicUrl(t_idx); //Tag 모든 정보
+//
+//            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+//        }catch (Exception e){
+//            log.error(e.getMessage());
+//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     /**
-     * 홈 - 테마 - 테마 디테일
+     * 홈 - 테마 - 테마 디테일 페이지대로 안되면 지워라
      * @return defaultRes
      */
     @GetMapping("/themes/details/{t_idx}")
-    public ResponseEntity getAllDetailTagPic(@PathVariable("t_idx") final int t_idx){
+    public ResponseEntity getAllDetailTagPic(@PathVariable("t_idx") final int t_idx,
+                                             @RequestParam(value="a_idx", defaultValue = "1",required=false) final int a_idx){
         try{
-            DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllTagPicUrl(t_idx); //Tag 모든 정보
+            DefaultRes<List<ArtworkPic>> defaultRes = homeService.getAllTagPicUrlPaging(t_idx, a_idx); //Tag 모든 정보
 
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         }catch (Exception e){
