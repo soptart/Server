@@ -52,24 +52,26 @@ public class ArtworkService {
      *
      * @return DefaultRes
      */
-    public DefaultRes<List<Artwork>> findAll() {
-        List<Artwork> artworkList = artworkMapper.findAll();
+    public DefaultRes<List<Artwork>> findAll(final int a_idx) {
+        List<Artwork> artworkList = artworkMapper.findAll(a_idx);
+        final int numArtwork = artworkMapper.findRealAll().size();
         for (Artwork artwork : artworkList) {
             artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS+numArtwork, artworkList);
     }
 
     /**
      * 모든 작품 조회(인덱스랑 url만)
      *
      */
-    public DefaultRes<List<ArtworkMini>> findAllIndexAndUrl(){
-        List<ArtworkMini> artworkMiniList = artworkMapper.findAllIndexAndUrl();
+    public DefaultRes<List<ArtworkMini>> findAllIndexAndUrl(final int a_idx){
+        List<ArtworkMini> artworkMiniList = artworkMapper.findAllIndexAndUrl(a_idx);
+        final int numArtwork = artworkMapper.findRealAll().size();
         for (ArtworkMini artworkMini: artworkMiniList){
             artworkMini.setPic_url(artworkPicMapper.findByArtIdx(artworkMini.getA_idx()).getPic_url());
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkMiniList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS+numArtwork, artworkMiniList);
     }
 
     /**

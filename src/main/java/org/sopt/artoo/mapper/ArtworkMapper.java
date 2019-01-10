@@ -15,11 +15,15 @@ public interface ArtworkMapper {
      *
      * @return 미술작품전체
      */
-    @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
-    List<Artwork> findAll();
+    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx}" +
+            " ORDER BY artwork.a_date DESC LIMIT 15")
+    List<Artwork> findAll(@Param("a_idx") final int a_idx);
 
-    @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
-    List<ArtworkMini> findAllIndexAndUrl();
+    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_date DESC LIMIT 15")
+    List<ArtworkMini> findAllIndexAndUrl(@Param("a_idx") final int a_idx);
+
+    @Select("SELECT * FROM artwork WHERE a_active = 1")
+    List<Artwork> findRealAll();
 
 
     /**

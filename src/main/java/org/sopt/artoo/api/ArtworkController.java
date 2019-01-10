@@ -41,13 +41,13 @@ public class ArtworkController {
      * @param header jwt token
      * @return ResponseEntity
      */
-    @GetMapping("/artworks")
+    @GetMapping("/artworks/{a_idx}")
     public ResponseEntity getAllartworks(
-            @RequestHeader(value = "Authorization", required = false) final String header
-    ) {
+            @RequestHeader(value = "Authorization", required = false) final String header,
+            @PathVariable("a_idx") final int a_idx) {
         try {
             final int userIdx = jwtService.decode(header).getUser_idx();
-            DefaultRes<List<Artwork>> defaultRes = artworkService.findAll();
+            DefaultRes<List<Artwork>> defaultRes = artworkService.findAll(a_idx);
 
             for (Artwork artwork : defaultRes.getData()) {
                 artwork.setAuth(userIdx == artwork.getU_idx());
@@ -63,10 +63,11 @@ public class ArtworkController {
      * 미술작품 전체 인덱스랑 url만 불러오기
      *
      */
-    @GetMapping("/artworksmini")
-    public ResponseEntity getAllartworksMini(){
+    @GetMapping("/artworksmini/{a_idx}")
+    public ResponseEntity getAllartworksMini(
+            @PathVariable("a_idx") final int a_idx){
         try {
-            DefaultRes<List<ArtworkMini>> defaultRes = artworkService.findAllIndexAndUrl();
+            DefaultRes<List<ArtworkMini>> defaultRes = artworkService.findAllIndexAndUrl(a_idx);
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());

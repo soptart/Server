@@ -40,7 +40,7 @@ public class ResponseMessage {
     public static final String YOU_ARE_NOT_ADMIN = "당신은 가짜 관리자야";
 
 
-    public static final String READ_ALL_CONTENTS = "모든 컨텐츠 조회 성공";
+    public static final String READ_ALL_CONTENTS = "모든 컨텐츠 조회 성공.";
     public static final String READ_CONTENT = "컨텐츠 조회 성공";
     public static final String NOT_FOUND_CONTENT = "컨텐츠가 존재하지 않습니다.";
     public static final String CREATE_CONTENT = "컨텐츠 작성 성공";
