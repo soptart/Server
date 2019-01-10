@@ -4,15 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.LoginReq;
 import org.sopt.artoo.model.PurchaseReq;
-import org.sopt.artoo.service.AdminService;
-import org.sopt.artoo.service.ArtworkService;
-import org.sopt.artoo.service.AuthService;
-import org.sopt.artoo.service.JwtService;
+import org.sopt.artoo.service.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
+import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
 @RestController
@@ -21,11 +21,16 @@ public class AdminController {
 
     private final AdminService adminService;
     private final JwtService jwtService;
+    private final DisplayContentService displayContentService;
+    private final DisplayService displayService;
 
-    public AdminController(AdminService adminService, JwtService jwtService) {
+    public AdminController(AdminService adminService, JwtService jwtService, DisplayContentService displayContentService, DisplayService displayService) {
         this.adminService = adminService;
         this.jwtService = jwtService;
+        this.displayContentService = displayContentService;
+        this.displayService = displayService;
     }
+    private static final DefaultRes UNAUTHORIZED_RES = new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
 
     /**
      * Admin Login
@@ -100,4 +105,69 @@ public class AdminController {
         }
         return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.UNAUTHORIZED);
     }
+
+    /**
+     * 관리자 - 모든 전시회 반환
+     *
+     *
+     * @param header jwt token
+     * @return ResponseEntity
+     */
+    @GetMapping("/admin/displays")
+    public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header) {
+        try {
+            if(jwtService.decode(header).getUser_idx() == 0){
+                return new ResponseEntity<>(displayService.findAllDisplays(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 관리자 - 전시 신청 작품 목룍 조회
+     *
+     *
+     * @param header jwt token
+     * @return ResponseEntity
+     */
+    @GetMapping("/admin/displays/{display_idx}")
+    public ResponseEntity getDisplayApply(@RequestHeader(value = "Authorization", required = false) final String header,
+                                          @PathVariable(value="display_idx") final int display_idx) {
+        try {
+            if(jwtService.decode(header).getUser_idx() == 0){
+                return new ResponseEntity<>(displayContentService.findByDisplayIdx(display_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * 관리자 - 전시 신청 작품 삭제
+     *
+     *
+     * @param header jwt token
+     * @return ResponseEntity
+     */
+    @Auth
+    @DeleteMapping("/admin/discontents/{displayContent_idx}")
+    public ResponseEntity deleteComment(
+            @RequestHeader(value = "Authorization") final String header,
+            @PathVariable("displayContent_idx") final int displayContent_idx) {
+        try {
+            if(jwtService.decode(header).getUser_idx() == 0){
+                return new ResponseEntity<>(displayContentService.deleteDisplaycontent(displayContent_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(UNAUTHORIZED_RES, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

@@ -58,7 +58,7 @@ public class ResponseMessage {
     public static final String FAIL_CREATE_PURCHASE_ING = "구매중이므로 구매할 수 없습니다.";
     public static final String REFUND_REQUEST_SUCCESS = "환불 요청 성공";
     public static final String UNCOMPLETED_PURCHASE = "완료되지 않은 거래가 있어 작품을 삭제 대신 비활성화함";
-    public static final String UNAUTHORIZED_WAY = "해당 전달 방식은 지원되지 않음";
+    public static final String UNAUTHORIZED_WAY = "비구매상품입니다.";
 
     public static final String READ_ALL_COMMENTS = "모든 댓글 조회 성공";
     public static final String READ_COMMENT = "댓글 조회 성공";
