@@ -15,11 +15,15 @@ public interface ArtworkMapper {
      *
      * @return 미술작품전체
      */
-    @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
-    List<Artwork> findAll();
+    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx}" +
+            " ORDER BY artwork.a_idx DESC LIMIT 15")
+    List<Artwork> findAll(@Param("a_idx") final int a_idx);
 
-    @Select("SELECT * FROM artwork WHERE a_active = 1 ORDER BY artwork.a_date DESC")
-    List<ArtworkMini> findAllIndexAndUrl();
+    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_idx DESC LIMIT 15")
+    List<ArtworkMini> findAllIndexAndUrl(@Param("a_idx") final int a_idx);
+
+    @Select("SELECT * FROM artwork WHERE a_active = 1")
+    List<Artwork> findRealAll();
 
 
     /**
@@ -50,7 +54,7 @@ public interface ArtworkMapper {
      * @param u_idx
      * @return 미술작품객체 리스트
      */
-    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx} AND a_active = 1 ORDER BY a_date DESC")
+    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx} AND a_active = 1 ORDER BY a_idx DESC")
     List<Artwork> findArtworkByUserIdx(@Param("u_idx") final int u_idx);
 
 
@@ -84,11 +88,19 @@ public interface ArtworkMapper {
 
     /**
      * 미술작품 태그, a_idx
-     *
      * @return a_tags, a_idx
      */
-    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1")
+    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1 ORDER BY rand()")
     List<Artwork> findTagsArtworkIdx();
+
+    /**
+     * 미술작품 태그, a_idx
+     * a_idx != -1 일때
+     * @return a_tags, a_idx
+     */
+//    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx} ORDER BY a_idx DESC")
+//    List<Artwork> findTagsArtworkIdxByPage(@Param("a_idx") final int a_idx);
+
 
     @Select("SELECT a_idx FROM artwork WHERE a_active =1 ORDER BY a_date DESC")
     List<Integer> findAllArtIdx();
@@ -104,7 +116,7 @@ public interface ArtworkMapper {
      * min_size, max_size 클라에서 'S', 'M' 인지 받아서 S면 min_size = 0, max_size = 2411 설정해서 a_idx받아오기,
      * ArtworkPicMapper findByArtIdx 함수 이용해서 art_pic 받아오기
      */
-    @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size} AND a_active = 1 ORDER BY artwork.a_date DESC")
+    @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size} AND a_active = 1 ORDER BY artwork.a_idx DESC")
     List<Integer> findArtIdxBySize(@Param("min_size") final int min_size, @Param("max_size") final int max_size);
 
     @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size} AND a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_date DESC")
@@ -115,7 +127,7 @@ public interface ArtworkMapper {
      * @param a_form
      * @return a_idx
      */
-    @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form} AND a_active = 1 ORDER BY artwork.a_date DESC")
+    @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form} AND a_active = 1 ORDER BY artwork.a_idx DESC")
     List<Integer> findArtIdxByForm(@Param("a_form") final String a_form);
 
     @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form} AND a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_date DESC")
@@ -124,7 +136,7 @@ public interface ArtworkMapper {
     /**
      * 미술 작품 카테고리(인물, 동물, 식물, 사물, 추상, 풍경)
      */
-    @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1 ORDER BY artwork.a_date DESC")
+    @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1 ORDER BY artwork.a_idx DESC")
     List<Integer> findArtIdxByCategory(@Param("a_category") final String a_category);
 
     @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_date DESC")
@@ -145,7 +157,7 @@ public interface ArtworkMapper {
      * @return
      */
     @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
-            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 ORDER BY a.a_date DESC")
+            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 ORDER BY a.a_idx DESC")
     List<Integer> findArtIdxByKeyword(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword);
 
     @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +

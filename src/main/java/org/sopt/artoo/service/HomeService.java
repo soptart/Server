@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 
 @Slf4j
@@ -119,9 +116,11 @@ public class HomeService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themeList);
     }
 
+
+
     public DefaultRes<List<ArtworkPic>> getAllTagPicUrl(final int t_idx){
         final List<ArtworkPic> themePicList = new ArrayList<>();
-        List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx(); //a_tag와 a_idx 갖고옴
+        List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx();
         for(Artwork artwork : artworkList){
             String a_tags = artwork.getA_tags();
             String[] tagNum = a_tags.split(","); // {3,4,5}
@@ -132,14 +131,13 @@ public class HomeService {
                     }
                 }
             }
+            if(themePicList.size() == 48){
+                break;
+            }
         }
 
-        if(themePicList.isEmpty()){
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
-        }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themePicList);
     }
-
 
 
 }
