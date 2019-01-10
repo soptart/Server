@@ -94,7 +94,7 @@ public class NoticeService {
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
-                    if(purchase1.equals("") || purchase1.getP_comment() == null ){
+                    if(purchase1.getP_comment().equals("") || purchase1.getP_comment() == null ){
                         noticeRes.setC_isComment(false);
                     }else{noticeRes.setC_isComment(true);}
 
