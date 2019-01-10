@@ -33,7 +33,7 @@ public class AdminService {
      * @return loginToken
      */
     public DefaultRes adminLogin(final LoginReq loginReq){
-        final User adminUser = userMapper.findByIdAndPassword(loginReq.getU_email(), loginReq.getU_pw());
+        final User adminUser = userMapper.findByIdAndPassword(loginReq);
         if(adminUser.getU_idx() == 0){
             try {
                 final JwtService.TokenRes tokenDto = new JwtService.TokenRes(jwtService.create(adminUser.getU_idx()), adminUser.getU_idx());
