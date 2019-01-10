@@ -8,7 +8,6 @@ import java.util.Date;
 
 @Data
 public class ArtworkReq {
-
     // 작품 고유 인덱스
     private int a_idx;
     // 작품 이름
@@ -51,6 +50,7 @@ public class ArtworkReq {
     private boolean a_active = true;
 
     private int a_purchaseState;
+
     public boolean checkProperties() {
         return (a_name!=null && a_width>0 && a_height>0 && a_price>0 && a_detail!=null && a_year!=null);
     }

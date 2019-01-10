@@ -2,14 +2,13 @@ package org.sopt.artoo.service;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.sopt.artoo.dto.Artwork;
 import org.sopt.artoo.dto.Display;
 import org.sopt.artoo.dto.DisplayContent;
 import org.sopt.artoo.mapper.DisplayContentMapper;
 import org.sopt.artoo.mapper.DisplayMapper;
 import org.sopt.artoo.mapper.UserMapper;
-import org.sopt.artoo.model.DateRes;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.DisplayAddReq;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -154,9 +153,47 @@ public class DisplayService {
             displayMapper.deleteByDisplayIdx(d_idx);
         } catch (Exception e) {
             e.printStackTrace();
-        return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
-
         return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_DISPLAYS);
     }
+
+    /**
+     * 관리자 - 모든 전시회 조회
+     *
+     * @return DefaultRes - List<AdminDisplaysRes>
+     */
+    public DefaultRes<List<AdminDisplaysRes>> findAllDisplays(){
+        List<Display> displayList = displayMapper.findAllDisplay();
+        List<AdminDisplaysRes> adminDisplaysResList  = new ArrayList<>();
+        if (displayList.isEmpty()) {
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT);
+        }
+
+        for(Display display : displayList) {
+            AdminDisplaysRes adminDisplaysRes = new AdminDisplaysRes(display);
+            adminDisplaysRes.setD_count(displayContentMapper.findDisplayContentCount(display.getD_idx()));
+
+            if (!DateRes.isCompareFromNow(display.getD_sDateApply())) {// 신청 전
+                adminDisplaysRes.setD_state(0);
+            }
+             if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){ // 신청기간
+                adminDisplaysRes.setD_state(1);
+             }
+             else if(DateRes.isContain(display.getD_eDateApply(), display.getD_sDateNow())){ // 대기중
+                adminDisplaysRes.setD_state(2);
+             }
+             else if(DateRes.isContain(display.getD_sDateNow(), display.getD_eDateNow())){ // 전시중
+                adminDisplaysRes.setD_state(3);
+             }
+             else if(DateRes.isCompareFromNow(display.getD_eDateNow())){ // 전시 완료된 전시
+                adminDisplaysRes.setD_state(4);
+             }
+            adminDisplaysResList.add(adminDisplaysRes);
+        }
+
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_DISPLAY, adminDisplaysResList);
+    }
+
+
 }

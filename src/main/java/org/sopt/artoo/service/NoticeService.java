@@ -94,7 +94,7 @@ public class NoticeService {
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
                     Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
-                    if(purchase1.equals("") || purchase1.getP_comment() == null ){
+                    if(purchase1.getP_comment().equals("") || purchase1.getP_comment() == null ){
                         noticeRes.setC_isComment(false);
                     }else{noticeRes.setC_isComment(true);}
 
@@ -168,14 +168,16 @@ public class NoticeService {
      */
     public DefaultRes trySavePurchaseComment(final int u_idx, final int p_idx, final PurchaseComment purchaseComment){
         try {
-            if(purchaseComment.getP_comment() != null) {
+            if(purchaseComment.getP_comment() != null ) {
                 Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
-                if (purchase.getP_buyer_idx() == u_idx) {
-                    purchaseMapper.updatePurchaseComment(p_idx, purchaseComment.getP_comment());
-                    return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
-                } else {
-                    return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
-                }
+                if(purchase.getP_state() != 10 && purchase.getP_state() !=20) {
+                    if (purchase.getP_buyer_idx() == u_idx) {
+                        purchaseMapper.updatePurchaseComment(p_idx, purchaseComment.getP_comment());
+                        return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_COMMENT);
+                    } else {
+                        return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+                    }
+                }return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_CREATE_REVIEW);
             }
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.FAIL_CREATE_COMMENT);
         } catch (Exception e) {

@@ -63,7 +63,6 @@ public class DisplayContentService {
             displayContent.setD_idx(d_idx);
             displayContent.setD_title(d_title);
         }
-
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY, dcList);
     }
 
