@@ -31,13 +31,9 @@ public class CommentService {
 
     public DefaultRes<List<Comment>> findAllCommentByArtIdx(final int a_idx, final int u_idx) {
         List<Comment> commentList = commentMapper.findAllCommentByArtIdx(a_idx);
-        if (commentList.stream().filter(comment -> comment.getU_idx() == u_idx).collect(Collectors.toList()).size() != 0) {
-            for (Comment comment : commentList) {
-                comment.setAuth(u_idx == comment.getU_idx());
-                comment.setU_name(userMapper.findByUidx(comment.getU_idx()).getU_name());
-            }
-        }else{
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INDEX_NOT_FOUNDED, new ArrayList<Comment>());
+        for (Comment comment : commentList) {
+            comment.setAuth(u_idx == comment.getU_idx());
+            comment.setU_name(userMapper.findByUidx(comment.getU_idx()).getU_name());
         }
         try {
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_COMMENTS, commentList);
@@ -113,14 +109,14 @@ public class CommentService {
 
     public DefaultRes deleteComment(final int c_idx, final int userIdx) {
         try {
-            if(commentMapper.findCommentByCommentIdx(c_idx)!=null){
-                if(commentMapper.findCommentByCommentIdx(c_idx).getU_idx() == userIdx){
+            if (commentMapper.findCommentByCommentIdx(c_idx) != null) {
+                if (commentMapper.findCommentByCommentIdx(c_idx).getU_idx() == userIdx) {
                     commentMapper.deleteCommentByCommentIdx(c_idx);
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_COMMENT);
-                }else{
+                } else {
                     return DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
                 }
-            }else{
+            } else {
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_COMMENT);
             }
         } catch (Exception e) {
