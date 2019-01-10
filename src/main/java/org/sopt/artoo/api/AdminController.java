@@ -36,12 +36,13 @@ public class AdminController {
      * Admin Login
      * @param loginReq
      */
-    @PostMapping("admin/login")
+    @PostMapping("/admin/login")
     public ResponseEntity adminLogin(@RequestBody final LoginReq loginReq) {
         try {
             return new ResponseEntity<>(adminService.adminLogin(loginReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -52,7 +53,7 @@ public class AdminController {
      * @param header
      * @return
      */
-    @GetMapping("admin/users")
+    @GetMapping("/admin/users")
     public ResponseEntity userFind(@RequestBody final LoginReq loginReq,
                                    @RequestHeader (value ="Authorization", required = false) final String header){
         if(jwtService.decode(header).getUser_idx() == 0){
@@ -60,6 +61,7 @@ public class AdminController {
                 return new ResponseEntity<>(adminService.findUserPurchaseById(loginReq), HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
+                e.printStackTrace();
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
@@ -72,7 +74,7 @@ public class AdminController {
      * @param header
      * @return
      */
-    @GetMapping("admin/users/{p_idx}")
+    @GetMapping("/admin/users/{p_idx}")
     public ResponseEntity findPurchaseState(@PathVariable("p_idx") final int p_idx,
                                             @RequestHeader (value ="Authorization", required = false) final String header){
         if(jwtService.decode(header).getUser_idx() == 0){
@@ -80,6 +82,7 @@ public class AdminController {
                 return new ResponseEntity<>(adminService.findPurchaseByPidx(p_idx), HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
+                e.printStackTrace();
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
@@ -87,7 +90,7 @@ public class AdminController {
     }
 
 
-    @PostMapping("admin/users/{p_idx}")
+    @PostMapping("/admin/users/{p_idx}")
     public ResponseEntity updatePurchaseState(@PathVariable("p_idx") final int p_idx,
                                               @RequestBody final int p_state,
                                               @RequestHeader (value ="Authorization", required = false) final String header){
@@ -96,6 +99,7 @@ public class AdminController {
                 return new ResponseEntity<>(adminService.updatePurchaseState(p_idx, p_state), HttpStatus.OK);
             }catch (Exception e) {
                 log.error(e.getMessage());
+                e.printStackTrace();
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
