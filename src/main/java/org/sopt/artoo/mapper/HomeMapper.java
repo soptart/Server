@@ -34,7 +34,7 @@ public interface HomeMapper {
 
     /**
      * 작가 이름, 작가 소개
-     * @param u_idx
+     * @param u_idx-
      * @return Home
      */
     @Select("SELECT DISTINCT u_name, u_description, u_school FROM artwork, user WHERE artwork.u_idx = #{u_idx} AND user.u_idx = #{u_idx}")
