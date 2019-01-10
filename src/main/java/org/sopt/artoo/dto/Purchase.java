@@ -13,7 +13,7 @@ public class Purchase {
     // 구매 날짜
     private Date p_date;
     // 구매 후기
-    private String p_comment;
+    private String p_comment = "";
     // 작품 고유 인덱스
     private int a_idx;
     // 작품 구매자 인덱스

@@ -93,8 +93,8 @@ public class NoticeService {
                         log.info(noticeRes.getA_idx() + "택배");
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
-                    Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
-                    if(purchase1.getP_comment().equals("") || purchase1.getP_comment() == null ){
+//                    Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
+                    if(purchase.getP_comment().equals("") || purchase.getP_comment() == null ){
                         noticeRes.setC_isComment(false);
                     }else{noticeRes.setC_isComment(true);}
 
