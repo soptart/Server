@@ -8,6 +8,8 @@ public class DisplayContentRes {
     private int d_idx;
     private String d_title;
 
+    private int dc_idx;
+
     //작품 정보
     private int a_idx;
     private String a_name;
