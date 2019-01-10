@@ -228,6 +228,7 @@ public class ArtworkService {
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_CONTENT);
             } catch (Exception e) {
                 log.error(e.getMessage());
+                e.printStackTrace();
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
@@ -383,7 +384,7 @@ public class ArtworkService {
                     purchaseMapper.savePurchaseData(purchaseReq);
                     // 아트워크 구매 상태 변경 1|2|3. -> 11|12|13
                     int a_purchaseState = artwork.getA_purchaseState() + 10;
-                    artworkMapper.updatePurchaseStateByAIdx(artwork.getA_idx(), a_purchaseState);
+                    artworkMapper.updatePurchaseStateByAIdx(a_purchaseState, artwork.getA_idx());
 
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchaseReq);
                 }
