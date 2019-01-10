@@ -13,11 +13,19 @@ import lombok.Data;
 public class DefaultRes<T> {
     private int status;
     private String message;
+    private int len;
     private T data;
 
     public DefaultRes(final int status, final String message) {
         this.status = status;
         this.message = message;
+        this.data = null;
+    }
+
+    public DefaultRes(final int status, final String message, final int len) {
+        this.status = status;
+        this.message = message;
+        this.len = len;
         this.data = null;
     }
 
@@ -30,6 +38,15 @@ public class DefaultRes<T> {
                 .data(t)
                 .status(status)
                 .message(message)
+                .build();
+    }
+
+    public static <T> DefaultRes<T> res(final int status, final String message, final T t, final int len) {
+        return DefaultRes.<T>builder()
+                .data(t)
+                .status(status)
+                .message(message)
+                .len(len)
                 .build();
     }
     public static final DefaultRes FAIL_DEFAULT_RES = new DefaultRes(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);

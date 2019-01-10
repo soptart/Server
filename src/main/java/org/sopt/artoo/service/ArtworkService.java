@@ -538,8 +538,8 @@ public class ArtworkService {
                 sublist = artworkPicList.subList(0, artworkPicList.size());
             }
 
-            int total = artworkMapper.findAllArtIdx().size();
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS+total, sublist);
+            int total = artworkIdxList.size();
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, sublist, total);
 
         }catch (Exception e){
             log.error(e.getMessage());
