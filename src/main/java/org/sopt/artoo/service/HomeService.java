@@ -116,45 +116,11 @@ public class HomeService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themeList);
     }
 
-    public DefaultRes<List<ArtworkPic>> getAllTagPicUrlPaging(final int t_idx, final int a_idx){
-        final List<ArtworkPic> themePicList = new ArrayList<>();
-        List<Artwork> artworkList = artworkMapper.findTagsArtworkIdxByPage(a_idx); //a_tag와 a_idx 갖고옴
 
-        if(artworkList.size() < 15){
-            for (int i = 0; i < artworkList.size(); i++) {
-                String a_tags = artworkList.get(i).getA_tags();
-                String[] tagNum = a_tags.split(",");
-                for (String aTagNum : tagNum) {
-                    if (String.valueOf(t_idx).equals(aTagNum)) { //tag index와 aTagNum가 같으면
-                        if (artworkPicMapper.findByArtIdx(artworkList.get(i).getA_idx()) != null) {
-                            themePicList.add(artworkPicMapper.findByArtIdx(artworkList.get(i).getA_idx())); //사진 가져오기
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            for (int i = 0; i < 15; i++) {
-                String a_tags = artworkList.get(i).getA_tags();
-                String[] tagNum = a_tags.split(",");
-                for (String aTagNum : tagNum) {
-                    if (String.valueOf(t_idx).equals(aTagNum)) { //tag index와 aTagNum가 같으면
-                        if (artworkPicMapper.findByArtIdx(artworkList.get(i).getA_idx()) != null) {
-                            themePicList.add(artworkPicMapper.findByArtIdx(artworkList.get(i).getA_idx())); //사진 가져오기
-                        }
-                    }
-                }
-            }
-        }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themePicList);
-    }
 
-    /**
-     * 사용 안함
-     */
     public DefaultRes<List<ArtworkPic>> getAllTagPicUrl(final int t_idx){
         final List<ArtworkPic> themePicList = new ArrayList<>();
-        List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx(); //전체 a_tag와 a_idx 갖고옴
+        List<Artwork> artworkList = artworkMapper.findTagsArtworkIdx();
         for(Artwork artwork : artworkList){
             String a_tags = artwork.getA_tags();
             String[] tagNum = a_tags.split(","); // {3,4,5}
@@ -165,14 +131,13 @@ public class HomeService {
                     }
                 }
             }
+            if(themePicList.size() == 48){
+                break;
+            }
         }
 
-        if(themePicList.isEmpty()){
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_CONTENT);
-        }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, themePicList);
     }
-
 
 
 }

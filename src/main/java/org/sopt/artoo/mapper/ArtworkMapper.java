@@ -88,15 +88,19 @@ public interface ArtworkMapper {
 
     /**
      * 미술작품 태그, a_idx
-     *
      * @return a_tags, a_idx
      */
-    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1 ORDER BY a_idx DESC")
+    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1 ORDER BY rand()")
     List<Artwork> findTagsArtworkIdx();
 
-    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx} ORDER BY a_idx DESC")
-    List<Artwork> findTagsArtworkIdxByPage(@Param("a_idx") final int a_idx);
-//
+    /**
+     * 미술작품 태그, a_idx
+     * a_idx != -1 일때
+     * @return a_tags, a_idx
+     */
+//    @Select("SELECT a_tags, a_idx FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx} ORDER BY a_idx DESC")
+//    List<Artwork> findTagsArtworkIdxByPage(@Param("a_idx") final int a_idx);
+
 
     @Select("SELECT a_idx FROM artwork WHERE a_active =1 ORDER BY a_date DESC")
     List<Integer> findAllArtIdx();
