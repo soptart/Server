@@ -206,15 +206,16 @@ public class ArtworkController {
      * 미술 작품 필터
      * @param
      */
-    @GetMapping("/artworks/filter")
+    @GetMapping("/artworks/filter/{a_idx}")
     public ResponseEntity filterArtwork(
             @RequestParam(value="a_size", defaultValue = "" ,required=false) final String a_size,
             @RequestParam(value="a_form", defaultValue = "", required=false) final String a_form,
             @RequestParam(value="a_category", defaultValue = "",required=false) final String a_category,
-            @RequestParam(value="a_keyword", defaultValue = "",required=false) final String a_keyword) {
+            @RequestParam(value="a_keyword", defaultValue = "",required=false) final String a_keyword,
+            @PathVariable("a_idx") final int a_idx) {
         try {
                 ArtworkFilterReq artworkFilterReq = new ArtworkFilterReq(a_size, a_form, a_category, a_keyword);
-                DefaultRes defaultRes = artworkService.filterArtworkPic(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
+                DefaultRes defaultRes = artworkService.filterArtworkPic(artworkFilterReq, a_idx); //작가 이름, 작가 사진들, 작품연도
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());

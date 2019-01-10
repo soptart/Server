@@ -102,8 +102,11 @@ public interface ArtworkMapper {
 //    List<Artwork> findTagsArtworkIdxByPage(@Param("a_idx") final int a_idx);
 
 
-    @Select("SELECT a_idx FROM artwork WHERE a_active =1 ORDER BY a_date DESC")
+    @Select("SELECT a_idx FROM artwork WHERE a_active =1 ORDER BY a_idx DESC")
     List<Integer> findAllArtIdx();
+
+    @Select("SELECT a_idx FROM artwork WHERE a_active =1 AND a_idx < #{a_idx} ORDER BY a_idx DESC")
+    List<Integer> findAllArtIdxBelow(@Param("a_idx") final int a_idx);
 
     /**
      * 미술작품 크기 필터
@@ -116,6 +119,9 @@ public interface ArtworkMapper {
     @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size} AND a_active = 1 ORDER BY artwork.a_idx DESC")
     List<Integer> findArtIdxBySize(@Param("min_size") final int min_size, @Param("max_size") final int max_size);
 
+    @Select("SELECT a_idx FROM artwork WHERE a_size BETWEEN #{min_size} AND #{max_size} AND a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_date DESC")
+    List<Integer> findArtIdxBySizeBelowIdx(@Param("min_size") final int min_size, @Param("max_size") final int max_size, @Param("a_idx") final int a_idx);
+
     /**
      * 미술 작품 형태 필터(드로잉, 페인팅, 동양화, 혼합 매체, 조형/공예, 사진)
      * @param a_form
@@ -124,11 +130,17 @@ public interface ArtworkMapper {
     @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form} AND a_active = 1 ORDER BY artwork.a_idx DESC")
     List<Integer> findArtIdxByForm(@Param("a_form") final String a_form);
 
+    @Select("SELECT a_idx FROM artwork WHERE a_form = #{a_form} AND a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_idx DESC")
+    List<Integer> findArtIdxByFormBelowIdx(@Param("a_form") final String a_form, @Param("a_idx") final int a_idx);
+
     /**
      * 미술 작품 카테고리(인물, 동물, 식물, 사물, 추상, 풍경)
      */
     @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1 ORDER BY artwork.a_idx DESC")
     List<Integer> findArtIdxByCategory(@Param("a_category") final String a_category);
+
+    @Select("SELECT a_idx FROM artwork WHERE a_category = #{a_category} AND a_active = 1 AND a_idx < #{a_idx} ORDER BY artwork.a_idx DESC")
+    List<Integer> findArtIdxByCategoryBelowIdx(@Param("a_category") final String a_category, @Param("a_idx") final int a_idx);
 
     /**
      * 작품 고유 번호로 작품 판매 상태 변환
@@ -147,6 +159,10 @@ public interface ArtworkMapper {
     @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
             "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 ORDER BY a.a_idx DESC")
     List<Integer> findArtIdxByKeyword(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword);
+
+    @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
+            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 AND a.a_idx < #{a_idx} ORDER BY a.a_idx DESC")
+    List<Integer> findArtIdxByKeywordBelowIdx(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword, @Param("a_idx") final int a_idx);
 
 
     /**
