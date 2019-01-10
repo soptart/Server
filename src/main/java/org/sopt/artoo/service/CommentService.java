@@ -31,15 +31,18 @@ public class CommentService {
 
     public DefaultRes<List<Comment>> findAllCommentByArtIdx(final int a_idx, final int u_idx) {
         List<Comment> commentList = commentMapper.findAllCommentByArtIdx(a_idx);
-        if (commentList.stream().filter(comment -> comment.getU_idx() == u_idx).collect(Collectors.toList()).size() != 0) {
+        //if (commentList.stream().filter(comment -> comment.getU_idx() == u_idx).collect(Collectors.toList()).size() != 0) {
             for (Comment comment : commentList) {
                 comment.setAuth(u_idx == comment.getU_idx());
                 comment.setU_name(userMapper.findByUidx(comment.getU_idx()).getU_name());
             }
-        }else{
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INDEX_NOT_FOUNDED, new ArrayList<Comment>());
-        }
+        //}else{
+            //return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INDEX_NOT_FOUNDED, new ArrayList<Comment>());
+        //}
         try {
+            if(commentList==null){
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_COMMENTS, new ArrayList<Comment>());
+            }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_COMMENTS, commentList);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
