@@ -145,11 +145,11 @@ public class ArtworkService {
                 artworkRes.setA_purchaseState(0);
             }
             // 구매가능 (p_state: 1,2,3)
-            if (artwork.getA_purchaseState() < 10) {
+            else if (artwork.getA_purchaseState() < 10) {
                 artworkRes.setA_purchaseState(1);
             }
             // 판매완료 (p_state: 11,12,13)
-            if (artwork.getA_purchaseState() > 10) {
+            else if (artwork.getA_purchaseState() > 10) {
                 artworkRes.setA_purchaseState(11);
             }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CONTENT, artworkRes);
