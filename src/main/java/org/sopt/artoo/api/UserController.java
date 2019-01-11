@@ -29,7 +29,7 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/u_email")
+    @PostMapping("/u_email/{u_email}")
     public ResponseEntity getUserEmail(
             @PathVariable("u_email") final String email){
         DefaultRes defaultRes = userService.findUserEmailExist(email);
