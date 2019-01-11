@@ -76,17 +76,13 @@ public class UserController {
     @Auth
     @GetMapping("/{u_idx}/purchases")
     public ResponseEntity getUserPurchase(
-            @RequestHeader (value = "Authorization", required = false) final String header,
             @PathVariable("u_idx") final int userIdx) {
-        if(jwtService.decode(header).getUser_idx()==userIdx) {
             try {
                 return new ResponseEntity<>(userService.findUserPurchase(userIdx), HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }
-        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
     }
 
     /**
