@@ -311,12 +311,12 @@ public class ArtworkController {
 //    @Auth
     @PostMapping("/artworks/{a_idx}/likes/{u_idx}")
     public ResponseEntity like(
-//            @RequestHeader(value = "Authorization") final String header,
+            @RequestHeader(value = "Authorization") final String header,
             @PathVariable("a_idx") final int a_idx,
             @PathVariable("u_idx") final int u_idx) {
         try {
-//            final int u_idx = jwtService.decode(header).getUser_idx();
-            return new ResponseEntity<>(artworkService.saveArtworkLike(a_idx, u_idx), HttpStatus.OK);
+            final int user_Idx = jwtService.decode(header).getUser_idx();
+            return new ResponseEntity<>(artworkService.saveArtworkLike(a_idx, user_Idx), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
