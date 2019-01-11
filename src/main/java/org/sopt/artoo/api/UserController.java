@@ -29,6 +29,13 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
+    @PostMapping("/u_email/{u_email}")
+    public ResponseEntity getUserEmail(
+            @PathVariable("u_email") final String email){
+        DefaultRes defaultRes = userService.findUserEmailExist(email);
+        return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+    }
+
 
     /**
      * 유저의 미술품 보여주기
