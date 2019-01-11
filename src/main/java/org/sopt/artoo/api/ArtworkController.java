@@ -246,7 +246,7 @@ public class ArtworkController {
      * @param a_idx 작품 고유 번호
      * @return artwork 작품
      */
-//    @Auth
+//  @Auth
     @PostMapping("/artworks/{a_idx}/likes/{u_idx}")
     public ResponseEntity like(
 //            @RequestHeader(value = "Authorization") final String header,
