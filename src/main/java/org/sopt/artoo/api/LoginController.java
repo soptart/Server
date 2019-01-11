@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.LoginReq;
 import org.sopt.artoo.service.AuthService;
+import org.sopt.artoo.utils.PasswordIncoder;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,8 @@ public class LoginController {
     @PostMapping("login")
     public ResponseEntity login(@RequestBody final LoginReq loginReq) {
         try {
+            String hashpw = PasswordIncoder.incodePw(loginReq.getU_pw());
+            loginReq.setU_pw(hashpw);
             return new ResponseEntity<>(authService.login(loginReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -246,13 +246,14 @@ public class ArtworkController {
      * @param a_idx 작품 고유 번호
      * @return artwork 작품
      */
-    @Auth
-    @PostMapping("/artworks/{a_idx}/likes")
+//    @Auth
+    @PostMapping("/artworks/{a_idx}/likes/{u_idx}")
     public ResponseEntity like(
-            @RequestHeader(value = "Authorization") final String header,
-            @PathVariable("a_idx") final int a_idx) {
+//            @RequestHeader(value = "Authorization") final String header,
+            @PathVariable("a_idx") final int a_idx,
+            @PathVariable("u_idx") final int u_idx) {
         try {
-            final int u_idx = jwtService.decode(header).getUser_idx();
+//            final int u_idx = jwtService.decode(header).getUser_idx();
             return new ResponseEntity<>(artworkService.saveArtworkLike(a_idx, u_idx), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -260,7 +261,7 @@ public class ArtworkController {
         }
     }
 
-    @Auth
+//    @Auth
     @DeleteMapping("/artworks/delete/{a_idx}")
     public ResponseEntity deleteArtwork(
             @RequestHeader(value = "Authorization") final String header,

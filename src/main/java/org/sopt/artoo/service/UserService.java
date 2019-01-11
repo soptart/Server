@@ -75,18 +75,15 @@ public class UserService {
         if (userSignUpReq.checkQualification()) { //로그인 항목 필수 항목 검사
             final User user = userMapper.findByEmail(userSignUpReq.getU_email());
             if (user == null) { //이메일 중복 검사
-                if(userSignUpReq.getU_pw().length() >= 7) { // 비밀번호 길이 검사
-                   // userSignUpReq.setU_pw(PasswordIncoder.incodePw(userSignUpReq.getU_pw())); 비밀번호 암호화
-                    try {
-                        userMapper.save(userSignUpReq);
-                        return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
-                    } catch (Exception e) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                        log.error(e.getMessage());
-                        return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-                    }
+                userSignUpReq.setU_pw(PasswordIncoder.incodePw(userSignUpReq.getU_pw()));
+                try {
+                    userMapper.save(userSignUpReq);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
+                } catch (Exception e) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    log.error(e.getMessage());
+                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                 }
-                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
             } else return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.ALREADY_USER);
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_USER);
@@ -373,20 +370,16 @@ public class UserService {
     public DefaultRes userPwChange(final int userIdx, final UserPwInfo userPwInfo) {
         if (userMapper.findByUidx(userIdx) != null) {
             try {
-                if(!userMapper.checkUserPw(userIdx).equals(userPwInfo.getU_pw_current())) {
+                String userPw = userMapper.checkUserPw(userIdx);
+
+                if(!userMapper.checkUserPw(userIdx).equalsIgnoreCase(PasswordIncoder.incodePw(userPwInfo.getU_pw_current()))){
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_PASSWORD);
                 }
-                /*
-                if(!userMapper.checkUserPw(userIdx).equals(PasswordIncoder.incodePw(userPwInfo.getU_pw_current()))){
-                    return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_PASSWORD);
-                }
-                */ //암호화되어있는 코드 확인용
+
                 else if(!userPwInfo.getU_pw_new().equals(userPwInfo.getU_pw_check())){
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_CHECK_PASSWORD);
                 }
-                else if(userPwInfo.getU_pw_new().length() < 7){
-                    return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_ENOUGH_PASSWORD_LENGTH);
-                }
+                userPwInfo.setU_pw_new(PasswordIncoder.incodePw(userPwInfo.getU_pw_new()));
                 userMapper.updateUserPw(userIdx, userPwInfo);
                 return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.UPDATE_USER);
             } catch (Exception e) {

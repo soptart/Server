@@ -93,8 +93,8 @@ public class NoticeService {
                         log.info(noticeRes.getA_idx() + "택배");
                     }
                     noticeRes.setA_pic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
-                    Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
-                    if(purchase1.getP_comment().equals("") || purchase1.getP_comment() == null ){
+//                    Purchase purchase1 = purchaseMapper.findPurchaseByPurchaseIdx(purchase.getP_idx());
+                    if(purchase.getP_comment().equals("") || purchase.getP_comment() == null ){
                         noticeRes.setC_isComment(false);
                     }else{noticeRes.setC_isComment(true);}
 
@@ -243,26 +243,36 @@ public class NoticeService {
         try {
             List<Display> displayList = displayMapper.findAllDisplay();
             List<DisplayContent> displayContents_apply = new ArrayList<>(); // 신청 중인 전시
-            List<DisplayContent> displayContents =  new ArrayList<>(); // 전시 완료된 전시
-            List<DisplayContent> displayContents_wait =  new ArrayList<>(); // 확정되어서 대기 중인 전시
 
             for(Display display : displayList){
                 // 신청 중인 전시회 (신청 완료)
                 if(DateRes.isContain(display.getD_sDateApply(), display.getD_eDateApply())){
                     displayContents_apply.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
-                }// 전시 완료된 전시
-//                else if(DateRes.isCompareFromNow(display.getD_eDateNow())){
-//                    displayContents.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
-//                }// 확정되어서 대기 중인 전시
-//                else if(DateRes.isContain(display.getD_eDateApply(), display.getD_sDateNow())){
-//                    displayContents_wait.add(displayContentMapper.findByUidxAndDidx(u_idx, display.getD_idx()));
-//                }
+                }
             }
             // 신청 중인 전시 반환 리스트 생성
             List<DisplayRes> displayResList = new ArrayList<>();
-            if(!displayContents_apply.isEmpty()) {insertRes(displayContents_apply, displayResList, NoticeConstant.displayContents_apply);}
-//          if(!displayContents.isEmpty()){ insertRes(displayContents, displayResList, NoticeConstant.displayContents);}
-//          if(!displayContents_wait.isEmpty()) {insertRes(displayContents_wait, displayResList, NoticeConstant.displayContents_wait);}
+            if(!displayContents_apply.isEmpty()) {
+                for (DisplayContent displayContent : displayContents_apply) {
+                    if(displayContent != null) {
+                        DisplayRes displayRes = new DisplayRes();
+                        User user = userMapper.findByUidx(displayContent.getU_idx());
+                        Artwork artwork = artworkMapper.findByIdx(displayContent.getA_idx());
+                        Display display = displayMapper.findByDisplayidx(displayContent.getD_idx());
+
+                        Date date = displayContent.getDc_date();
+                        displayRes.setDc_date(DateRes.getDate1(date));
+                        displayRes.setDisplay(display);
+                        displayRes.setA_idx(artwork.getA_idx());
+                        displayRes.setA_name(artwork.getA_name());
+                        displayRes.setU_idx(user.getU_idx());
+                        displayRes.setU_name(user.getU_name());
+                        displayRes.setState(NoticeConstant.displayContents_apply);
+                        displayRes.setDc_idx(displayContent.getDc_idx());
+                        displayResList.add(displayRes);
+                    }
+                }
+            }
 
             if(!displayResList.isEmpty())
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_DISPLAY_APPLY, displayResList);
@@ -273,32 +283,32 @@ public class NoticeService {
             return DefaultRes.res(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
         }
     }
-
-    public  List<DisplayRes> insertRes(List<DisplayContent> displayContentList, List<DisplayRes> displayResList, int state){
-        try {
-            if (!displayContentList.isEmpty()) {
-                for (DisplayContent displayContent : displayContentList) {
-                    User user = userMapper.findByUidx(displayContent.getU_idx());
-                    Artwork artwork = artworkMapper.findByIdx(displayContent.getA_idx());
-                    Display display = displayMapper.findByDisplayidx(displayContent.getD_idx());
-                    DisplayRes displayRes = new DisplayRes();
-
-                    Date date = displayContent.getDc_date();
-                    displayRes.setDc_date(DateRes.getDate1(date));
-                    displayRes.setDisplay(display);
-                    displayRes.setA_idx(artwork.getA_idx());
-                    displayRes.setA_name(artwork.getA_name());
-                    displayRes.setU_idx(user.getU_idx());
-                    displayRes.setU_name(user.getU_name());
-                    displayRes.setState(state);
-                    displayRes.setDc_idx(displayContent.getDc_idx());
-                    displayResList.add(displayRes);
-                }
-            }
-            return displayResList;
-        }catch(Exception e){
-            log.error(e.getMessage());
-            return displayResList;
-        }
-    }
+//
+//    public  List<DisplayRes> insertRes(List<DisplayContent> displayContentList, List<DisplayRes> displayResList, int state){
+//        try {
+//            if (!displayContentList.isEmpty()) {
+//                for (DisplayContent displayContent : displayContentList) {
+//                    User user = userMapper.findByUidx(displayContent.getU_idx());
+//                    Artwork artwork = artworkMapper.findByIdx(displayContent.getA_idx());
+//                    Display display = displayMapper.findByDisplayidx(displayContent.getD_idx());
+//                    DisplayRes displayRes = new DisplayRes();
+//
+//                    Date date = displayContent.getDc_date();
+//                    displayRes.setDc_date(DateRes.getDate1(date));
+//                    displayRes.setDisplay(display);
+//                    displayRes.setA_idx(artwork.getA_idx());
+//                    displayRes.setA_name(artwork.getA_name());
+//                    displayRes.setU_idx(user.getU_idx());
+//                    displayRes.setU_name(user.getU_name());
+//                    displayRes.setState(state);
+//                    displayRes.setDc_idx(displayContent.getDc_idx());
+//                    displayResList.add(displayRes);
+//                }
+//            }
+//            return displayResList;
+//        }catch(Exception e){
+//            log.error(e.getMessage());
+//            return displayResList;
+//        }
+//    }
 }
