@@ -193,7 +193,7 @@ public class ArtworkService {
             if (artworkLike == null) {
                 artworkMapper.like(a_idx, artwork.getA_like_count() + 1);
                 Date date = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 artworkLikeMapper.save(u_idx, a_idx, sdf.format(date));
             } else {
                 artworkMapper.like(a_idx, artwork.getA_like_count() - 1);
