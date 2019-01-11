@@ -75,6 +75,48 @@ public class ArtworkController {
         }
     }
 
+
+    /**
+     * 미술작품 전체 불러오기 - ios
+     *
+     * @param header jwt token
+     * @return ResponseEntity
+     */
+    @GetMapping("/artworks")
+    public ResponseEntity getAllartworksIos(
+            @RequestHeader(value = "Authorization", required = false) final String header
+    ) {
+        try {
+            final int userIdx = jwtService.decode(header).getUser_idx();
+            DefaultRes<List<Artwork>> defaultRes = artworkService.findAllIos();
+
+            for (Artwork artwork : defaultRes.getData()) {
+                artwork.setAuth(userIdx == artwork.getU_idx());
+            }
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 미술작품 전체 인덱스랑 url만 불러오기 - ios
+     *
+     */
+    @GetMapping("/artworksmini")
+    public ResponseEntity getAllartworksMiniIos(){
+        try {
+            DefaultRes<List<ArtworkMini>> defaultRes = artworkService.findAllIndexAndUrlIos();
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
     /**
      * 미술작품 조회
      *
@@ -217,6 +259,26 @@ public class ArtworkController {
                 ArtworkFilterReq artworkFilterReq = new ArtworkFilterReq(a_size, a_form, a_category, a_keyword);
                 DefaultRes defaultRes = artworkService.filterArtworkPic(artworkFilterReq, a_idx); //작가 이름, 작가 사진들, 작품연도
                 return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 미술 작품 필터 - ios
+     * @param
+     */
+    @GetMapping("/artworks/filter")
+    public ResponseEntity filterArtworkIos(
+            @RequestParam(value="a_size", defaultValue = "" ,required=false) final String a_size,
+            @RequestParam(value="a_form", defaultValue = "", required=false) final String a_form,
+            @RequestParam(value="a_category", defaultValue = "",required=false) final String a_category,
+            @RequestParam(value="a_keyword", defaultValue = "",required=false) final String a_keyword) {
+        try {
+            ArtworkFilterReq artworkFilterReq = new ArtworkFilterReq(a_size, a_form, a_category, a_keyword);
+            DefaultRes defaultRes = artworkService.filterArtworkPicIos(artworkFilterReq); //작가 이름, 작가 사진들, 작품연도
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

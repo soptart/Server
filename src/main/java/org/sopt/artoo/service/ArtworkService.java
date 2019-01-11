@@ -74,6 +74,36 @@ public class ArtworkService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS + numArtwork, artworkMiniList);
     }
 
+
+    /**
+     * 모든 작품 조회 - ios
+     *
+     * @return DefaultRes
+     */
+    public DefaultRes<List<Artwork>> findAllIos() {
+        List<Artwork> artworkList = artworkMapper.findAllIos();
+        for (Artwork artwork : artworkList) {
+            artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkList);
+    }
+
+    /**
+     * 모든 작품 조회(인덱스랑 url만) - ios
+     *
+     */
+    public DefaultRes<List<ArtworkMini>> findAllIndexAndUrlIos(){
+        List<ArtworkMini> artworkMiniList = artworkMapper.findAllIndexAndUrlIos();
+        for (ArtworkMini artworkMini: artworkMiniList){
+            artworkMini.setPic_url(artworkPicMapper.findByArtIdx(artworkMini.getA_idx()).getPic_url());
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkMiniList);
+    }
+
+
+
+
+
     /**
      * 작품 인덱스로 조회
      *
@@ -551,6 +581,86 @@ public class ArtworkService {
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
         }
     }
+
+
+    /**
+     * size, form, category, keyword 를 이용하여 작품 필터 - ios
+     * @param artworkFilterReq
+     * @return Artwork
+     */
+    @Transactional
+    public DefaultRes filterArtworkPicIos(final ArtworkFilterReq artworkFilterReq){
+        try{
+            List<ArtworkPic> artworkPicList = new ArrayList<>();
+            List<Integer> artworkIdxList = new ArrayList<>();
+
+            String size = artworkFilterReq.getA_size();
+            String form = artworkFilterReq.getA_form();
+            String category = artworkFilterReq.getA_category();
+            String keyword = artworkFilterReq.getA_keyword();
+
+            log.info(size + " " +form + " " +  category + " " + keyword);
+//            artworkIdxList = artworkMapper.findArtIdxBySize(0, 100000);
+            if(!size.equals("")) {
+                switch (size) {
+                    case "S":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(0, 2411); //사이즈가 S인 a_idx List
+                        break;
+                    case "M":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(2412, 6608); //사이즈가 M인 a_idx List
+                        break;
+                    case "L":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(6609, 10628); //사이즈가 L인 a_idx List
+                        break;
+                    case "XL":
+                        artworkIdxList = artworkMapper.findArtIdxBySize(10629, 21134); //사이즈가 XL인 a_idx List
+                        break;
+                }
+            }
+            if(!form.equals("")){
+                List<Integer> artworkIdxByFormList = artworkMapper.findArtIdxByForm(form);
+                if(artworkIdxList.size() != 0) {
+                    artworkIdxList.retainAll(artworkIdxByFormList); //artworkIdxList에서 artworkIdxByFormList와  공통 요소만 저장 공통 요소만 저장
+                }else{
+                    artworkIdxList.addAll(artworkIdxByFormList);
+                }
+            }
+            if(!category.equals("")){
+                List<Integer> artworkIdxByCategoryList = artworkMapper.findArtIdxByCategory(category);
+                if(artworkIdxList.size() != 0){
+                    artworkIdxList.retainAll(artworkIdxByCategoryList);//artworkIdxList에서 artworkIdxByCategoryList와 공통 요소만 저장
+                }else{
+                    artworkIdxList.addAll(artworkIdxByCategoryList);
+                }
+            }
+            if(!keyword.equals("")){
+                String likeKeyword = '%'+keyword+'%';
+                List<Integer> artworkIdxByKeywordList = artworkMapper.findArtIdxByKeyword(keyword, likeKeyword);
+                if(artworkIdxList.size() != 0){
+                    artworkIdxList.retainAll(artworkIdxByKeywordList);//artworkIdxList에서 artworkIdxByKeywordList 공통 요소만 저장
+                }else{
+                    artworkIdxList.addAll(artworkIdxByKeywordList);
+                }
+            }
+            if(size.equals("") && form.equals("") && category.equals("") && keyword.equals("")){
+                artworkIdxList = artworkMapper.findAllArtIdx();
+            }
+
+            for(int a_idx : artworkIdxList){
+                artworkPicList.add(artworkPicMapper.findByArtIdx(a_idx));
+            }
+            if(artworkPicList.isEmpty()){
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT, artworkPicList);
+            }
+
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS, artworkPicList);
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
+
 
 
 }
