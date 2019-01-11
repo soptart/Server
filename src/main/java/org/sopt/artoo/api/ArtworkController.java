@@ -88,7 +88,7 @@ public class ArtworkController {
             @PathVariable("a_idx") final int a_idx) {
         try {
             final int userIdx = jwtService.decode(header).getUser_idx();
-            DefaultRes<ArtworkRes> defaultRes = artworkService.findByArtworkIdx(a_idx);
+            DefaultRes<ArtworkRes> defaultRes = artworkService.findByArtworkIdx(a_idx, userIdx);
             defaultRes.getData().setAuth(userIdx == defaultRes.getData().getU_idx());
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
