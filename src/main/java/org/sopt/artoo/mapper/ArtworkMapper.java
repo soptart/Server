@@ -167,12 +167,12 @@ public interface ArtworkMapper {
      * @param likeKeyword
      * @return
      */
-    @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
-            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 ORDER BY a.a_idx DESC")
+    @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name LIKE #{keyword} OR a.a_category LIKE #{keyword} OR a.a_form LIKE #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
+            "OR u.u_name LIKE #{keyword} OR u.u_school LIKE #{keyword}) AND a.a_active = 1 ORDER BY a.a_idx DESC")
     List<Integer> findArtIdxByKeyword(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword);
 
-    @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name = #{keyword} OR a.a_category = #{keyword} OR a.a_form = #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
-            "OR u.u_name = #{keyword} OR u.u_school = #{keyword}) AND a.a_active = 1 AND a.a_idx < #{a_idx} ORDER BY a.a_idx DESC")
+    @Select("SELECT a.a_idx FROM artwork a, user u WHERE a.u_idx = u.u_idx AND (a.a_name LIKE #{keyword} OR a.a_category LIKE #{keyword} OR a.a_form LIKE #{keyword} OR a.a_detail LIKE #{likeKeyword} " +
+            "OR u.u_name LIKE #{keyword} OR u.u_school LIKE #{keyword}) AND a.a_active = 1 AND a.a_idx < #{a_idx} ORDER BY a.a_idx DESC")
     List<Integer> findArtIdxByKeywordBelowIdx(@Param("keyword") final String keyword, @Param("likeKeyword") final String likeKeyword, @Param("a_idx") final int a_idx);
 
 
