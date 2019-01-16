@@ -34,13 +34,14 @@ public class AdminService {
      */
     public DefaultRes adminLogin(final LoginReq loginReq){
         final User adminUser = userMapper.findByIdAndPassword(loginReq);
-        if(adminUser.getU_idx() == 0){
+        if(adminUser.getU_idx() == 1004){
             try {
                 final JwtService.TokenRes tokenDto = new JwtService.TokenRes(jwtService.create(adminUser.getU_idx()), adminUser.getU_idx());
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.LOGIN_SUCCESS, tokenDto);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 log.error(e.getMessage());
+                e.printStackTrace();
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }

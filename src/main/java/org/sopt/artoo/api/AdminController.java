@@ -5,6 +5,7 @@ import org.sopt.artoo.model.DefaultRes;
 import org.sopt.artoo.model.LoginReq;
 import org.sopt.artoo.model.PurchaseReq;
 import org.sopt.artoo.service.*;
+import org.sopt.artoo.utils.PasswordIncoder;
 import org.sopt.artoo.utils.ResponseMessage;
 import org.sopt.artoo.utils.StatusCode;
 import org.sopt.artoo.utils.auth.Auth;
@@ -39,6 +40,8 @@ public class AdminController {
     @PostMapping("/admin/login")
     public ResponseEntity adminLogin(@RequestBody final LoginReq loginReq) {
         try {
+            String hashpw = PasswordIncoder.incodePw(loginReq.getU_pw());
+            loginReq.setU_pw(hashpw);
             return new ResponseEntity<>(adminService.adminLogin(loginReq), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
