@@ -52,16 +52,16 @@ public class AdminController {
 
     /**
      * 유저 ID로 거래 내역 요청
-     * @param loginReq
+     * @param
      * @param header
      * @return
      */
-    @GetMapping("/admin/users")
-    public ResponseEntity userFind(@RequestBody final LoginReq loginReq,
+    @GetMapping("/admin/users/email/{u_email}")
+    public ResponseEntity userFind(@PathVariable final String u_email,
                                    @RequestHeader (value ="Authorization", required = false) final String header){
         if(jwtService.decode(header).getUser_idx() == 0){
             try {
-                return new ResponseEntity<>(adminService.findUserPurchaseById(loginReq), HttpStatus.OK);
+                return new ResponseEntity<>(adminService.findUserPurchaseById(u_email), HttpStatus.OK);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 e.printStackTrace();
