@@ -34,7 +34,7 @@ public class AdminService {
      */
     public DefaultRes adminLogin(final LoginReq loginReq){
         final User adminUser = userMapper.findByIdAndPassword(loginReq);
-        if(adminUser.getU_idx() == 1004){
+        if(adminUser.getU_idx() == 0){
             try {
                 final JwtService.TokenRes tokenDto = new JwtService.TokenRes(jwtService.create(adminUser.getU_idx()), adminUser.getU_idx());
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.LOGIN_SUCCESS, tokenDto);
@@ -50,11 +50,11 @@ public class AdminService {
 
     /**
      * 아이디 검색 후 PurchaseList 반환
-     * @param loginReq
+     * @param
      * @return List<Purchase>
      */
-    public DefaultRes<List<Purchase>> findUserPurchaseById(final LoginReq loginReq){
-        final User user = userMapper.findByEmail(loginReq.getU_email());
+    public DefaultRes<List<Purchase>> findUserPurchaseById(final String email){
+        final User user = userMapper.findByEmail(email);
         if(user != null) {
             try{
                 List<Purchase> userPurchaseList = purchaseMapper.findTransactionByUserIdx(user.getU_idx());
