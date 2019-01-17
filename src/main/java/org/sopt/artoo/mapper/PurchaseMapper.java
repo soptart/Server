@@ -23,6 +23,9 @@ public interface PurchaseMapper {
     @Options(useGeneratedKeys = true, keyColumn = "purchase.p_idx")
     int savePurchaseData(@Param("purchaseReq") final PurchaseReq purchaseReq);
 
+
+    @Select("SELECT * FROM purchase")
+    List<Purchase> findAllPurchaseRecord();
     /**
      * 특정 회원의 구매 내역 반환
      *

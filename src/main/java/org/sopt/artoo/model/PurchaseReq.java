@@ -48,7 +48,7 @@ public class PurchaseReq {
 //    }
 
     public boolean checkPurchaseReq() {
-        if(p_isPost == true){
+        if(p_isPost){
             return ( p_recipient != null && p_address != null && p_phone != null );
         }
         else {

@@ -71,6 +71,21 @@ public class AdminController {
         return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.UNAUTHORIZED);
     }
 
+    @GetMapping("/admin/users/purchase")
+    public ResponseEntity userFindAll(@RequestHeader(value = "Authorization") final String header){
+        if(jwtService.decode(header).getUser_idx() == 0){
+            try {
+                return new ResponseEntity<>(adminService.findAllUserPurchase(), HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.UNAUTHORIZED);
+    }
+
+
     /**
      * 특정 인덱스에 해당하는 구매 내역 호출
      * @param p_idx
