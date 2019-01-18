@@ -108,9 +108,9 @@ public class AdminController {
     }
 
 
-    @PostMapping("/admin/users/{p_idx}")
+    @GetMapping("/admin/users/{p_idx}/state/{p_state}")
     public ResponseEntity updatePurchaseState(@PathVariable("p_idx") final int p_idx,
-                                              @RequestBody final int p_state,
+                                              @PathVariable("p_state") final int p_state,
                                               @RequestHeader (value ="Authorization", required = false) final String header){
         if(jwtService.decode(header).getUser_idx() == 0){
             try {

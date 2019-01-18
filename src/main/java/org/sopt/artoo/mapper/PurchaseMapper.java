@@ -98,7 +98,7 @@ public interface PurchaseMapper {
      * @param p_idx
      * @param p_state
      */
-    @Update("Update purchase SET p_state = #{p_state} WHERE p_idx = #{p_idx}")
+    @Update("UPDATE purchase SET p_state = #{p_state} WHERE p_idx = #{p_idx}")
     void updatePurchaseState(@Param("p_idx") final int p_idx, @Param("p_state") final int p_state);
 
     @Delete("DELETE FROM purchase WHERE p_idx = #{p_idx}")

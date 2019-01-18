@@ -165,11 +165,12 @@ public class AdminService {
      * @param p_state
      */
     public DefaultRes updatePurchaseState(final int p_idx, final int p_state) {
+        log.info("p_idx is: "+String.valueOf(p_idx));
         final Purchase purchase = purchaseMapper.findPurchaseByPurchaseIdx(p_idx);
         try {
             if (purchase != null) {
                 purchaseMapper.updatePurchaseState(p_idx, p_state);
-                DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE);
             }
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT);
         } catch (Exception e) {

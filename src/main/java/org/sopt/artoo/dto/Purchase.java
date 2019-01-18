@@ -25,6 +25,10 @@ public class Purchase {
     // 작품 수령 주소
     private String p_address;
     // 구매자 / 판매자 구분
+    private String p_phone;
+    // 전번
+    private boolean p_isCard;
+    // 카드 여부
     private boolean p_isBuyer;
     // 1.7 월추가 p_price(a_price, VAT, (택배))
     private int p_price;
