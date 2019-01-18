@@ -170,7 +170,8 @@ public class AdminService {
         try {
             if (purchase != null) {
                 purchaseMapper.updatePurchaseState(p_idx, p_state);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE);
+                purchase.setP_state(p_state);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATE_PURCHASE, purchase);
             }
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.NOT_FOUND_CONTENT);
         } catch (Exception e) {
