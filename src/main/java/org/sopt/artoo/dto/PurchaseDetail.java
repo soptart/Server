@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class Purchase {
+public class PurchaseDetail {
     // 구매 인덱스
     private int p_idx;
     // 구매 상태
@@ -16,20 +16,24 @@ public class Purchase {
     private String p_comment = "";
     // 작품 고유 인덱스
     private int a_idx;
-    // 작품 구매자 인덱스
-    private int p_buyer_idx;
-    // 작품 판매자 인덱스
-    private int p_seller_idx;
+    // 작품 이름
+    private String a_name;
+    // 작품 구매자 이름
+    private String p_buyer_name;
+    // 작품 구매자 전화번호
+    private String p_buyer_phone;
+    // 작품 구매자 계좌번호
+    private String p_buyer_account;
+    // 작품 판매자 이름
+    private String p_seller_name;
+    // 작품 판매자 전화번호
+    private String p_seller_phone;
+    // 작품 판매자 계좌번호
+    private String p_seller_account;
     // 작품 수령자 이름
     private String p_recipient;
     // 작품 수령 주소
     private String p_address;
-    // 구매자 / 판매자 구분
-    private String p_phone;
-    // 전번
-    private boolean p_isCard;
-    // 카드 여부
-    private boolean p_isBuyer;
     // 1.7 월추가 p_price(a_price, VAT, (택배))
     private int p_price;
 }
