@@ -379,7 +379,6 @@ public class UserService {
     public DefaultRes userPwChange(final int userIdx, final UserPwInfo userPwInfo) {
         if (userMapper.findByUidx(userIdx) != null) {
             try {
-                String userPw = userMapper.checkUserPw(userIdx);
 
                 if(!userMapper.checkUserPw(userIdx).equalsIgnoreCase(PasswordIncoder.incodePw(userPwInfo.getU_pw_current()))){
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_PASSWORD);
@@ -400,6 +399,29 @@ public class UserService {
         return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
     }
 
-
+//    @Transactional
+//    public DefaultRes deleteUser(final int userIdx, final UserPwInfo userPwInfo){
+//        if (userMapper.findByUidx(userIdx) != null) {
+//            try{
+//                //비밀번호 확인
+//                if(!userMapper.checkUserPw(userIdx).equalsIgnoreCase(PasswordIncoder.incodePw(userPwInfo.getU_pw_current()))){
+//                    return DefaultRes.res(StatusCode.OK, ResponseMessage.WRONG_PASSWORD);
+//                }
+//                // 연결된 모든 작품 연결 링크 삭제 후
+//                else {
+//                    List<Artwork> userArtwork= artworkMapper.findArtworkByUserIdxAll(userIdx);
+//                    for(Artwork a : userArtwork){
+//                        artworkMapper.updateArtworkUidx(-1, a.getA_idx());
+//                    }
+//                }
+//            }
+//            catch (Exception e) {
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                log.error(e.getMessage());
+//                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+//            }
+//        }
+//        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+//    }
 
 }
