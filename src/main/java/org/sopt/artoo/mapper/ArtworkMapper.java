@@ -11,13 +11,28 @@ import java.util.List;
 public interface ArtworkMapper {
 
     /**
-     * 미술작품 전체 조회
-     *
+     * 미술작품 전체 조회 (기존)
+     * sort by date
      * @return 미술작품전체
      */
     @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx}" +
             " ORDER BY artwork.a_idx DESC LIMIT 15")
-    List<Artwork> findAll(@Param("a_idx") final int a_idx);
+    List<Artwork> findAllSortByIdx(@Param("a_idx") final int a_idx);
+
+    /** sort by 낮은 가격순 */
+    @Select("SELECT * FROM artwork WHERE a_active = 1"+
+            " ORDER BY artwork.a_price LIMIT #{limit}, 15")
+    List<Artwork> findAllSortByPrice(@Param("limit") final int limit, @Param("a_price") final int a_price);
+
+    /** sort by 높은 가격순 */
+    @Select("SELECT * FROM artwork WHERE a_active = 1" +
+            " ORDER BY artwork.a_price DESC LIMIT #{limit}, 15")
+    List<Artwork> findAllSortByPriceDesc(@Param("limit") final int limit, @Param("a_price") final int a_price);
+
+    /** sort by 좋아요 */
+    @Select("SELECT a_idx, count(a_idx) as count FROM artworkLike group by a_idx order by c desc")
+    List<Artwork> findAllSortByLikes(@Param("a_idx") final int a_idx);
+
 
     /**
      * 미술작품 전체 조회
