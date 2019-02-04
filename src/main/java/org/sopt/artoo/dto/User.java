@@ -15,14 +15,18 @@ public class User {
     // 유저 핸드폰 번호
     private int u_credit;
     // 유저 마일리지
-    private String u_address;
-    // 유저 주소
     private String u_name;
     // 유저 이름
-    private String u_bank;
-    // 은행명
-    private String u_account;
-    // 유저 계좌 번호
     private String u_description;
     // 유저 자기 소개
+
+    //admin 전용
+    private String u_bank;
+    // 은행명
+    private String u_address;
+    // 유저 주소
+    private String u_account;
+    // 유저 계좌 번호
+
+
 }

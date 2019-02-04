@@ -163,7 +163,7 @@ public class UserController {
 
 
     /**
-     *
+     * 유저정보조회
      * @param userIdx
      * @return User 객체
      */
@@ -229,25 +229,6 @@ public class UserController {
             return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
         }
     }
-
-//    @DeleteMapping("/{u_idx}/myInfo")
-//    public ResponseEntity deleteUser(
-//            @RequestHeader (value = "Authorization", required = false) final String header,
-//            @RequestBody final UserPwInfo userPwInfo,
-//            @PathVariable("u_idx") final int userIdx) {
-//        if(jwtService.checkAuth(header, userIdx)) {
-//            try {
-//                DefaultRes defaultRes = userService.deleteUser(userIdx, userPwInfo);
-//                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
-//            } catch (Exception e) {
-//                log.error(e.getMessage());
-//                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//        }
-//        else{
-//            return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED.UNAUTHORIZED);
-//        }
-//    }
 
 
     /**

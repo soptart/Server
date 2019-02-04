@@ -337,27 +337,11 @@ public class UserService {
                 if(userInfo.getU_name() != null) {
                     myUser.setU_name(userInfo.getU_name());
                 }
-                if(userInfo.getU_email() != null){
-                    if(userMapper.findByEmail(userInfo.getU_email())!= null){
-                        return DefaultRes.res(StatusCode.OK, ResponseMessage.ALREADY_USER);
-                    }
-                    myUser.setU_email(userInfo.getU_email());
-                }
                 if(userInfo.getU_phone() != null){
                     myUser.setU_phone(userInfo.getU_phone());
                 }
                 if(userInfo.getU_school() != null){
                     myUser.setU_school(userInfo.getU_school());
-                }
-                if(userInfo.getU_school() != null) {
-                    myUser.setU_school(userInfo.getU_school());
-                }
-                if(userInfo.getU_bank() != null && userInfo.getU_account() != null) {
-                    myUser.setU_bank(userInfo.getU_bank());
-                    myUser.setU_account(userInfo.getU_account());
-                }
-                if(userInfo.getU_description()!=null){
-                    myUser.setU_description(userInfo.getU_description());
                 }
                 userMapper.updateUserInfo(userIdx, myUser);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
