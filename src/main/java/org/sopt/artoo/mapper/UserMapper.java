@@ -72,4 +72,13 @@ public interface UserMapper {
      */
     @Update("Update user SET u_pw = #{userInfo.u_pw_new} WHERE u_idx = #{u_idx}")
     void updateUserPw(@Param("u_idx") final int u_idx, @Param("userInfo") final UserPwInfo userPwInfo);
+
+    /**
+     * 유저 정보 비활성화
+     * @param u_idx
+     */
+    @Update("Update user SET u_pw = '3BE481CA29E74A01367CEACA0B5C7F5EE53E9A407D26D4368EDD539541F7B13C', " +
+            "u_school ='', u_address ='', u_name='', u_bank='', u_account='', u_dept='', u_phone='', u_description='' WHERE u_idx = #{u_idx}")
+    void inActiveUser(@Param("u_idx") final int u_idx);
+
 }

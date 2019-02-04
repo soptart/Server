@@ -10,6 +10,7 @@ import org.sopt.artoo.utils.StatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import sun.rmi.runtime.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -423,5 +424,33 @@ public class UserService {
 //        }
 //        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
 //    }
+
+    /**
+     * 유저 삭제 (-> 유저 개인 정보 비활성화 -> )
+     * @param userIdx
+     * @param userPw
+     * @return
+     */
+    @Transactional
+    public DefaultRes deleteUser(final int userIdx, final LoginReq userPw){
+        User user = userMapper.findByUidx(userIdx);
+        if(user != null) {
+            try{
+                //compare data and password
+                String incodedPw = PasswordIncoder.incodePw(userPw.getU_pw());
+                if(incodedPw.equalsIgnoreCase(userMapper.checkUserPw(userIdx))){
+                    userMapper.inActiveUser(userIdx);
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_USER);
+                }
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.WRONG_PASSWORD);
+            }
+            catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+        }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+    }
 
 }
