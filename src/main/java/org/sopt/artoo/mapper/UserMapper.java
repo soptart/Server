@@ -15,9 +15,9 @@ public interface UserMapper {
      *
      * @param userSignUpReq 객체
      */
-    @Insert("INSERT INTO user(u_email, u_pw, u_school, u_address, u_name, u_bank, u_account, u_phone) " +
+    @Insert("INSERT INTO user(u_email, u_pw, u_school, u_name, u_phone) " +
             "VALUES(#{userSignUpReq.u_email}, #{userSignUpReq.u_pw}, #{userSignUpReq.u_school}, " +
-            "#{userSignUpReq.u_address}, #{userSignUpReq.u_name}, #{userSignUpReq.u_bank}, #{userSignUpReq.u_account}, #{userSignUpReq.u_phone})")
+            "#{userSignUpReq.u_name}, #{userSignUpReq.u_phone})")
     @Options(useGeneratedKeys = true, keyColumn = "user.u_idx")
     int save(@Param("userSignUpReq") final UserSignUpReq userSignUpReq);
 
@@ -38,6 +38,11 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE u_idx = #{userIdx}")
     User findByUidx(@Param("userIdx") final int userIdx);
 
+    /**
+     * 회원 소개란 수정
+     * @param userIdx
+     * @param userDescriptionReq
+     */
     @Update("UPDATE user SET u_description = #{userDescriptionReq.u_description} WHERE u_idx = #{userIdx}")
     void saveUserDescription(@Param("userIdx") final int userIdx, @Param("userDescriptionReq") final UserDescriptionReq userDescriptionReq);
 
@@ -53,8 +58,8 @@ public interface UserMapper {
      * @param u_idx
      * @param userInfo
      */
-    @Update("UPDATE user SET u_name = #{userInfo.u_name}, u_phone = #{userInfo.u_phone}, u_address = #{userInfo.u_address}," +
-            "u_school = #{userInfo.u_school}, u_bank = #{userInfo.u_bank}, u_account = #{userInfo.u_account}, u_description = #{userInfo.u_description} WHERE u_idx = #{u_idx}")
+    @Update("UPDATE user SET u_name = #{userInfo.u_name}, u_phone = #{userInfo.u_phone}, " +
+            "u_school = #{userInfo.u_school} WHERE u_idx = #{u_idx}")
     void updateUserInfo(@Param("u_idx") final int u_idx, @Param("userInfo") final User userInfo);
 
     /**
@@ -75,4 +80,13 @@ public interface UserMapper {
      */
     @Update("Update user SET u_pw = #{userInfo.u_pw_new} WHERE u_idx = #{u_idx}")
     void updateUserPw(@Param("u_idx") final int u_idx, @Param("userInfo") final UserPwInfo userPwInfo);
+
+    /**
+     * 유저 정보 비활성화
+     * @param u_idx
+     */
+    @Update("Update user SET u_pw = '3BE481CA29E74A01367CEACA0B5C7F5EE53E9A407D26D4368EDD539541F7B13C', " +
+            "u_school ='', u_name='', u_phone='', u_description='' WHERE u_idx = #{u_idx}")
+    void inActiveUser(@Param("u_idx") final int u_idx);
+
 }
