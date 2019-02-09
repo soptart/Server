@@ -2,6 +2,7 @@ package org.sopt.artoo.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.model.DefaultRes;
+import org.sopt.artoo.model.ExternalLoginReq;
 import org.sopt.artoo.model.LoginReq;
 import org.sopt.artoo.service.AuthService;
 import org.sopt.artoo.utils.PasswordIncoder;
@@ -43,12 +44,16 @@ public class LoginController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping(value="/kakaologin", produces = "application/json")
-    public String kakaoLogin(@RequestParam("code") String code, RedirectAttributes ra, HttpSession session,
-                             HttpServletResponse response) throws IOException {
-        System.out.println("kakaocode : " + code);
-        return code;
+    /**
+     * 외부 로그인(카카오톡, 네이버 등등)
+     */
+    @PostMapping("externalLogin")
+    public ResponseEntity loginExternal(@RequestBody final ExternalLoginReq loginReq){
+        try {
+            return new ResponseEntity<>(authService.loginExternal(loginReq), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
 }

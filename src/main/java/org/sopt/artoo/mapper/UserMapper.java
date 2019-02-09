@@ -70,6 +70,9 @@ public interface UserMapper {
     @Select("SELECT u_pw FROM user WHERE u_idx = #{u_idx}")
     String checkUserPw(@Param("u_idx") final int u_idx);
 
+    //유저 아이디와 회원가입타입으로 회원 조회
+    @Select("SELECT * FROM user WHERE external_key = #{external_key} AND u_type = #{u_type}")
+    User findByUserIdAndType(@Param("external_key") final int external_key, @Param("u_type") final int u_type);
     /**
      * 유저 비밀번호 업데이트
      * @param u_idx

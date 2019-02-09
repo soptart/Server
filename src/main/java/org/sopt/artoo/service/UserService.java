@@ -90,6 +90,19 @@ public class UserService {
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_USER);
     }
 
+    @Transactional
+    public DefaultRes saveExternal(UserSignUpReq userSignUpReq) {
+        try {
+            userSignUpReq.setU_pw("wqrqerqwerqewr");
+            userSignUpReq.setU_phone("");
+            userMapper.save(userSignUpReq);
+            return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.FAIL_CREATE_USER);
+        }
+    }
+
     /**
      * 유저별 작품 조회
      *
@@ -158,6 +171,13 @@ public class UserService {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+    public boolean findByUserIdAndType(final int userId, final int signupType) {
+        final User user = userMapper.findByUserIdAndType(userId, signupType);
+        if (user != null)
+            return true;
+        return false;
     }
 
     public DefaultRes findUserEmailExist(final String email){

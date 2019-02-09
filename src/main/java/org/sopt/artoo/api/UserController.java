@@ -1,9 +1,11 @@
 package org.sopt.artoo.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.MyPageRes;
 import org.sopt.artoo.model.*;
 import org.sopt.artoo.service.JwtService;
+import org.sopt.artoo.service.KakaoService;
 import org.sopt.artoo.service.UserService;
 import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,12 @@ public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final KakaoService kakaoService;
 
-    public UserController(final UserService userService, final JwtService jwtService){
+    public UserController(final UserService userService, final JwtService jwtService, final KakaoService kakaoService){
         this.userService = userService;
         this.jwtService = jwtService;
+        this.kakaoService = kakaoService;
     }
 
     /**
@@ -129,6 +133,40 @@ public class UserController {
         } catch (Exception e){
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 외부 회원 가입입니다.
+     * @param userSignUpReq
+     * @return
+     */
+    @PostMapping("/external")
+    public ResponseEntity userSignUpExternal(@RequestBody final UserSignUpReq userSignUpReq){
+        if(userSignUpReq.getU_type() == UserSignUpReq.Kakao) {
+            JsonNode userInfo = kakaoService.verifyAccessToken(userSignUpReq.getAccessToken());
+            //우선은 id로 해놨는데 나중에 email로 바꿔도 되는건지 확인해봅시당
+            if (!userInfo.path("id").isMissingNode()) {
+                userSignUpReq.setExternal_key(userInfo.path("id").asInt());
+                if (userService.findByUserIdAndType(userSignUpReq.getExternal_key(), userSignUpReq.getU_type())) {
+                    return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.BAD_REQUEST);
+                }
+                JsonNode kakao_account = userInfo.path("kakao_account");
+                if (kakao_account.path("has_email").asBoolean() && kakao_account.path("is_email_valid").asBoolean() && kakao_account.path("is_email_verified").asBoolean()) {
+                    userSignUpReq.setU_email(kakao_account.path("email").asText());
+                }
+            } else {
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.BAD_REQUEST);
+            }
+            try {
+                userSignUpReq.setU_type(UserSignUpReq.Kakao);
+                return new ResponseEntity<>(userService.saveExternal(userSignUpReq), HttpStatus.OK);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else{
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.BAD_REQUEST);
         }
     }
 
