@@ -45,9 +45,12 @@ public class AuthService {
             JsonNode userInfo = kakaoService.verifyAccessToken(loginReq.getAccessToken());
             if(!userInfo.path("id").isMissingNode()){
                 userId = userInfo.path("id").asInt();
+                log.info(""+userId);
             }else {
-                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LOGIN_FAIL);
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.LOGIN_FAIL);
             }
+        }else{
+            log.info("no kakao");
         }
         final User user = userMapper.findByUserIdAndType(userId, loginReq.getLoginType());
         if(user!=null){
