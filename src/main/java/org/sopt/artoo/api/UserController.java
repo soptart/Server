@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.sopt.artoo.model.DefaultRes.FAIL_AUTHORIZATION_RES;
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
+import static org.sopt.artoo.model.DefaultRes.FAIL_FIND_USER;
 
 @RestController
 @RequestMapping("/users")
@@ -155,14 +156,23 @@ public class UserController {
                 if (kakao_account.path("has_email").asBoolean() && kakao_account.path("is_email_valid").asBoolean() && kakao_account.path("is_email_verified").asBoolean()) {
                     userSignUpReq.setU_email(kakao_account.path("email").asText());
                 }
+                JsonNode properties = userInfo.path("properties");
+                if(properties.path("nickname").asText()!=null){
+                    userSignUpReq.setU_name(userInfo.path("nickname").asText());
+                    log.info("nickname: "+userInfo.path("nickname").asText());
+                }else{
+                    userSignUpReq.setU_name("no_name");
+                    log.info("no_name");
+                }
             } else {
-                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(FAIL_FIND_USER, HttpStatus.BAD_REQUEST);
             }
             try {
                 userSignUpReq.setU_type(UserSignUpReq.Kakao);
                 return new ResponseEntity<>(userService.saveExternal(userSignUpReq), HttpStatus.OK);
             } catch (Exception e) {
                 e.printStackTrace();
+                log.info("failed set u_type");
                 return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }else{
