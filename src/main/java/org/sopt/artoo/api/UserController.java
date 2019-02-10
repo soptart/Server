@@ -3,10 +3,7 @@ package org.sopt.artoo.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.artoo.dto.MyPageRes;
-import org.sopt.artoo.model.DefaultRes;
-import org.sopt.artoo.model.UserDescriptionReq;
-import org.sopt.artoo.model.UserPwInfo;
-import org.sopt.artoo.model.UserSignUpReq;
+import org.sopt.artoo.model.*;
 import org.sopt.artoo.service.JwtService;
 import org.sopt.artoo.service.KakaoService;
 import org.sopt.artoo.service.UserService;
@@ -34,6 +31,11 @@ public class UserController {
         this.kakaoService = kakaoService;
     }
 
+    /**
+     * 이메일 중복 검사
+     * @param email
+     * @return
+     */
     @PostMapping("/u_email/{u_email}")
     public ResponseEntity getUserEmail(
             @PathVariable("u_email") final String email){
@@ -209,7 +211,7 @@ public class UserController {
 
 
     /**
-     *
+     * 유저정보조회
      * @param userIdx
      * @return User 객체
      */
@@ -274,6 +276,32 @@ public class UserController {
         } else {
             return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+
+    /**
+     * 유저 삭제
+     * @param header
+     * @param userPw
+     * @param userIdx
+     * @return defaultRes
+     */
+    @DeleteMapping("/{u_idx}")
+    public ResponseEntity deleteUser(
+            @RequestHeader (value = "Authorization", required =  false) final String header,
+            @RequestBody final LoginReq userPw,
+            @PathVariable("u_idx") final int userIdx) {
+        if(jwtService.checkAuth(header, userIdx)){
+            try{
+                DefaultRes defaultRes = userService.deleteUser(userIdx, userPw);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+               return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+
     }
 }
 
