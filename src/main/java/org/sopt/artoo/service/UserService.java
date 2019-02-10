@@ -94,6 +94,9 @@ public class UserService {
         try {
             userSignUpReq.setU_pw("wqrqerqwerqewr");
             userSignUpReq.setU_phone("");
+            if(userSignUpReq.getU_email()==null){
+                userSignUpReq.setU_email("");
+            }
             userMapper.save(userSignUpReq);
             return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
         } catch (Exception e) {
