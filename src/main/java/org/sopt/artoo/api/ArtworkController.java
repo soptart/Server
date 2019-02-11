@@ -40,17 +40,30 @@ public class ArtworkController {
      *
      * @param header jwt token
      * @return ResponseEntity
+     * @requestParam sort
+     * 0- 최신순
+     * 1- 높은 가격순
+     * 2- 낮은 가격순
+     * 3- 인기순 (좋아요)
      */
-    @GetMapping("/artworks/load/{a_idx}")
+    @GetMapping("/artworks/load/{limit}")
     public ResponseEntity getAllartworks(
             @RequestHeader(value = "Authorization", required = false) final String header,
-            @PathVariable("a_idx") final int a_idx) {
+            @PathVariable("limit") final int limit,
+            @RequestParam(value = "sort", required = false, defaultValue="0") final int sort) {
         try {
-            final int userIdx = jwtService.decode(header).getUser_idx();
-            DefaultRes<List<Artwork>> defaultRes = artworkService.findAll(a_idx);
+            DefaultRes<List<Artwork>> defaultRes = artworkService.findAll(limit, sort);
 
-            for (Artwork artwork : defaultRes.getData()) {
-                artwork.setAuth(userIdx == artwork.getU_idx());
+            if(header == null){
+                for (Artwork artwork : defaultRes.getData()) {
+                    artwork.setAuth(false);
+                }
+            }else {
+                final int userIdx = jwtService.decode(header).getUser_idx();
+
+                for (Artwork artwork : defaultRes.getData()) {
+                    artwork.setAuth(userIdx == artwork.getU_idx());
+                }
             }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
