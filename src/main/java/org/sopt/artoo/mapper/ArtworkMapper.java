@@ -34,7 +34,7 @@ public interface ArtworkMapper {
     List<Artwork> findAllSortByPrice(@Param("limit") final int limit);
 
     /** sort by 좋아요 */
-    @Select("SELECT * FROM  artwork left outer join (SELECT a_idx, count(a_idx) as count FROM artworkLike group by a_idx order by count(a_idx) desc) a on artwork.a_idx=a.a_idx ORDER BY a.count DESC LIMIT #{limit}, 15")
+    @Select("SELECT * FROM  artwork left outer join (SELECT a_idx, count(a_idx) as count FROM artworkLike group by a_idx order by count(a_idx) desc) a on artwork.a_idx=a.a_idx WHERE artwork.a_active=1 ORDER BY a.count DESC LIMIT #{limit}, 15")
     List<Artwork> findAllSortByLikes(@Param("limit") final int limit);
 
 
