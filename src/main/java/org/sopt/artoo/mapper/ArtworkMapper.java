@@ -15,23 +15,27 @@ public interface ArtworkMapper {
      * sort by date
      * @return 미술작품전체
      */
-    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx}" +
-            " ORDER BY artwork.a_idx DESC LIMIT 15")
-    List<Artwork> findAllSortByIdx(@Param("a_idx") final int a_idx);
+//    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx}" +
+//            " ORDER BY artwork.a_idx DESC LIMIT 15")
+//    List<Artwork> findAllSortByIdx(@Param("a_idx") final int a_idx);
 
-    /** sort by 낮은 가격순 */
-    @Select("SELECT * FROM artwork WHERE a_active = 1"+
-            " ORDER BY artwork.a_price LIMIT #{limit}, 15")
-    List<Artwork> findAllSortByPrice(@Param("limit") final int limit, @Param("a_price") final int a_price);
+    @Select("SELECT * FROM artwork WHERE a_active = 1" +
+            " ORDER BY artwork.a_idx DESC LIMIT #{limit}, 15")
+    List<Artwork> findAllSortByIdx(@Param("limit") final int limit);
 
-    /** sort by 높은 가격순 */
+    /** sort by 높은 가격순 a_idx=limit */
     @Select("SELECT * FROM artwork WHERE a_active = 1" +
             " ORDER BY artwork.a_price DESC LIMIT #{limit}, 15")
-    List<Artwork> findAllSortByPriceDesc(@Param("limit") final int limit, @Param("a_price") final int a_price);
+    List<Artwork> findAllSortByPriceDesc(@Param("limit") final int limit);
+
+    /** sort by 낮은 가격순 a_idx=limit */
+    @Select("SELECT * FROM artwork WHERE a_active = 1"+
+            " ORDER BY artwork.a_price LIMIT #{limit}, 15")
+    List<Artwork> findAllSortByPrice(@Param("limit") final int limit);
 
     /** sort by 좋아요 */
-    @Select("SELECT a_idx, count(a_idx) as count FROM artworkLike group by a_idx order by c desc")
-    List<Artwork> findAllSortByLikes(@Param("a_idx") final int a_idx);
+    @Select("SELECT * FROM  artwork left outer join (SELECT a_idx, count(a_idx) as count FROM artworkLike group by a_idx order by count(a_idx) desc) a on artwork.a_idx=a.a_idx ORDER BY a.count DESC LIMIT #{limit}, 15")
+    List<Artwork> findAllSortByLikes(@Param("limit") final int limit);
 
 
     /**
