@@ -94,9 +94,9 @@ public class UserService {
     public DefaultRes saveExternal(UserSignUpReq userSignUpReq) {
         try {
             userSignUpReq.setU_pw("wqrqerqwerqewr");
-            userSignUpReq.setU_phone(" ");
+            userSignUpReq.setU_phone("");
             if(userSignUpReq.getU_email()==null){
-                userSignUpReq.setU_email(" ");
+                userSignUpReq.setU_email("");
             }
             userMapper.save(userSignUpReq);
             return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
