@@ -52,8 +52,18 @@ public class ArtworkService {
      *
      * @return DefaultRes
      */
-    public DefaultRes<List<Artwork>> findAll(final int a_idx) {
-        List<Artwork> artworkList = artworkMapper.findAll(a_idx);
+    public DefaultRes<List<Artwork>> findAll(final int limit, final int sort) {
+        log.info(String.valueOf(sort));
+        List<Artwork> artworkList = new ArrayList<>();
+        if(sort == 0)
+            artworkList = artworkMapper.findAllSortByIdx(limit);
+        else if(sort == 1)
+            artworkList = artworkMapper.findAllSortByPriceDesc(limit);
+        else if(sort == 2)
+            artworkList = artworkMapper.findAllSortByPrice(limit);
+        else if(sort == 3)
+            artworkList = artworkMapper.findAllSortByLikes(limit);
+
         final int numArtwork = artworkMapper.findRealAll().size();
         for (Artwork artwork : artworkList) {
             artwork.setPic_url(artworkPicMapper.findByArtIdx(artwork.getA_idx()).getPic_url());
@@ -62,7 +72,7 @@ public class ArtworkService {
     }
 
     /**
-     * s
+     *
      * 모든 작품 조회(인덱스랑 url만)
      */
     public DefaultRes<List<ArtworkMini>> findAllIndexAndUrl(final int a_idx) {
