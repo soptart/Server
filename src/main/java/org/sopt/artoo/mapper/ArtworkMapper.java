@@ -11,32 +11,13 @@ import java.util.List;
 public interface ArtworkMapper {
 
     /**
-     * 미술작품 전체 조회 (기존)
-     * sort by date
+     * 미술작품 전체 조회
+     *
      * @return 미술작품전체
      */
-//    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx}" +
-//            " ORDER BY artwork.a_idx DESC LIMIT 15")
-//    List<Artwork> findAllSortByIdx(@Param("a_idx") final int a_idx);
-
-    @Select("SELECT * FROM artwork WHERE a_active = 1" +
-            " ORDER BY artwork.a_idx DESC LIMIT #{limit}, 15")
-    List<Artwork> findAllSortByIdx(@Param("limit") final int limit);
-
-    /** sort by 높은 가격순 a_idx=limit */
-    @Select("SELECT * FROM artwork WHERE a_active = 1" +
-            " ORDER BY artwork.a_price DESC LIMIT #{limit}, 15")
-    List<Artwork> findAllSortByPriceDesc(@Param("limit") final int limit);
-
-    /** sort by 낮은 가격순 a_idx=limit */
-    @Select("SELECT * FROM artwork WHERE a_active = 1"+
-            " ORDER BY artwork.a_price LIMIT #{limit}, 15")
-    List<Artwork> findAllSortByPrice(@Param("limit") final int limit);
-
-    /** sort by 좋아요 */
-    @Select("SELECT * FROM  artwork left outer join (SELECT a_idx, count(a_idx) as count FROM artworkLike group by a_idx order by count(a_idx) desc) a on artwork.a_idx=a.a_idx WHERE artwork.a_active=1 ORDER BY a.count DESC LIMIT #{limit}, 15")
-    List<Artwork> findAllSortByLikes(@Param("limit") final int limit);
-
+    @Select("SELECT * FROM artwork WHERE a_active = 1 AND a_idx < #{a_idx}" +
+            " ORDER BY artwork.a_idx DESC LIMIT 15")
+    List<Artwork> findAll(@Param("a_idx") final int a_idx);
 
     /**
      * 미술작품 전체 조회
@@ -79,13 +60,29 @@ public interface ArtworkMapper {
     Artwork findAllArtworkByIdx(@Param("a_idx") final int a_idx);
 
     /**
-     * 특정 작가별 작품 조회
+     * 특정 작가별 작품 조회 (활성화 된 작품만)
      *
      * @param u_idx
      * @return 미술작품객체 리스트
      */
     @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx} AND a_active = 1 ORDER BY a_idx DESC")
     List<Artwork> findArtworkByUserIdx(@Param("u_idx") final int u_idx);
+
+    /**
+     * 유저 삭제용 연관 아트워크 유저 인덱스 변경
+     * @param u_idx
+     * @param a_idx
+     */
+    @Update("UPDATE artwork SET u_idx = #{u_idx} WHERE a_idx = #{a_idx}")
+    void updateArtworkUidx(@Param("u_idx") final int u_idx, @Param("a_idx") final int a_idx);
+
+    /**
+     * 특정 작가별 작품 조회 (모두)
+     * @param u_idx
+     * @return 미술작품객체 리스트(비활성 포함)
+     */
+    @Select("SELECT * FROM artwork WHERE u_idx = #{u_idx}")
+    List<Artwork> findArtworkByUserIdxAll(@Param("u_idx") final int u_idx);
 
 
     /**

@@ -40,30 +40,17 @@ public class ArtworkController {
      *
      * @param header jwt token
      * @return ResponseEntity
-     * @requestParam sort
-     * 0- 최신순
-     * 1- 높은 가격순
-     * 2- 낮은 가격순
-     * 3- 인기순 (좋아요)
      */
-    @GetMapping("/artworks/load/{limit}")
+    @GetMapping("/artworks/load/{a_idx}")
     public ResponseEntity getAllartworks(
             @RequestHeader(value = "Authorization", required = false) final String header,
-            @PathVariable("limit") final int limit,
-            @RequestParam(value = "sort", required = false, defaultValue="0") final int sort) {
+            @PathVariable("a_idx") final int a_idx) {
         try {
-            DefaultRes<List<Artwork>> defaultRes = artworkService.findAll(limit, sort);
+            final int userIdx = jwtService.decode(header).getUser_idx();
+            DefaultRes<List<Artwork>> defaultRes = artworkService.findAll(a_idx);
 
-            if(header == null){
-                for (Artwork artwork : defaultRes.getData()) {
-                    artwork.setAuth(false);
-                }
-            }else {
-                final int userIdx = jwtService.decode(header).getUser_idx();
-
-                for (Artwork artwork : defaultRes.getData()) {
-                    artwork.setAuth(userIdx == artwork.getU_idx());
-                }
+            for (Artwork artwork : defaultRes.getData()) {
+                artwork.setAuth(userIdx == artwork.getU_idx());
             }
             return new ResponseEntity<>(defaultRes, HttpStatus.OK);
         } catch (Exception e) {
@@ -71,6 +58,7 @@ public class ArtworkController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     /**
      * 미술작품 전체 인덱스랑 url만 불러오기
