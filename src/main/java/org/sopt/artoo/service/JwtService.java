@@ -109,10 +109,6 @@ public class JwtService {
         public TokenRes() {
         }
 
-        public TokenRes(final String token) {
-            this.token = token;
-        }
-
         public TokenRes(final String token, final int userIdx) {
             this.token = token;
             this.userIdx = userIdx;

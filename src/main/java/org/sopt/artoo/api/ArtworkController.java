@@ -59,6 +59,7 @@ public class ArtworkController {
         }
     }
 
+
     /**
      * 미술작품 전체 인덱스랑 url만 불러오기
      *

@@ -61,8 +61,9 @@ public class ArtworkService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_CONTENTS + numArtwork, artworkList);
     }
 
+
     /**
-     * s
+     *
      * 모든 작품 조회(인덱스랑 url만)
      */
     public DefaultRes<List<ArtworkMini>> findAllIndexAndUrl(final int a_idx) {
