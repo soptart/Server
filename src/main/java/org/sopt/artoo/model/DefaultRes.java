@@ -53,4 +53,6 @@ public class DefaultRes<T> {
 
     public static final DefaultRes FAIL_AUTHORIZATION_RES = new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
 
+    public static final DefaultRes FAIL_FIND_USER = new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+
 }
