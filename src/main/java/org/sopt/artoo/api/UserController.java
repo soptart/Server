@@ -12,6 +12,10 @@ import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.sopt.artoo.model.*;
+import org.sopt.artoo.service.KakaoService;
+import static org.sopt.artoo.model.DefaultRes.FAIL_FIND_USER;
 
 import static org.sopt.artoo.model.DefaultRes.FAIL_AUTHORIZATION_RES;
 import static org.sopt.artoo.model.DefaultRes.FAIL_DEFAULT_RES;
@@ -23,12 +27,19 @@ public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final KakaoService kakaoService;
 
-    public UserController(final UserService userService, final JwtService jwtService){
+    public UserController(final UserService userService, final JwtService jwtService, final KakaoService kakaoService){
         this.userService = userService;
         this.jwtService = jwtService;
+        this.kakaoService = kakaoService;
     }
 
+    /**
+     * 이메일 중복 검사
+     * @param email
+     * @return
+     */
     @PostMapping("/u_email/{u_email}")
     public ResponseEntity getUserEmail(
             @PathVariable("u_email") final String email){
@@ -129,10 +140,55 @@ public class UserController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    /**
+     * 외부 회원 가입입니다.
+     * @param userSignUpReq
+     * @return
+     */
+    @PostMapping("/external")
+    public ResponseEntity userSignUpExternal(@RequestBody final UserSignUpReq userSignUpReq){
+        if(userSignUpReq.getU_type() == UserSignUpReq.Kakao) {
+            JsonNode userInfo = kakaoService.verifyAccessToken(userSignUpReq.getAccessToken());
+            //우선은 id로 해놨는데 나중에 email로 바꿔도 되는건지 확인해봅시당
+            String email = userInfo.path("kakao_account").path("email").asText();
+            System.out.println("email : " + email);
+            if (!userInfo.path("id").isMissingNode()) {
+                userSignUpReq.setExternal_key(userInfo.path("id").asInt());
+                if (userService.findByUserIdAndType(userSignUpReq.getExternal_key(), userSignUpReq.getU_type())) {
+                    return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.BAD_REQUEST);
+                }
+                JsonNode kakao_account = userInfo.path("kakao_account");
+                if (kakao_account.path("has_email").asBoolean() && kakao_account.path("is_email_valid").asBoolean() && kakao_account.path("is_email_verified").asBoolean()) {
+                    userSignUpReq.setU_email(kakao_account.path("email").asText());
+                }
+                JsonNode properties = userInfo.path("properties");
+                if(properties.path("nickname").asText()!=null){
+                    userSignUpReq.setU_name(userInfo.path("nickname").asText());
+                    log.info("nickname: "+userInfo.path("nickname").asText());
+                }else{
+                    userSignUpReq.setU_name("no_name");
+                    log.info("no_name");
+                }
+            } else {
+                return new ResponseEntity<>(FAIL_FIND_USER, HttpStatus.BAD_REQUEST);
+            }
+            try {
+                userSignUpReq.setU_type(UserSignUpReq.Kakao);
+                return new ResponseEntity<>(userService.saveExternal(userSignUpReq), HttpStatus.OK);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.info("failed set u_type");
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else{
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     /**
      * 유저 소개란 삽입/수정
-     *
+     * 유저정보조회
      * @RequestBody userDescription
      * @param userIdx
      * @return User.u_description
@@ -226,6 +282,33 @@ public class UserController {
         } else {
             return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+
+
+    /**
+     * 유저 삭제
+     * @param header
+     * @param userPw
+     * @param userIdx
+     * @return defaultRes
+     */
+    @DeleteMapping("/{u_idx}")
+    public ResponseEntity deleteUser(
+            @RequestHeader (value = "Authorization", required =  false) final String header,
+            @RequestBody final LoginReq userPw,
+            @PathVariable("u_idx") final int userIdx) {
+        if(jwtService.checkAuth(header, userIdx)){
+            try{
+                DefaultRes defaultRes = userService.deleteUser(userIdx, userPw);
+                return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity(FAIL_AUTHORIZATION_RES, HttpStatus.UNAUTHORIZED);
+
     }
 }
 

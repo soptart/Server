@@ -25,4 +25,9 @@ public class User {
     // 유저 계좌 번호
     private String u_description;
     // 유저 자기 소개
+
+    // 유저 로그인 타입
+    private int u_type;
+    // 외부 인덱스
+    private int external_key;
 }
