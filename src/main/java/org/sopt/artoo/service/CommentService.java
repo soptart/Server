@@ -32,7 +32,8 @@ public class CommentService {
     public DefaultRes<List<Comment>> findAllCommentByArtIdx(final int a_idx, final int u_idx) {
         List<Comment> commentList = commentMapper.findAllCommentByArtIdx(a_idx);
         for (Comment comment : commentList) {
-            comment.setAuth(u_idx == comment.getU_idx());
+            if(u_idx != -1){ comment.setAuth(u_idx == comment.getU_idx()); }
+            else{ comment.setAuth(false); }
             comment.setU_name(userMapper.findByUidx(comment.getU_idx()).getU_name());
         }
         try {
