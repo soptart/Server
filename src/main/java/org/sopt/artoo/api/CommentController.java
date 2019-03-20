@@ -13,6 +13,7 @@ import org.sopt.artoo.utils.auth.Auth;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sun.awt.SunHints;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +43,10 @@ public class CommentController {
             //토큰으로 유저인덱스 가져오기
             final int userIdx = jwtService.decode(header).getUser_idx();
             // userIdx로 유저가 쓴 코멘트들을 가져와서 그 코멘트 중에 이 artwork에 artwork가 가지고 있는 c_idx를 가진 코멘트가 있는지 확인
-            if (userIdx == -1) {
-                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.INDEX_NOT_FOUNDED), HttpStatus.OK);
-            }
+            log.info(String.valueOf(userIdx));
+//            if (userIdx == -1) {
+//                return new ResponseEntity<>(DefaultRes.res(StatusCode.UNAUTHORIZED, ResponseMessage.INDEX_NOT_FOUNDED), HttpStatus.OK);
+//            }
             DefaultRes<List<Comment>> commentList = commentService.findAllCommentByArtIdx(a_idx, userIdx);
             return new ResponseEntity<>(commentList, HttpStatus.OK);
         } catch (Exception e) {
