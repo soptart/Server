@@ -153,17 +153,17 @@ public class UserController {
             String email = userInfo.path("kakao_account").path("email").asText();
             System.out.println("email : " + email);
             if (!userInfo.path("id").isMissingNode()) {
-                userSignUpReq.setExternal_key(userInfo.path("id").asInt());
                 if (userService.findByUserIdAndType(userSignUpReq.getExternal_key(), userSignUpReq.getU_type())) {
                     return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.BAD_REQUEST);
                 }
+                userSignUpReq.setExternal_key(userInfo.path("id").asInt());
                 JsonNode kakao_account = userInfo.path("kakao_account");
                 if (kakao_account.path("has_email").asBoolean() && kakao_account.path("is_email_valid").asBoolean() && kakao_account.path("is_email_verified").asBoolean()) {
                     userSignUpReq.setU_email(kakao_account.path("email").asText());
                 }
                 JsonNode properties = userInfo.path("properties");
                 if(properties.path("nickname").asText()!=null){
-                    userSignUpReq.setU_name(userInfo.path("nickname").asText());
+                    userSignUpReq.setU_name(properties.path("nickname").asText());
                     log.info("nickname: "+userInfo.path("nickname").asText());
                 }else{
                     userSignUpReq.setU_name("no_name");
